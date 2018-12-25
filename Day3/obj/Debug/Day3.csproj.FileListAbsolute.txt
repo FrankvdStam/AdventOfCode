@@ -1,7 +1,7 @@
 C:\Projects\AdventOfCode\Day3\bin\Debug\Day3.exe.config
 C:\Projects\AdventOfCode\Day3\bin\Debug\Day3.exe
 C:\Projects\AdventOfCode\Day3\bin\Debug\Day3.pdb
+C:\Projects\AdventOfCode\Day3\obj\Debug\Day3.csprojAssemblyReference.cache
 C:\Projects\AdventOfCode\Day3\obj\Debug\Day3.csproj.CoreCompileInputs.cache
 C:\Projects\AdventOfCode\Day3\obj\Debug\Day3.exe
 C:\Projects\AdventOfCode\Day3\obj\Debug\Day3.pdb
-C:\Projects\AdventOfCode\Day3\obj\Debug\Day3.csprojAssemblyReference.cache

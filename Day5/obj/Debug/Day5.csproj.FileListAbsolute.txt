@@ -4,4 +4,3 @@ C:\Projects\AdventOfCode\Day5\bin\Debug\Day5.pdb
 C:\Projects\AdventOfCode\Day5\obj\Debug\Day5.csproj.CoreCompileInputs.cache
 C:\Projects\AdventOfCode\Day5\obj\Debug\Day5.exe
 C:\Projects\AdventOfCode\Day5\obj\Debug\Day5.pdb
-C:\Projects\AdventOfCode\Day5\obj\Debug\Day5.csprojAssemblyReference.cache

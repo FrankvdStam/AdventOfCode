@@ -10,125 +10,113 @@ namespace Day7
     {
         static void Main(string[] args)
         {
-            ProblemOne();
+            //ProblemOne();
+            ProblemTwo();
         }
 
         static void ProblemOne()
         {
-            List<Step> steps = ParseInput(example);
-            var firstSteps = FindFirstSteps(steps);
-            Step nextStep = SelectNextStep(firstSteps);
+            var steps = ParseInput(input);
             string order = "";
-            while (nextStep != null)
+            //CABDFE
+            
+            Step nextStep = FindNextStep(steps);
+            while(nextStep != null)
             {
                 order += nextStep.StepName;
-                nextStep.Done = true;
-                
-                nextStep = SelectNextStep(firstSteps);
+                RemoveStepFromDictionary(nextStep, steps);
+                nextStep = FindNextStep(steps);
             }
+        }
+
+        static void ProblemTwo(){
+            var steps = ParseInput(input);
+
+            int second = 0;
+            string order = "";
+            var workers = new (int duration, Step step)[numberOfWorkers];
+            while(steps.Any()){
+                for(int i = 0; i < workers.Count(); i++){
+                    if (workers[i].duration > 0) {
+                        workers[i].duration--;
+                        if (workers[i].duration == 0 && workers[i].step != null) {
+                            order += workers[i].step.StepName;
+                            RemoveStepFromDictionary(workers[i].step, steps);
+                            workers[i].step = null;
+                        }
+                    }
+                }
+
+                for(int i = 0; i < workers.Count(); i++){
+                    if (workers[i].duration == 0) {
+                        Step nextStep = FindNextStep(steps);
+                        if (nextStep != null) {
+                            nextStep.InProgress = true;
+                            workers[i].duration = GetStepDuration(nextStep.StepName);
+                            workers[i].step = nextStep;
+                        }
+                    }
+                }
+                second++;
+            }
+            second -= 1;
+        }
+        static int numberOfWorkers = 5;
+        static int baseStepDuration = 60;
+        static int GetStepDuration(string stepName)
+        {
+            return baseStepDuration + (stepName[0] - 'A') + 1;
         }
         
-        static Step SelectNextStep(List<Step> steps)
+        static void RemoveStepFromDictionary(Step step, Dictionary<string, Step> steps)
         {
-            return FindPosibleSteps(steps).OrderBy(i => i.StepName).FirstOrDefault();
-
-        }
-
-        static List<Step> FindPosibleSteps(List<Step> steps)
-        {
-            List<Step> result = new List<Step>();
-            foreach (Step s in steps)
-            {
-                if (!s.Done)
-                {
-                    result.Add(s);
-                }
-                else
-                {
-                    result.AddRange(FindPosibleSteps(s.CompleteFirstSteps));
-                }
+            steps.Remove(step.StepName);
+            foreach(Step s in steps.Values){
+                s.DependsOn.Remove(step);
             }
-
-            return result;
         }
 
-        static List<Step> ParseInput(string input)
+        static Step FindNextStep(Dictionary<string, Step> steps)
         {
+            return steps.Values.Where(i => !i.DependsOn.Any() && !i.InProgress).OrderBy(i => i.StepName).FirstOrDefault();
+        }
+        
+        //input: Step C must be finished before step A can begin.
+        static Dictionary<string, Step> ParseInput(string input)
+        {            
             Dictionary<string, Step> steps = new Dictionary<string, Step>();
-            //for (int i = 0; i < 26; i++)
-            //{
-            //    string s = ((char)(65 + i)).ToString();
-            //    steps[s] = new Step(){StepName = s};
-            //}
-
             var split = input.Split(new string[]{"\r\n"}, StringSplitOptions.None).ToList();
             List<(string mustFinish, string canStart)> list = new List<(string mustFinish, string canStart)>();
+
             foreach (string s in split)
             {
                 string mustFinish = s[5].ToString();
                 string canStart = s[36].ToString();
-                list.Add((mustFinish, canStart));
+
+                if(!steps.ContainsKey(canStart)){
+                    steps[canStart] = new Step() { StepName = canStart };
+                }
 
                 if (!steps.ContainsKey(mustFinish))
                 {
-                    steps[mustFinish] = new Step(){StepName = mustFinish };
+                    steps[mustFinish] = new Step() { StepName = mustFinish };
                 }
 
-                if (!steps.ContainsKey(canStart))
-                {
-                    steps[canStart] = new Step() { StepName = canStart };
-                }
+                steps[canStart].DependsOn.Add(steps[mustFinish]);
             }
-
-            foreach (var s in list)
-            {
-                steps[s.canStart].CompleteFirstSteps.Add(steps[s.mustFinish]);
-            }
-
-            List<Step> result = new List<Step>();
-            foreach (var s in steps)
-            {
-                result.Add(s.Value);
-            }
-
-            return result;
-        }
-
-
-        static List<Step> FindFirstSteps(List<Step> steps)
-        {
-            List<Step> result = new List<Step>();
-            foreach (Step s in steps)
-            {
-                if (!IsContainedInOtherStep(s, steps))
-                {
-                    result.Add(s);
-                }
-            }
-            return result;
-        }
-
-        static bool IsContainedInOtherStep(Step step, List<Step> steps)
-        {
-            foreach (Step s in steps)
-            {
-                if (s.CompleteFirstSteps.Contains(step))
-                {
-                    return true;
-                }
-            }
-            return false;
+            
+            return steps;
         }
 
         public class Step
         {
-            public bool Done = false;
+            public bool InProgress = false;
             public string StepName;
-            public List<Step> CompleteFirstSteps = new List<Step>();
+            public List<Step> DependsOn = new List<Step>();
 
             public override string ToString()
             {
-                return $"{StepName} {CompleteFirstSteps.Count}";
+                return $"{StepName} {DependsOn.Count}";
             }
         }
 

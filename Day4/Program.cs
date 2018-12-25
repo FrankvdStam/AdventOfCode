@@ -3,170 +3,118 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Day4
 {
+    public enum EventType
+    {
+        Unset,
+        StartShift,
+        FallsAsleep,
+        WakesUp,
+    }
+
+    public class Event
+    {
+        public DateTime DateTime;
+        public EventType Type = EventType.Unset;
+        public int? GuardId;
+
+        public override String ToString(){
+            return $"{DateTime} {GuardId} {Type}";
+        }
+    }
+    
+    public class Day
+    {
+        public int[] Minutes = new int[60];
+        public DateTime date;
+    }
+
+    public class Guard
+    {
+        public int Id;
+        List<Day> Days;
+    }    
+    
     class Program
     {
         static void Main(string[] args)
         {
-            List<LogRecord> input = ParseInput();
-            ProblemOne(input);
-        }
-
-        static void ProblemOne(List<LogRecord> input)
-        {
-            FurtherProcessing(input);
-
-
-            Dictionary<int, int> guardsAndMinutesOfSleep = new Dictionary<int, int>();
-            foreach (var id in UniqueGuards(input))
-            {
-                guardsAndMinutesOfSleep[id] = 0;
-            }
+            List<Event> result = ParseInput(input);
+            Dictionary<int, int[]> guardsSleepyMinutes = RegisterSleepTime(result);
+            //ProblemOne(guardsSleepyMinutes);
+            ProblemTwo(guardsSleepyMinutes);
             
+        }
+
+        static void ProblemOne(Dictionary<int, int[]> input)
+        {
+            int mostSleepyGuardId = input.Select(i => (i.Key, i.Value.Sum())).OrderByDescending(i => i.Item2).First().Key;                   
+            int mostSleepyMinute = input[mostSleepyGuardId].Zip(Enumerable.Range(0, 60), (sum, key) => (key, sum))
+                .OrderByDescending(i => i.sum).First().key;
+        
             
-
+            Console.WriteLine($"Most sleepy guard: {mostSleepyGuardId}, most sleepy minute: {mostSleepyMinute}");
         }
 
-        static List<int> UniqueGuards(List<LogRecord> input)
+        static void ProblemTwo(Dictionary<int, int[]> input)
         {
-            List<int> result = new List<int>();
-            foreach (var rec in input)
+            //input.Select(i => i.Value.Zip(Enumerable.Range(0, 60), (_count, minute) => (i.Key, minute, _count)))
+            //    .OrderByDescending(i => i.).First();
+                
+            var result =    (from i in input
+                            from s in i.Value.Zip(Enumerable.Range(0, 60), (count, minute) => (minute, count))
+                            select (i.Key, s.minute, s.count)).ToList().OrderByDescending(i => i.count).First();
+            
+            Console.WriteLine($"guardId: {result.Item1} minute: {result.Item2} count: {result.Item3} multiplied: {result.Item1*result.Item2}");
+        }
+
+
+        static Dictionary<int, int[]> RegisterSleepTime(List<Event> events)
+        {
+            var result = new Dictionary<int, int[]>();            
+            int? guardId = null;
+            int? fallAsleepMinute = null;
+            foreach (Event _event in events)
             {
-                if (!result.Contains(rec.GuardId.Value))
+                Debug.WriteLine(_event.ToString());
+                switch(_event.Type)
                 {
-                    result.Add(rec.GuardId.Value);
+                    case EventType.StartShift:
+                        guardId = _event.GuardId;
+                        fallAsleepMinute = null;
+                        break;
+
+                    case EventType.FallsAsleep:
+                        Debug.Assert(fallAsleepMinute == null);
+                        fallAsleepMinute = _event.DateTime.Minute;
+                        break;
+
+                    case EventType.WakesUp:
+                        Debug.Assert(fallAsleepMinute != null);
+                        if(!result.ContainsKey(guardId.Value))
+                        {
+                            result[guardId.Value] = new int[60];
+                        }
+                        var guardMinutes = result[guardId.Value];
+                        for (var minute = fallAsleepMinute.Value; minute < _event.DateTime.Minute; minute++)
+                        {
+                            guardMinutes[minute]++;
+                        }
+                        fallAsleepMinute = null;
+                        break;
                 }
             }
             return result;
         }
 
-
-        static List<Guard> FurtherProcessing(List<LogRecord> input)
+        static void ProblemOne(string input)
         {
-            List<LogRecord> SortedList = input.OrderBy(o => o.GuardId).ThenBy(c => c.DateTime).ToList();
-            bool Asleep = false;
-            Guard currentGuard = null;
-            DateTime? previousDateTime = null;
-            List<Guard> guards = new List<Guard>();
-            for (int i = 0; i < input.Count; i++)
-            {
-                //Switch guards and add guards to 
-                if (input[i].Action == Action.BeginShift)
-                {
-                    if (currentGuard != null)
-                    {
-                        guards.Add(currentGuard);
-                    }
-                    currentGuard = new Guard();
-                    currentGuard.Id = input[i].GuardId.Value;
-                    previousDateTime = input[i].DateTime;
-                    Asleep = false;
-                }
-
-                if (input[i].Action == Action.FallAsleep)
-                {
-
-                }
-            }
-
-            return null;
         }
 
-        public class Guard
-        {
-            public int Id;
-            public List<Day> Days;
-        }
-
-
-        public class Day
-        {
-            public DateTime StartDateTime;
-            public List<TimeSpan> AsleepSpans;
-        }
-
-        public class LogRecord
-        {
-            public DateTime DateTime;
-            public int? GuardId;
-            public Action Action;
-
-            public override string ToString()
-            {
-                return $"{DateTime} {GuardId} {Action}";
-            }
-
-        }
-
-        public enum Action
-        {
-            BeginShift,
-            FallAsleep,
-            WakeUp
-        }
-
-        static List<LogRecord> ParseInput()
-        {
-            var split = (input.Split('\n')).ToList();
-            List<string> sanitized = new List<string>();
-            foreach (string s in split)
-            {
-                sanitized.Add(s.Replace("\r", ""));
-            }
-            sanitized.Remove("");
-
-
-
-            List<LogRecord> result = new List<LogRecord>();
-            int currentGuardId = 0;
-            foreach (string s in sanitized)
-            {
-                LogRecord record = ParseString(s);
-                result.Add(record);
-                if (record.GuardId != null)
-                {
-                    currentGuardId = record.GuardId.Value;
-                }
-                else
-                {
-                    record.GuardId = currentGuardId;
-                }
-            }
-
-            return result;
-        }
-
-        //Example [1518-09-17 23:48] Guard #1307 begins shift
-        static LogRecord ParseString(string s)
-        {
-            LogRecord result = new LogRecord();
-
-            string dateTime = SubStringByEndIndex(s, 1, s.IndexOf("]"));
-            result.DateTime = DateTime.ParseExact(dateTime, "yyyy-MM-dd HH:mm", null);
-
-            if (s.Contains("#"))
-            {
-                //Get guardId
-                string temp = s.Substring(s.IndexOf("#")+1);
-                string guardId = SubStringByEndIndex(temp, 0, temp.IndexOf(" "));
-                result.GuardId = int.Parse(guardId);
-                result.Action = Action.BeginShift;
-            }
-            else
-            {
-                if (s.Contains("falls asleep"))
-                {
-                    result.Action = Action.FallAsleep;
-                }
-                else
-                {
-                    result.Action = Action.WakeUp;
-                }
-            }
-            return result;
-        }
+       
 
         static string SubStringByEndIndex(string input, int startIndex, int endIndex)
         {
@@ -184,6 +132,60 @@ namespace Day4
 
             return result;
         }
+
+        static List<Event> ParseInput(string input)
+        {
+            var split = input.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList();
+
+            List<Event> events = new List<Event>();
+            foreach (string s in split)
+            {
+                Event _event = new Event();
+
+                string datetime = SubStringByEndIndex(s, 1, s.IndexOf("]"));
+                _event.DateTime = DateTime.ParseExact(datetime, "yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+
+                if(s.Contains("begins shift"))
+                {
+                    string temp = s.Substring(s.IndexOf("#")+1);
+                    string gaurdId = temp.Substring(0, temp.IndexOf(" "));
+                    _event.GuardId = int.Parse(gaurdId);
+                    _event.Type = EventType.StartShift;
+                }
+
+                if(s.Contains("wakes up")){
+                    _event.Type = EventType.WakesUp;
+                }
+
+                if(s.Contains("falls asleep")){
+                    _event.Type = EventType.FallsAsleep;
+                }
+
+                System.Diagnostics.Debug.Assert(_event.Type != EventType.Unset);
+                events.Add(_event);
+            }
+
+            return events.OrderBy(i => i.DateTime).ToList();
+        }
+    
+
+        private static string example = @"[1518-11-01 00:00] Guard #10 begins shift
+[1518-11-01 00:05] falls asleep
+[1518-11-01 00:25] wakes up
+[1518-11-01 00:30] falls asleep
+[1518-11-01 00:55] wakes up
+[1518-11-01 23:58] Guard #99 begins shift
+[1518-11-02 00:40] falls asleep
+[1518-11-02 00:50] wakes up
+[1518-11-03 00:05] Guard #10 begins shift
+[1518-11-03 00:24] falls asleep
+[1518-11-03 00:29] wakes up
+[1518-11-04 00:02] Guard #99 begins shift
+[1518-11-04 00:36] falls asleep
+[1518-11-04 00:46] wakes up
+[1518-11-05 00:03] Guard #99 begins shift
+[1518-11-05 00:45] falls asleep
+[1518-11-05 00:55] wakes up";
 
         private static string input = @"[1518-09-17 23:48] Guard #1307 begins shift
 [1518-06-03 00:00] Guard #3217 begins shift

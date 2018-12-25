@@ -1,7 +1,6 @@
-C:\projects\AdventOfCode\Day1\bin\Debug\Day1.exe.config
-C:\projects\AdventOfCode\Day1\bin\Debug\Day1.exe
-C:\projects\AdventOfCode\Day1\bin\Debug\Day1.pdb
-C:\projects\AdventOfCode\Day1\obj\Debug\Day1.csprojAssemblyReference.cache
-C:\projects\AdventOfCode\Day1\obj\Debug\Day1.csproj.CoreCompileInputs.cache
-C:\projects\AdventOfCode\Day1\obj\Debug\Day1.exe
-C:\projects\AdventOfCode\Day1\obj\Debug\Day1.pdb
+C:\Projects\AdventOfCode\Day1\bin\Debug\Day1.exe.config
+C:\Projects\AdventOfCode\Day1\bin\Debug\Day1.exe
+C:\Projects\AdventOfCode\Day1\bin\Debug\Day1.pdb
+C:\Projects\AdventOfCode\Day1\obj\Debug\Day1.csproj.CoreCompileInputs.cache
+C:\Projects\AdventOfCode\Day1\obj\Debug\Day1.exe
+C:\Projects\AdventOfCode\Day1\obj\Debug\Day1.pdb
