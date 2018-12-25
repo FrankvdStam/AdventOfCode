@@ -1,0 +1,14 @@
+{
+  "ProjectFilePath": "c:\\Projects\\AdventOfCode\\Day10_MonoGame\\Day10_MonoGame.csproj",
+  "TargetFramework": "v4.5",
+  "TagHelpers": [],
+  "Configuration": {
+    "ConfigurationName": "UnsupportedRazor",
+    "LanguageVersion": "1.0",
+    "Extensions": [
+      {
+        "ExtensionName": "UnsupportedRazorExtension"
+      }
+    ]
+  }
+}
