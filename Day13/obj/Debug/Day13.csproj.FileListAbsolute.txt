@@ -1,0 +1,7 @@
+C:\Projects\AdventOfCode\Day13\bin\Debug\Day13.exe.config
+C:\Projects\AdventOfCode\Day13\bin\Debug\Day13.exe
+C:\Projects\AdventOfCode\Day13\bin\Debug\Day13.pdb
+C:\Projects\AdventOfCode\Day13\obj\Debug\Day13.csprojAssemblyReference.cache
+C:\Projects\AdventOfCode\Day13\obj\Debug\Day13.csproj.CoreCompileInputs.cache
+C:\Projects\AdventOfCode\Day13\obj\Debug\Day13.exe
+C:\Projects\AdventOfCode\Day13\obj\Debug\Day13.pdb
