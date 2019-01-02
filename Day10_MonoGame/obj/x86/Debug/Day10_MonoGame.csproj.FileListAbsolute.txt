@@ -20,3 +20,4 @@ C:\Projects\AdventOfCode\Day10_MonoGame\obj\x86\Debug\Day10_MonoGame.csproj.Core
 C:\Projects\AdventOfCode\Day10_MonoGame\obj\x86\Debug\Day10_MonoGame.csproj.CopyComplete
 C:\Projects\AdventOfCode\Day10_MonoGame\obj\x86\Debug\Day10_MonoGame.exe
 C:\Projects\AdventOfCode\Day10_MonoGame\obj\x86\Debug\Day10_MonoGame.pdb
+C:\Projects\AdventOfCode\Day10_MonoGame\obj\x86\Debug\Day10_MonoGame.csprojAssemblyReference.cache

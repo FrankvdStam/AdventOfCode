@@ -38,7 +38,7 @@ namespace Day9
             int rounds = 70918 * 100;
 
             LinkedList<int> players = new LinkedList<int>();
-            Dictionary<int, int> score = new Dictionary<int, int>();
+            Dictionary<int, long> score = new Dictionary<int, long>();
             for(int i = 1; i <= playersAmount; i++)
             {
                 score[i] = 0;
@@ -63,7 +63,7 @@ namespace Day9
 
         
 
-        static void AddMarble(int playerId, int marbleValue, ref LinkedListNode<int> currentMarble, LinkedList<int> marbles, Dictionary<int, int> score)
+        static void AddMarble(int playerId, int marbleValue, ref LinkedListNode<int> currentMarble, LinkedList<int> marbles, Dictionary<int, long> score)
         {
             if(marbleValue % 23 == 0)
             {
@@ -72,10 +72,10 @@ namespace Day9
                 {
                     currentMarble = currentMarble.Previous ?? marbles.Last;
                 }
-                int removeValue = currentMarble.Value;
-                score[playerId] += removeValue;
+                var removeMarble = currentMarble;
+                score[playerId] += currentMarble.Value;
                 currentMarble = currentMarble.Next;
-                marbles.Remove(removeValue);
+                marbles.Remove(removeMarble);
             }
             else
             {
