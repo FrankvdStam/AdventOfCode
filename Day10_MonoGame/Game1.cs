@@ -71,9 +71,10 @@ namespace Day10_MonoGame
                 if (canProgress)
                 {
                     canProgress = false;
-                problem.ProgresSeconds(1, lights);
-                seconds++;
-                lights = problem.MoveToOrigin(problem.Normalize(lights));
+                    problem.ProgresSeconds(1, lights);
+                    seconds++;
+                    lights = problem.MoveToOrigin(problem.Normalize(lights));
+                    System.Diagnostics.Debug.WriteLine(seconds);
                 }
             }
 
