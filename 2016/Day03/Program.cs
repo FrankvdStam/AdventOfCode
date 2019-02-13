@@ -32,7 +32,7 @@ namespace Day03
         {
             List<(int x, int y, int z)> verticalTriangles = new List<(int x, int y, int z)>();
 
-            for (int i = 0; i+3 < triangles.Count; i+=3)
+            for (int i = 0; i < triangles.Count; i+=3)
             {
 			    verticalTriangles.Add((triangles[i].x, triangles[i + 1].x, triangles[i + 2].x));
                 verticalTriangles.Add((triangles[i].y, triangles[i + 1].y, triangles[i + 2].y));
