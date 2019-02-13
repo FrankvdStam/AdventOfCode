@@ -1,0 +1,22 @@
+﻿<SyntaxDefinition name="BooleanSyntax"
+                  xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+
+
+  <RuleSet>
+
+    <Keywords fontWeight="bold" foreground="Blue">
+      <Word>hlf</Word>
+      <Word>tpl</Word>
+      <Word>inc</Word>
+      <Word>jmp</Word>
+      <Word>jie</Word>
+      <Word>jio</Word>
+    </Keywords>
+
+    <Keywords fontWeight="bold" foreground="Red">
+      <Word>a</Word>
+      <Word>b</Word>
+    </Keywords>
+  </RuleSet>
+
+</SyntaxDefinition>
