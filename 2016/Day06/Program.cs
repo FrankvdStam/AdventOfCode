@@ -12,7 +12,9 @@ namespace Day06
         {
             //ProblemOne(Input, 8);
             ProblemTwo(Input, 8);
+            
         }
+
 
         static void ProblemTwo(string input, int width)
         {
