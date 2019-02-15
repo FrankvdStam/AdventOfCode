@@ -160,6 +160,19 @@ namespace Day08
             }
 
             Draw(pixels);
+
+            int count = 0;
+            for (int y = 0; y < pixels.GetLength(0); y++)
+            {
+                for (int x = 0; x < pixels.GetLength(1); x++)
+                {
+                    if (pixels[y, x])
+                    {
+                        count++;
+                    }
+                }
+            }
+
         }
 
 
