@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
+using System.IO.Ports;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,163 +12,142 @@ namespace Day10
 {
     public class Bot
     {
-        public bool CheckCompare(int x, int y)
+        public int Id { get; set; }
+
+        public void Add(int value)
         {
-            return values.Contains(x) && values.Contains(y);
-        }
-        public Bot(int number, int value)
-        {
-            Number = number;
-            AddValue(value);
-        }
-
-        public int Number;
-
-        private readonly List<int> values = new List<int>();
-
-        public int High => values.Max();
-        public int Low => values.Min();
-
-        public void AddValue(int value)
-        {
-            values.Add(value);
+            Values.Add(value);
+            if (Values.Contains(61) && Values.Contains(17))
+            {
+                int result = Id;
+            }
         }
 
-        public void TakeValue(int value)
+        public void Remove(int value)
         {
-            values.Remove(value);
+            Values.Remove(value);
         }
 
-        public bool CanBotProceed()
-        {
-            return values.Count == 2;
-        }
+        public bool ContainsTwoValues => Values.Count == 2;
+
+        private List<int> Values { get; set; } = new List<int>();
+        public int Max => Values.Max();
+        public int Min => Values.Min();
     }
-
+    
     class Program
     {
         static void Main(string[] args)
         {
-            ProblemOne(Input);
-            //ProblemTwo();
+           ProblemOne(Input);
         }
 
+        #region Bot storage and logic ========================================================================================================
+        static Dictionary<int, Bot> Bots = new Dictionary<int, Bot>();
 
-        static Dictionary<int, Bot>  bots = new Dictionary<int, Bot>();
-        static Dictionary<int, List<int>> output = new Dictionary<int, List<int>>();
-
-        static void AddValueToBot(int botnum, int value)
+        public static Bot GetOrAddBot(int botId)
         {
-            if (bots.ContainsKey(botnum))
+            Bot b;
+            if (!Bots.TryGetValue(botId, out b))
             {
-                bots[botnum].AddValue(value);
+                b = new Bot();
+                b.Id = botId;
+                Bots[botId] = b;
             }
-            else
-            {
-                Bot b = new Bot(botnum, value);
-                bots[botnum] = b;
-            }
+            return b;
         }
 
-        static void AddValueToOutput(int bin, int value)
+        public static void AddValue(int botId, int value)
         {
-            if (!output.ContainsKey(bin))
-            {
-                output[bin] = new List<int>();
-            }
-            output[bin].Add(value);
+            Bot b = GetOrAddBot(botId);
+            b.Add(value);
         }
 
+        public static void RemoveValue(int botId, int value)
+        {
+            Bot b = GetOrAddBot(botId);
+            b.Remove(value);
+        }
+        #endregion
 
         static void ProblemOne(string input)
         {
-            var lines = input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+            var output = new Dictionary<int, List<int>>();
 
-            var init = new List<string>();
-            var instructions = new List<string>();
+            var lines = input.Split(new string[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
 
+            //Get the bots
             foreach (var line in lines)
             {
                 if (line.StartsWith("value"))
                 {
-                    init.Add(line);
-                }
-                else
-                {
-                    instructions.Add(line);
+                    var bits = line.Split(' ');
+                    int botId = int.Parse(bits[5]);
+                    int value  = int.Parse(bits[1]);
+                    AddValue(botId, value);
                 }
             }
 
-            //value 2 goes to bot 143
-            foreach (var line in init)
+            bool running = true;
+            while (running)
             {
-                var bits = line.Split(' ');
-
-                int value = int.Parse(bits[1]); 
-                int botNum = int.Parse(bits[5]);
-
-                AddValueToBot(botNum, value);
-            }
-
-            //bot 57 gives low to bot 4 and high to bot 186
-            //bot 1 gives low to output 1 and high to bot 0
-            //bot 0 gives low to output 2 and high to output 0
-            //0bot 1{giving number} 2gives 3({high/low} 4to 5{bot/output} 6{bot/output number}) 7and 8({high/low} 9to 10{bot/output} 11{bot/output number})
-            foreach (var line in instructions)
-            {
-                var bits = line.Split(' ');
-
-                //Keep logic and parsing/organizing/indexing bits seperate
-                int givingBotKey = int.Parse(bits[1]);
-
-                string[] highLow = new string[2];
-                highLow[0] = bits[3];
-                highLow[1] = bits[8];
-
-                string[] botOutput = new string[2];
-                botOutput[0] = bits[5];
-                botOutput[1] = bits[10];
-
-                int[] botOutputKey = new int[2];
-                botOutputKey[0] = int.Parse(bits[6]);
-                botOutputKey[1] = int.Parse(bits[11]);
-
-                if (bots.TryGetValue(givingBotKey, out Bot givingBot) && givingBot.CanBotProceed())
+                running = false;
+                
+                //Do the transactions
+                foreach (var line in lines)
                 {
-                    if (givingBot.CheckCompare(61, 17))
+                    if (!line.StartsWith("value"))
                     {
+                        //0   [1]  2    [3] 4  [5] [6] 7  [8]  9  [10][11]
+                        //bot 135 gives low to bot 27 and high to bot 166
 
-                    }
+                        var bits = line.Split(' ');
 
-                    //JUST DO IT
-                    for (int i = 0; i < 2; i++)
-                    {
-                        int value = highLow[i] == "low" ? givingBot.Low : givingBot.High;
-                        givingBot.TakeValue(value);
-
-                        if (botOutput[i] == "bot")
+                        Bot giver = GetOrAddBot(int.Parse(bits[1]));
+                        //Upon closer examination, you notice that each bot only proceeds when it has two microchips
+                        if (giver.ContainsTwoValues)
                         {
-                            AddValueToBot(botOutputKey[i], value);
-                        }
-                        else
-                        {
-                            AddValueToOutput(botOutputKey[i], value);
+                            running = true;
+
+                            string[] lowHigh = new string[]{bits[3], bits[8]};
+                            string[] botOutput = new string[]{bits[5], bits[10]};
+                            int[]    botOutputId = new int[]{int.Parse(bits[6]), int.Parse(bits[11]) };
+
+                            for (int i = 0; i < 2; i++)
+                            {
+                                int giveValue;
+                                if (lowHigh[i] == "low")
+                                {
+                                    giveValue = giver.Min;
+                                }
+                                else
+                                {
+                                    giveValue = giver.Max;
+                                }
+                                giver.Remove(giveValue);
+
+                                if (botOutput[i] == "bot")
+                                {
+                                    AddValue(botOutputId[i], giveValue);
+                                }
+                                else
+                                {
+                                    if (!output.ContainsKey(botOutputId[i]))
+                                    {
+                                        output[botOutputId[i]] = new List<int>();
+                                    }
+                                    output[botOutputId[i]].Add(giveValue);
+                                }
+                            }
                         }
                     }
                 }
             }
+
+            //yeah...
+            int result = output[0][0] * output[1][0] * output[2][0];
         }
         
-
-
-
-        static void ProblemTwo(string input)
-        {
-
-
-        }
-        
-
 
         private static string Input = @"bot 135 gives low to bot 27 and high to bot 166
 bot 57 gives low to bot 4 and high to bot 186
