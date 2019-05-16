@@ -11,11 +11,11 @@ namespace Day03
     {
         static void Main(string[] args)
         {
-            Test();
+            //Test();
 
-            ParseInput(Example);
-            ProblemOne();
-            //ProblemTwo();
+            //ParseInput(Example);
+            //ProblemOne();
+            ProblemTwo();
         }
 
         static void ProblemOne()
@@ -32,9 +32,129 @@ namespace Day03
 
         static void ProblemTwo()
         {
+            //For this problem, math won't cut it anymore and we have to brute force it by calculating the memory.
 
+            int square = 9;
+            int middle = ((square - 1) / 2) + 1;
+            int x = middle;
+            int y = middle;
+
+
+            int[,] sheet = new int[square,square];
+
+
+
+            sheet[x-1, y-1] = 1;
+            x++;
+            sheet[x-1, y-1] = 1;
+           
+
+            int step = 3;
+
+            while (step < Math.Pow(square, 2)+1)
+            {
+                int currentSquare = FindFirstSquare(step);
+                FindCoords(currentSquare, step, out x, out y, out int currentMiddle);
+                int difference = middle - currentMiddle;
+                x += difference;
+                y += difference;
+
+                int surroundingSum = SumSurrounding(sheet, x - 1, y - 1);
+                sheet[x-1, y-1] = surroundingSum;
+                step++;
+            }
+
+            PrintArray(sheet);
         }
 
+        static void PrintArray(int[,] array)
+        {
+            for (int y = 0; y < array.GetLength(1); y++)
+            {
+                for (int x = 0; x < array.GetLength(0); x++)
+                {
+                    Console.Write(array[x, y]);
+                    Console.Write('\t');
+                }
+                Console.Write('\n');
+            }
+        }
+
+        #region Problem two ========================================================================================================
+
+        #region Sum surrounding fields ========================================================================================================
+        static readonly int[,] SurroundingTranslation =
+        {
+            //left
+            { -1,  0  },
+            //up
+            {  0,  -1 },
+            //right
+            {  1,  0  },
+            //down
+            {  0,  1  },
+            
+            //left up
+            { -1, -1  },
+            //right-up
+            {  1, -1  },
+            //left down
+            { -1,  1  },
+            //right down
+            {  1,  1  },
+        };
+
+
+        static int SumSurrounding(int[,] sheet, int x, int y)
+        {
+            int sum = 0;
+
+            //For every direction
+            for (int i = 0; i < SurroundingTranslation.GetLength(0); i++)
+            {
+                int _x = x + SurroundingTranslation[i, 0];
+                int _y = y + SurroundingTranslation[i, 1];
+
+                //Check if we are still in bounds of the array
+                if (_x >= 0 && _x < sheet.GetLength(0) && _y >= 0 && _y < sheet.GetLength(1))
+                {
+                    sum += sheet[_x, _y];
+                }
+            }
+
+            return sum;
+        }
+        #endregion
+
+        static int FindFirstSquare(int steps)
+        {
+            //Find the first square size that contains our step by finding the first odd-number square
+            int squareSize = 0;
+            int i = 1;
+            while (true)
+            {
+                if (i % 2 != 0)
+                {
+                    int square = i * i;
+                    if (square >= steps)
+                    {
+                        return i;
+                    }
+                }
+                else
+                {
+                    //Make i odd
+                    i++;
+                }
+
+                //Skip 1 cycle of even numbers by incrementing by 2
+                i += 2;
+            }
+        }
+        #endregion
+
+
+        #region Problem one ========================================================================================================
 
         static void Test()
         {
@@ -209,19 +329,6 @@ namespace Day03
                 return sub;
             }
         }
-
-        static void ParseInput(string input)
-        {
-            var lines = input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
-            foreach (var line in lines)
-            {
-                var bits = line.Split(' ');
-            }
-        }
-
-
-        private static string Input = @"";
-        private static string Example = @"";
-
+        #endregion
     }
 }
