@@ -6,6 +6,20 @@ using System.Threading.Tasks;
 
 namespace Day13
 {
+    public enum Direction
+    {
+        None,
+        Up,
+        Down,
+        Left,
+        Right,
+    }
+
+    public class Cart
+    {
+        public Direction Direction = Direction.None;
+    }
+
     public class TrackNode
     {
         public TrackNode Up;
@@ -13,8 +27,11 @@ namespace Day13
         public TrackNode Left;
         public TrackNode Right;
 
+        public Cart Cart;
+
         public bool IsIntersection => Up != null && Down != null && Left != null && Right != null;
 
+        #region connections
         public void ConnectUp(TrackNode n)
         {
             this.Up = n;
@@ -38,8 +55,47 @@ namespace Day13
             this.Right = n;
             n.Left = this;
         }
+        #endregion
+
+        #region ToChar
+        //This is messy. Just look the other way :)
+        public char ToChar()
+        {
+            if(Cart != null)
+            {
+                return Cart.Direction.DirectionToChar();
+            }
+
+            if(Up != null && Down != null && Left != null && Right != null)
+            {
+                return '+';
+            }
+
+            if(Up != null && Down != null && Left == null && Right == null)
+            {
+                return '|';
+            }
+
+            if (Up == null && Down == null && Left != null && Right != null)
+            {
+                return '-';
+            }
+
+            if ((Up != null && Down == null && Left != null && Right == null) || (Up == null && Down != null && Left == null && Right != null))
+            {
+                return '/';
+            }
+
+            if ((Up != null && Down == null && Left == null && Right != null) || (Up == null && Down != null && Left != null && Right == null))
+            {
+                return '\\';
+            }
+
+            throw new Exception("Unsuported config.");
+        }
+        #endregion
     }
-    
+
     public class Map
     {
         public Map(string input)
@@ -62,6 +118,9 @@ namespace Day13
 
          */
 
+        #region Moving the carts ==========================================================================================
+        #endregion
+
         #region Parsing the map ==============================================================================================
         /// <summary>
         /// Parses everything. Outputs the width and height.
@@ -69,15 +128,43 @@ namespace Day13
         private TrackNode[,] Parse(string input, out int width, out int height)
         {
             char[,] chars = InputToCharArray(input, out width, out height);
-            PrintChars(chars, width, height);
-            chars = CleanCartsFromTrack(chars, width, height);
-            PrintChars(chars, width, height);
+            char[,] charsWithCarts = InputToCharArray(input, out width, out height);
+            
+            CleanCartsFromTrack(chars, width, height);
             TrackNode[,] nodes = CreateTrackNodes(chars, width, height);
+            AddCartsToTrackNodes(charsWithCarts, nodes, width, height);
+            PrintTrackNodes(nodes, width, height);
 
             return nodes;
         }
-               
 
+
+        /// <summary>
+        /// For debugging and stuff.
+        /// </summary>
+        private void PrintTrackNodes(TrackNode[,] nodes, int width, int height)
+        {
+            Console.Clear();
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    if(nodes[x, y] != null)
+                    {
+                        Console.Write(nodes[x, y].ToChar());
+                    }
+                    else
+                    {
+                        Console.Write(' ');
+                    }
+                }
+                Console.Write('\n');
+            }
+        }
+
+        /// <summary>
+        /// For debugging and stuff.
+        /// </summary>
         private void PrintChars(char[,] chars, int width, int height)
         {
             Console.Clear();
@@ -119,7 +206,7 @@ namespace Day13
         /// <summary>
         /// To parse the track I do not want to have to deal with carts right away, parsing the track is complicated enough on it's own.
         /// </summary>
-        private char[,] CleanCartsFromTrack(char[,] chars, int width, int height)
+        private void CleanCartsFromTrack(char[,] chars, int width, int height)
         {
             for (int y = 0; y < height; y++)
             {
@@ -151,20 +238,10 @@ namespace Day13
                             right = chars[x + 1, y];
                         }
 
-                        //TODO: remember cart position in an out value
-                        try
-                        {
-
                         chars[x, y] = CharExtensions.GetTrackUnderneathCart(up, down, left, right);
-                        }
-                        catch
-                        {
-                        }
                     }
                 }
             }
-
-            return chars;
         }
 
 
@@ -226,7 +303,21 @@ namespace Day13
             return track;
         }
 
-        #endregion
 
+
+        private void AddCartsToTrackNodes(char[,] chars, TrackNode[,] nodes, int width, int height)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    if (chars[x, y].IsCart())
+                    {
+                        nodes[x, y].Cart = new Cart { Direction = chars[x, y].CartToDirection() };
+                    }
+                }
+            }
+        }
+        #endregion
     }
 }

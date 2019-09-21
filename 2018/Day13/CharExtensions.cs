@@ -206,5 +206,29 @@ namespace Day13
             throw new Exception("Corners aren't supported as starting positions.");
         }
         #endregion
+
+        #region cart and direction ======================================================================================================
+        private static Dictionary<char, Direction> _directions = new Dictionary<char, Direction>()
+        {
+            { '^', Direction.Up },
+            { 'v', Direction.Down },
+            { '<', Direction.Left },
+            { '>', Direction.Right },
+        };
+        
+        public static Direction CartToDirection(this char cart)
+        {
+            if(!cart.IsCart())
+            {
+                throw new Exception($"{cart} is not a cart.");
+            }
+            return _directions[cart];
+        }
+
+        public static char DirectionToChar(this Direction dir)
+        {
+            return _directions.First(i => i.Value == dir).Key;
+        }
+        #endregion
     }
 }
