@@ -14,7 +14,11 @@ namespace Day13
         {
             Console.SetWindowSize(160, 71);
 
-            ProblemOne(ExampleInput);
+
+            //Map m = new Map(ExampleInput);
+            Map m = new Map(ActualInput);
+            
+            //ProblemOne(ExampleInput);
             //ProblemOne(ActualInput);
         }
 
