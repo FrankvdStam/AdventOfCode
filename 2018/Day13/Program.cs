@@ -26,15 +26,25 @@ namespace Day13
 
 
             //Map m = new Map(ExampleInput);
-            Map m = new Map(ActualInput);
-            
+            Map m = new Map(ExampleInput);
+            Console.WriteLine(m);
+            m.Tick();
+
+            while (true)
+            {
+                Console.ReadKey();
+                m.Tick();
+                Console.WriteLine(m);
+            }
+
+
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine();
 
             Console.WriteLine(m.ToString());
 
-            if (ActualInput == m.ToString())
+            if (ExampleInput == m.ToString())
             {
 
             }

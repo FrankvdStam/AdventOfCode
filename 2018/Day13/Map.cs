@@ -15,9 +15,34 @@ namespace Day13
         Right,
     }
 
+    public enum Heading
+    {
+        Left,
+        Straight,
+        Right
+    }
+
     public class Cart
     {
         public Direction Direction = Direction.None;
+
+        private Heading _previousHeading = Heading.Right;
+        public Heading GetHeading()
+        {
+            switch (_previousHeading)
+            {
+                case Heading.Right:
+                    _previousHeading = Heading.Left;
+                    break;
+                case Heading.Left:
+                    _previousHeading = Heading.Straight;
+                    break;
+                case Heading.Straight:
+                    _previousHeading = Heading.Right;
+                    break;
+            }
+            return _previousHeading;
+        }
     }
 
     public class TrackNode
@@ -120,6 +145,55 @@ namespace Day13
          */
 
         #region Moving the carts ==========================================================================================
+
+        private static readonly Dictionary<Direction, (int x, int y)> DirectionToVectorLookup = new Dictionary<Direction, (int x, int y)>()
+        {
+            { Direction.Up      , ( 0, -1) },
+            { Direction.Down    , ( 0,  1) },
+            { Direction.Left    , (-1,  0) },
+            { Direction.Right   , ( 1,  0) },
+        };
+
+        public void Tick()
+        {
+            List<Cart> movedCarts = new List<Cart>();
+            
+            var node = _tracks[2, 0];
+
+
+            for (int y = 0; y < _height; y++)
+            {
+                for (int x = 0; x < _width; x++)
+                {
+                    if (_tracks[x, y] != null && _tracks[x, y].Cart != null && !movedCarts.Contains(_tracks[x, y].Cart))
+                    {
+                        TrackNode currentNode = _tracks[x, y];
+
+                        //Dont want to move it twice.
+                        movedCarts.Add(currentNode.Cart);
+                        
+                        //Find our destination node
+                        (int x, int y) vec = DirectionToVectorLookup[currentNode.Cart.Direction];
+                        TrackNode destination = _tracks[x + vec.x, y + vec.y];
+                        if (destination == null)
+                        {
+                            throw new Exception("Bug or invalid map.");
+                        }
+
+                        if (destination.IsIntersection)
+                        {
+                            //TODO.
+                            //destination.Cart = currentNode.Cart;
+                        }
+                        else
+                        {
+                            destination.Cart = currentNode.Cart;
+                        }
+                        currentNode.Cart = null;
+                    }
+                }
+            }
+        }
         #endregion
 
         #region Parsing the map ==============================================================================================
@@ -134,56 +208,7 @@ namespace Day13
             CleanCartsFromTrack(chars, width, height);
             TrackNode[,] nodes = CreateTrackNodes(chars, width, height);
             AddCartsToTrackNodes(charsWithCarts, nodes, width, height);
-            PrintTrackNodes(nodes, width, height);
-
             return nodes;
-        }
-
-
-        /// <summary>
-        /// For debugging and stuff.
-        /// </summary>
-        private void PrintTrackNodes(TrackNode[,] nodes, int width, int height)
-        {
-            Console.Clear();
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    if(nodes[x, y] != null)
-                    {
-                        Console.Write(nodes[x, y].ToChar());
-                    }
-                    else
-                    {
-                        Console.Write(' ');
-                    }
-                }
-                Console.Write('\n');
-            }
-        }
-
-        public override string ToString()
-        {
-            StringBuilder builder = new StringBuilder();
-            for (int y = 0; y < _height; y++)
-            {
-                for (int x = 0; x < _width; x++)
-                {
-                    if (_tracks[x, y] != null)
-                    {
-                        builder.Append(_tracks[x, y].ToChar());
-                    }
-                    else
-                    {
-                        builder.Append(' ');
-                    }
-                }
-                builder.Append("\r\n");
-            }
-            //Remove the last \r\n we append
-            builder.Remove(builder.Length - 2, 2);
-            return builder.ToString();
         }
         
         /// <summary>
@@ -343,8 +368,7 @@ namespace Day13
             }
             return track;
         }
-
-
+        
 
         private void AddCartsToTrackNodes(char[,] chars, TrackNode[,] nodes, int width, int height)
         {
@@ -360,5 +384,28 @@ namespace Day13
             }
         }
         #endregion
+
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder();
+            for (int y = 0; y < _height; y++)
+            {
+                for (int x = 0; x < _width; x++)
+                {
+                    if (_tracks[x, y] != null)
+                    {
+                        builder.Append(_tracks[x, y].ToChar());
+                    }
+                    else
+                    {
+                        builder.Append(' ');
+                    }
+                }
+                builder.Append("\r\n");
+            }
+            //Remove the last \r\n we append
+            builder.Remove(builder.Length - 2, 2);
+            return builder.ToString();
+        }
     }
 }
