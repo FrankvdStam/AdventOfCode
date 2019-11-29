@@ -7,6 +7,16 @@ using System.Threading.Tasks;
 
 namespace Day13
 {
+    public class Node
+    {
+        public Node Up;
+        public Node Down;
+        public Node Left;
+        public Node Right;
+
+
+    }
+
 
     class Program
     {
@@ -20,286 +30,86 @@ namespace Day13
 
         static void ProblemOne(string input)
         {
-            ParseTrack(input, out TrackType[,] track, out Cart[,] carts);
-            PrintTracks(track, carts);
         }
 
-        static Cart[,] Progress(TrackType[,] track, Cart[,] carts)
+        public Node[,] ParseTrack(string input, out int width, out int height)
         {
-            Cart[,] newCarts = new Cart[carts.GetLength(0), carts.GetLength(1)];
+            var split = input.Split(' ').ToList();
 
-            for (int y = 0; y < carts.GetLength(1); y++)
+            //This can be done more memory efficient
+            width = split[0].Length;
+            height = split.Count;
+            Node[,] nodes = new Node[width,height];
+
+            //Convert input string to multidim char array
+            char[,] chars = new char[width, height];
+            for (int y = 0; y < height; y++)
             {
-                for (int x = 0; x < carts.GetLength(0); x++)
+                for (int x = 0; x < width; x++)
                 {
-                    if (carts[x, y] != null)
-                    {
-                        int nextX = x, nextY = y;
-                        switch (carts[x,y].Direction)
-                        {
-                            case Direction.Up:
-                                y--;
-                                break;
-                            case Direction.Down:
-                                y++;
-                                break;
-                            case Direction.Left:
-                                x--;
-                                break;
-                            case Direction.Right:
-                                x++;
-                                break;
-                            default:
-                                throw new Exception();
-                        }
-
-                        TrackType nextTrack = track[nextX, nextY];
-                        Direction nextDirection = Direction.None;
-
-                        switch (nextTrack)
-                        {
-                            //Direction stays the same when movement is in a straight line
-                            case TrackType.TrackHorizontal:
-                                nextDirection = carts[x, y].Direction;
-                                break;
-                            case TrackType.TrackVertical:
-                                nextDirection = carts[x, y].Direction;
-                                break;
-                            
-                            //Direction depends on the corner and current direction
-                            case TrackType.CornerLeftDownRightUp: //  /
-                                switch (carts[x, y].Direction)
-                                {
-                                    case Direction.Down:
-                                        nextDirection = Direction.Left;
-                                        break;
-                                    case Direction.Right:
-                                        nextDirection = Direction.Up;
-                                        break;
-                                    default:
-                                        throw new Exception();
-                                }
-                                break;
-
-                            case TrackType.CornerLeftUpRightDown: // \
-                                switch (carts[x, y].Direction)
-                                {
-                                    case Direction.Down:
-                                        nextDirection = Direction.Right;
-                                        break;
-                                    case Direction.Left:
-                                        nextDirection = Direction.Up;
-                                        break;
-                                    default:
-                                        throw new Exception();
-                                }
-                                break;
-                            
-                            //Make cart choose
-                            case TrackType.Intersection:
-                                nextDirection = carts[x, y].PickDirection();
-                                break;
-
-                            //Hard error when something goes wrong, no silent failure
-                            case TrackType.None:
-                                throw new Exception();
-                            default:
-                                throw new Exception();
-                        }
-                        
-                        Debug.Assert(nextDirection != Direction.None);
-                        carts[x, y].Direction = nextDirection;
-                        newCarts[nextX, nextY] = carts[x, y];
-                    }
+                    chars[x, y] = split[y][x];
                 }
             }
-            return newCarts;
-        }
-
-        public enum Direction
-        {
-            //None has to be on top for a default array initialization to none.
-            None,
-            Up,
-            Down,
-            Left,
-            Right,
-        }
-
-        public enum TrackType
-        {
-            None,
-            TrackHorizontal,
-            TrackVertical,
-            Intersection,
-            CornerLeftDownRightUp,
-            CornerLeftUpRightDown,
-        }
-
-        private static readonly Dictionary<char, Direction> CharDirectionMap = new Dictionary<char, Direction>()
-        {
-            {'^', Direction.Up},
-            {'v', Direction.Down},
-            {'<', Direction.Left},
-            {'>', Direction.Right},
-        };
-
-        private static readonly Dictionary<char, TrackType> CharTrackMap = new Dictionary<char, TrackType>()
-        {
-            {' ' , TrackType.None                   },
-            {'-' , TrackType.TrackHorizontal        },
-            {'|' , TrackType.TrackVertical          },
-            {'+' , TrackType.Intersection           },
-            {'/' , TrackType.CornerLeftDownRightUp  },
-            {'\\', TrackType.CornerLeftUpRightDown  },
-        };
 
 
+            /*             
+            /->-\        
+            |   |  /----\
+            | /-+--+-\  |
+            | | |  | v  |
+            \-+-/  \-+--/
+              \------/   
 
-        public static void PrintTracks(TrackType[,] track, Cart[,] carts)
-        {
-            Console.Clear();
-            Console.SetCursorPosition(0, 0);
+            If there is a non-whitespace char, there are connections. The connections are based on what char it is but aren't always consistent
+            For instance, / can be a corner right-up or a corner left-down. Instead of using the chars to decide where the connections go, we should always use 
+            the surrounding data (eg a char or not a char) to make these connections.
 
-            for (int y = 0; y < track.GetLength(1); y++)
+            That means we are no longer dealing with chars but with a binary array - either there is or isn't a char and that's all we need for the connections.
+
+            Later, we will look back at the chars to find the positions.
+            
+            This is a possible screnario:
+            /->-\        
+            |   |  /----\
+            |  /+--+-\  |
+            |  ||  | v  |
+            \--+/  \-+--/
+               \-----/   
+            
+            On line 3, there are 2 lines right next to each other. If we just add all adjacent chars as connections, we will make a sideways T connection on both sides
+            
+            |  |
+            |--|
+            |  |
+
+            This is illegal. A plus always has 4 connections, all other nodes have 2 connections.
+            We NEED char data to decide in these types of scenarios wether to make bend connections or to make the strang connections
+
+            ++
+            || -> straight connection
+            ++
+
+            +--
+            |/-  -> bend connection
+            ||   -> straight connection            
+             */
+
+
+
+            for (int y = 0; y < height; y++)
             {
-                for (int x = 0; x < track.GetLength(0); x++)
+                for (int x = 0; x < width; x++)
                 {
-                    Console.Write(CharTrackMap.FirstOrDefault(i => i.Value == track[x, y]).Key);
-                }
-                Console.Write('\n');
-            }
-
-            for (int y = 0; y < track.GetLength(1); y++)
-            {
-                for (int x = 0; x < track.GetLength(0); x++)
-                {
-                    if (carts[x, y] != null)
-                    {
-                        Console.SetCursorPosition(x, y);
-
-                        char c = CharDirectionMap.FirstOrDefault(i => i.Value == carts[x, y].Direction).Key;
-                        Console.Write(c);
-                    }
+ 
                 }
             }
+
+            return nodes;
         }
-
-
-        public static void ParseTrack(string input, out TrackType[,] track, out Cart[,] carts)
-        {
-            var lines = input.Split(new string[] {"\r\n"}, StringSplitOptions.None);
-
-            track = new TrackType[lines[0].Length, lines.Length];
-            //Direction is implicitly initialized with all "none" values
-            carts = new Cart[lines[0].Length, lines.Length];
-
-            for (int y = 0; y < lines.Length; y++)
-            { 
-                for (int x = 0; x < lines[y].Length; x++)
-                {
-
-                    if (CharDirectionMap.ContainsKey(lines[y][x]))
-                    {
-                        carts[x, y] = new Cart(CharDirectionMap[lines[y][x]]);
-                        if (carts[x, y].Direction == Direction.Down || carts[x, y].Direction == Direction.Up)
-                        {
-                            track[x, y] = TrackType.TrackVertical;
-                        }
-                        else
-                        {
-                            track[x, y] = TrackType.TrackHorizontal;
-                        }
-                    }
-                    else
-                    {
-                        track[x, y] = CharTrackMap[lines[y][x]];
-                    }
-                }
-            }
-        }
-
-        /*
-         Each time a cart has the option to turn (by arriving at any intersection), 
-            it turns left the first time, 
-            goes straight the second time, 
-            turns right the third time,
-                and then repeats those directions starting again with 
-            left the fourth time, 
-            straight the fifth time, and so on. 
-         This process is independent of the particular intersection at which the cart has arrived - that is, the cart has no per-intersection memory.
-         */
-        public class Cart
-        {
-            public Cart(Direction direction)
-            {
-                Direction = direction;
-            }
-
-            public Direction Direction;
-            private int counter = 0;
-
-            public Direction PickDirection()
-            {
-                Direction result = Direction.None;
-                switch (counter)
-                {
-                    case 0:
-                        result = GetRelativeDirection(Direction.Left);
-                        break;
-                    //We go straight, no changes in direction.
-                    case 1:
-                        result = Direction;
-                        break;
-                    case 2:
-                        result = GetRelativeDirection(Direction.Right);
-                        break;
-                }
-
-                counter++;
-
-                if (counter >= 3)
-                {
-                    counter = 0;
-                }
-
-                Debug.Assert(result != Direction.None);
-                return result;
-            }
-
-            /// <summary>
-            /// Returns the relative direction when for when turning left or right.
-            /// </summary>
-            /// <param name="direction"></param>
-            /// <returns></returns>
-            private Direction GetRelativeDirection(Direction direction)
-            {
-                //if I'm moving down, right is my relative left direction.
-
-                LinkedList<Direction> relativeDirection = new LinkedList<Direction>();
-                relativeDirection.AddLast(Direction.Up);
-                relativeDirection.AddLast(Direction.Right);
-                relativeDirection.AddLast(Direction.Down);
-                relativeDirection.AddLast(Direction.Left);
-
-                if (direction == Direction.Left)
-                {
-                    var previous = relativeDirection.Find(Direction).Previous ?? relativeDirection.Last;
-                    return previous.Value;
-                }
-                if (direction == Direction.Right)
-                {
-                    var next = relativeDirection.Find(Direction).Next ?? relativeDirection.First;
-                    return next.Value;
-                }
-
-                throw new Exception();
-            }
-        }
-
 
         //In this example, the location of the first crash is 7,3.
         public static string ExampleInput = 
+
 @"/->-\        
 |   |  /----\
 | /-+--+-\  |
