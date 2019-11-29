@@ -177,6 +177,7 @@ namespace Day13
                         TrackNode destination = _tracks[x + vec.x, y + vec.y];
                         if (destination == null)
                         {
+
                             throw new Exception("Bug or invalid map.");
                         }
 

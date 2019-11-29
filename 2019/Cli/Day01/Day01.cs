@@ -1,26 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Day01
+namespace Cli.Day01
 {
-    class Program
+    public class Day01 : IDay
     {
-        static void Main(string[] args)
-        {
-            ParseInput(Example);
-            ProblemOne();
-            //ProblemTwo();
-        }
+        public int Day => 1;
 
-        static void ProblemOne()
+        public Day01()
         {
 
         }
 
-        static void ProblemTwo()
+
+        public void ProblemOne()
+        {
+
+        }
+
+        public void ProblemTwo()
         {
 
         }
@@ -37,6 +39,5 @@ namespace Day01
 
         private static string Input = @"";
         private static string Example = @"";
-
     }
 }
