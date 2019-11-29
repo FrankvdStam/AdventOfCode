@@ -101,8 +101,9 @@ namespace Day13
         public Map(string input)
         {
             _tracks = Parse(input, out _width, out _height);
+            ValidateMap(input);
         }
-
+        
         private int _width;
         private int _height;
         private TrackNode[,] _tracks;
@@ -162,24 +163,29 @@ namespace Day13
             }
         }
 
-        /// <summary>
-        /// For debugging and stuff.
-        /// </summary>
-        private void PrintChars(char[,] chars, int width, int height)
+        public override string ToString()
         {
-            Console.Clear();
-
-            for (int y = 0; y < height; y++)
+            StringBuilder builder = new StringBuilder();
+            for (int y = 0; y < _height; y++)
             {
-                for (int x = 0; x < width; x++)
+                for (int x = 0; x < _width; x++)
                 {
-                    Console.Write(chars[x, y]);
+                    if (_tracks[x, y] != null)
+                    {
+                        builder.Append(_tracks[x, y].ToChar());
+                    }
+                    else
+                    {
+                        builder.Append(' ');
+                    }
                 }
-                Console.Write('\n');
+                builder.Append("\r\n");
             }
+            //Remove the last \r\n we append
+            builder.Remove(builder.Length - 2, 2);
+            return builder.ToString();
         }
-
-
+        
         /// <summary>
         /// Converting the input string to a chararray just clears things up a lot.
         /// </summary>
@@ -200,6 +206,41 @@ namespace Day13
             }
 
             return chars;
+        }
+
+        private void ValidateMap(string input)
+        {
+            char[,] fromInput = InputToCharArray(input, out int inputWidth, out int inputHeight);
+            char[,] fromParse = InputToCharArray(ToString(), out int parseWidth, out int parseHeight);
+
+            if (inputWidth != parseWidth || inputHeight != parseHeight)
+            {
+                throw new Exception("Validating map failed, width and height don't match.");
+            }
+
+            List<(int x, int y, char input, char parse)> mismatchedChars = new List<(int x, int y, char input, char parse)> ();
+            for (int y = 0; y < inputHeight; y++)
+            {
+                for (int x = 0; x < inputWidth; x++)
+                {
+                    if (fromInput[x, y] != fromParse[x, y])
+                    {
+                        mismatchedChars.Add((x, y, fromInput[x, y], fromParse[x, y]));
+                    }
+                }
+            }
+
+            if (mismatchedChars.Any())
+            {
+                StringBuilder builder = new StringBuilder();
+                builder.Append("Validating map failed, mismatched chars at: ");
+                foreach (var chars in mismatchedChars)
+                {
+                    builder.Append($"({chars.x}, {chars.y}): '{chars.input}' - '{chars.parse}' ");
+                }
+
+                throw new Exception(builder.ToString());
+            }
         }
 
 

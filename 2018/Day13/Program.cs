@@ -28,6 +28,16 @@ namespace Day13
             //Map m = new Map(ExampleInput);
             Map m = new Map(ActualInput);
             
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+
+            Console.WriteLine(m.ToString());
+
+            if (ActualInput == m.ToString())
+            {
+
+            }
             //ProblemOne(ExampleInput);
             //ProblemOne(ActualInput);
         }
