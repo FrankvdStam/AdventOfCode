@@ -13,12 +13,13 @@ namespace Cli
         private static readonly List<IDay> Days = new List<IDay>()
         {
             new Day01.Day01(),
+            new Day02.Day02(),
         };
 
         static void Main(string[] args)
         {
-            Days.First().ProblemOne();
-            Days.First().ProblemTwo();
+            Days[1].ProblemOne();
+            Days[1].ProblemTwo();
 
         }
 
