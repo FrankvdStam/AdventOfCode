@@ -17,7 +17,8 @@ namespace Cli
 
         static void Main(string[] args)
         {
-            
+            Days.First().ProblemOne();
+            Days.First().ProblemTwo();
 
         }
 
