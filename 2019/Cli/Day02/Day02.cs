@@ -36,7 +36,7 @@ namespace Cli.Day02
             {
                 for (int y = 0; y <= 99; y++)
                 {
-                    var programClone = CloneList(program);
+                    var programClone = program.Clone();
                     programClone[1] = x;
                     programClone[2] = y;
                     RunProgram(programClone);
@@ -53,14 +53,7 @@ namespace Cli.Day02
             }
         }
 
-        public static List<T> CloneList<T>(List<T> oldList)
-        {
-            BinaryFormatter formatter = new BinaryFormatter();
-            MemoryStream stream = new MemoryStream();
-            formatter.Serialize(stream, oldList);
-            stream.Position = 0;
-            return (List<T>)formatter.Deserialize(stream);
-        }
+       
 
         public void RunProgram(List<int> program)
         {

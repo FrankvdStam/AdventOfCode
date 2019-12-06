@@ -14,12 +14,16 @@ namespace Cli
         {
             new Day01.Day01(),
             new Day02.Day02(),
+            new Day03.Day03(),
+            new Day04.Day04(),
         };
 
         static void Main(string[] args)
         {
-            Days[1].ProblemOne();
-            Days[1].ProblemTwo();
+            int day = 4;
+
+            Days[day-1].ProblemOne();
+            Days[day-1].ProblemTwo();
 
         }
 

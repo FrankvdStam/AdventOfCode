@@ -45,10 +45,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Day01\Day01.cs" />
+    <Compile Include="Day03\Day03.cs" />
     <Compile Include="Day02\Day02.cs" />
+    <Compile Include="Day04\Day04.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="IDay.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Vector2i.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
