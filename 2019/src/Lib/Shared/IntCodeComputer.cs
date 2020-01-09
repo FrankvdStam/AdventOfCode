@@ -17,6 +17,12 @@ namespace Lib.Shared
     {
         Add = 1,
         Multiply = 2,
+        Input = 3,
+        Output = 4,
+        JumpIfTrue = 5,
+        JumpIfFalse = 6,
+        LessThan = 7,
+        Equals = 8,
         Halt = 99,
     }
 
@@ -31,6 +37,11 @@ namespace Lib.Shared
 
 
         public List<int> Program = new List<int>();
+        public List<int> SimulatedInput = new List<int>();
+        private int _simulatedInputIndex = 0;
+
+        public bool UseSimulatedInput { get; set; } = false;
+        public bool PrintDecompiledInstructions { get; set; } = false;
 
 
         public void LoadProgramFromString(string input)
@@ -38,6 +49,9 @@ namespace Lib.Shared
             Program = ParseProgram(input);
         }
 
+        #region Running/decompiling
+
+        
 
         private int GetValueForParameter(InstructionMode mode, int value)
         {
@@ -63,21 +77,18 @@ namespace Lib.Shared
 
         public void Run()
         {
-            
-
-
             int position = 0;
             int param1 = 0, param2 = 0, param3 = 0;
 
-
             while (true)
             {
-                //Decode opcode
-                var opcode = DecodeOpcode(Program[position]);
+                if (PrintDecompiledInstructions)
+                {
+                    Console.WriteLine(DecompileInstruction(position));
+                    //Console.ReadKey();
+                }
 
-                //var param1 = GetValueForParameter(opcode.mode1, position + 1);
-                //var param2 = GetValueForParameter(opcode.mode1, position + 2);
-                //var param3 = GetValueForParameter(opcode.mode1, position + 3);
+                var opcode = DecodeOpcode(Program[position]);
 
                 switch (opcode.instruction)
                 {
@@ -87,18 +98,39 @@ namespace Lib.Shared
                         param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
                         param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
 
-                        Program[GetValueForParameter(InstructionMode.Immediate, Program[position + 3])] = param1 + param2;
+                        Program[Program[position + 3]] = param1 + param2;
                         position += 4;
-
                         break;
+
                     case Instruction.Multiply:
                         //Mult
 
                         param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
                         param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
-                        Program[GetValueForParameter(InstructionMode.Immediate, Program[position + 3])] = param1 * param2;
+                        Program[Program[position + 3]] = param1 * param2;
                         position += 4;
+                        break;
 
+                    case Instruction.Input:
+                        var input = GetIntInput();
+                        Program[Program[position + 1]] = input;
+                        position += 2;
+                        break;
+
+                    case Instruction.Output:
+
+                        //Console.WriteLine("OUT: " + Program[position + 1]);
+                        Console.WriteLine("OUT: " + GetValueForParameter(opcode.mode1, Program[position + 1]));
+                        position += 2;
+                        break;
+
+                    case Instruction.JumpIfTrue:
+                        break;
+                    case Instruction.JumpIfFalse:
+                        break;
+                    case Instruction.LessThan:
+                        break;
+                    case Instruction.Equals:
                         break;
 
                     case Instruction.Halt:
@@ -110,6 +142,90 @@ namespace Lib.Shared
                         throw new Exception("Something went wrong.");
                 }
             }
+        }
+
+        private string GetAddressOrValueString(InstructionMode mode, int value)
+        {
+            switch (mode)
+            {
+                case InstructionMode.Position:
+                    return $"[{value}]";
+                case InstructionMode.Immediate:
+                    return value.ToString();
+            }
+            throw new Exception($"unsupported mode {mode}");
+        }
+
+        public string DecompileInstruction(int position)
+        {
+            StringBuilder decomp = new StringBuilder();
+            int param1 = 0, param2 = 0, param3 = 0;
+
+            var opcode = DecodeOpcode(Program[position]);
+
+            switch (opcode.instruction)
+            {
+                case Instruction.Add:
+                    decomp.Append($"{position}-{position + 3}\tADD ");
+                    decomp.Append(GetAddressOrValueString(opcode.mode1, Program[position+1]));
+                    decomp.Append(" ");
+                    decomp.Append(GetAddressOrValueString(opcode.mode2, Program[position+2]));
+                    decomp.Append(" ");
+                    decomp.Append(GetAddressOrValueString(InstructionMode.Position, Program[position+3]));
+                    position += 4;
+                    break;
+
+                case Instruction.Multiply:
+                    decomp.Append($"{position}-{position + 3}\tMULT ");
+                    decomp.Append(GetAddressOrValueString(opcode.mode1, Program[position + 1]));
+                    decomp.Append(" ");
+                    decomp.Append(GetAddressOrValueString(opcode.mode2, Program[position + 2]));
+                    decomp.Append(" ");
+                    decomp.Append(GetAddressOrValueString(InstructionMode.Position, Program[position + 3]));
+                    position += 4;
+                    break;
+
+                case Instruction.Input:
+                    decomp.Append($"{position}-{position + 1}\tIN ");
+                    decomp.Append(GetAddressOrValueString(opcode.mode1, Program[position + 1]));
+                    position += 2;
+                    break;
+
+                case Instruction.Output:
+                    decomp.Append($"{position}-{position + 1}\tOUT ");
+                    decomp.Append(GetAddressOrValueString(opcode.mode1, Program[position + 1]));
+                    break;
+
+                case Instruction.Halt:
+                    decomp.Append($"{position}-{position + 1}\tHALT");
+                    position += 2;
+                    break;
+            }
+            return decomp.ToString();
+        }
+
+        #endregion
+
+        private int GetIntInput()
+        {
+            if (UseSimulatedInput)
+            {
+                int simIn = SimulatedInput[_simulatedInputIndex];
+                _simulatedInputIndex++;
+                return simIn;
+            }
+
+
+            Console.Write("in: ");
+            var input = Console.ReadLine();
+            int result;
+            while (!int.TryParse(input, out result))
+            {
+                Console.WriteLine($"Failed to parse {input}. Only integers are accepted.");
+                Console.Write("in: ");
+                input = Console.ReadLine();
+            }
+            return result;
         }
 
 
