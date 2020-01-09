@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Cli.Shared;
+using Lib.Shared;
 
-namespace Cli.Day08
+namespace Lib.Day08
 {
-    class Day08 : IDay
+    public class Day08 : IDay
     {
         public int Day => 8;
 

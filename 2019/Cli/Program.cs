@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Cli;
-using Cli.Day01;
+using Lib;
 
 namespace Cli
 {
@@ -12,19 +11,19 @@ namespace Cli
     {
         private static readonly List<IDay> Days = new List<IDay>()
         {
-            new Day01.Day01(),
-            new Day02.Day02(),
-            new Day03.Day03(),
-            new Day04.Day04(),
-            new Day05.Day05(),
-            new Day06.Day06(),
-            new Day07.Day07(),
-            new Day08.Day08(),
+            new Lib.Day01.Day01(),
+            new Lib.Day02.Day02(),
+            new Lib.Day03.Day03(),
+            new Lib.Day04.Day04(),
+            new Lib.Day05.Day05(),
+            new Lib.Day06.Day06(),
+            new Lib.Day07.Day07(),
+            new Lib.Day08.Day08(),
         };
 
         static void Main(string[] args)
         {
-            int day = 2;
+            int day = 5;
 
             Days[day-1].ProblemOne();
             Days[day-1].ProblemTwo();

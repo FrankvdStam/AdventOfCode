@@ -1,4 +1,4 @@
-﻿using Cli.Shared;
+﻿using Lib.Shared;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cli.Day02
+namespace Lib.Day02
 {
     public class Day02 : IDay
     {

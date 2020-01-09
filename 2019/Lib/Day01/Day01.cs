@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cli.Day01
+namespace Lib.Day01
 {
     public class Day01 : IDay
     {

@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cli.Day05
+namespace Lib.Day04
 {
-    public class Day05 : IDay
+    public class Day04 : IDay
     {
-        public int Day => 5;
+        public int Day => 4;
 
-        public Day05()
+        public Day04()
         {
             //Test();
         }

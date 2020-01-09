@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cli.Shared
+namespace Lib.Shared
 {
     public class Rgb
     {

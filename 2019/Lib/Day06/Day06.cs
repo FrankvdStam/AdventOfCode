@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Cli.Shared;
+using Lib.Shared;
 
-namespace Cli.Day06
+namespace Lib.Day06
 {
 
     public class Day06 : IDay
