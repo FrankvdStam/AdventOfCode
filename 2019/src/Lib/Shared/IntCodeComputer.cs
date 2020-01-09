@@ -113,6 +113,21 @@ namespace Lib.Shared
         }
 
 
+        public override string ToString()
+        {
+            StringBuilder result = new StringBuilder("");
+            for (int i = 0; i < Program.Count; i++)
+            {
+                result.Append(Program[i].ToString());
+                if (i + 1 < Program.Count)
+                {
+                    result.Append(',');
+                }
+                
+            }
+            return result.ToString();
+        }
+
 
         public static (Instruction instruction, InstructionMode mode3, InstructionMode mode2, InstructionMode mode1) DecodeOpcode(int opcode)
         {
