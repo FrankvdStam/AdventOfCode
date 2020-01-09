@@ -38,6 +38,7 @@ namespace Lib.Shared
 
         public List<int> Program = new List<int>();
         public List<int> SimulatedInput = new List<int>();
+        public List<int> Output = new List<int>();
         private int _simulatedInputIndex = 0;
 
         public bool UseSimulatedInput { get; set; } = false;
@@ -124,7 +125,9 @@ namespace Lib.Shared
                     case Instruction.Output:
 
                         //Console.WriteLine("OUT: " + Program[position + 1]);
-                        Console.WriteLine("OUT: " + GetValueForParameter(opcode.mode1, Program[position + 1]));
+                        int output = GetValueForParameter(opcode.mode1, Program[position + 1]);
+                        Output.Add(output);
+                        Console.WriteLine("OUT: " + output);
                         position += 2;
                         break;
 

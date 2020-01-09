@@ -9,27 +9,29 @@ namespace Cli
 {
     class Program
     {
-        private static readonly List<IDay> Days = new List<IDay>()
-        {
-            new Lib.Day01.Day01(),
-            new Lib.Day02.Day02(),
-            new Lib.Day03.Day03(),
-            new Lib.Day04.Day04(),
-            new Lib.Day05.Day05(),
-            new Lib.Day06.Day06(),
-            new Lib.Day07.Day07(),
-            new Lib.Day08.Day08(),
-        };
+        private static List<IDay> Days = new List<IDay>();
 
         static void Main(string[] args)
         {
-            int day = 5;
+            var type = typeof(IDay);
+            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => type.IsAssignableFrom(p)).ToList();
+            foreach (var t in types)
+            {
+                try
+                {
+                    var obj = (IDay)Activator.CreateInstance(t);
+                    Days.Add(obj);
+                }
+                catch { }
+            }
+            
 
-            Days[day-1].ProblemOne();
-            Days[day-1].ProblemTwo();
+            int day = 6;
 
+            var activeDay = Days.FirstOrDefault(i => i.Day == day);
+
+            activeDay.ProblemOne();
+            activeDay.ProblemTwo();
         }
-
-        
     }
 }
