@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cli
+namespace Cli.Shared
 {
     public struct Vector2i : IEquatable<Vector2i>
     {

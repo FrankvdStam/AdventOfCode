@@ -16,11 +16,15 @@ namespace Cli
             new Day02.Day02(),
             new Day03.Day03(),
             new Day04.Day04(),
+            new Day05.Day05(),
+            new Day06.Day06(),
+            new Day07.Day07(),
+            new Day08.Day08(),
         };
 
         static void Main(string[] args)
         {
-            int day = 4;
+            int day = 2;
 
             Days[day-1].ProblemOne();
             Days[day-1].ProblemTwo();
