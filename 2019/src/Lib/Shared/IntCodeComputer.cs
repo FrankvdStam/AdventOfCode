@@ -42,6 +42,7 @@ namespace Lib.Shared
 
         public bool UseSimulatedInput { get; set; } = false;
         public bool PrintDecompiledInstructions { get; set; } = false;
+        public bool WaitAfterDecompiling { get; set; } = false;
 
 
         public void LoadProgramFromString(string input)
@@ -85,7 +86,10 @@ namespace Lib.Shared
                 if (PrintDecompiledInstructions)
                 {
                     Console.WriteLine(DecompileInstruction(position));
-                    //Console.ReadKey();
+                    if (WaitAfterDecompiling)
+                    {
+                        Console.ReadKey();
+                    }
                 }
 
                 var opcode = DecodeOpcode(Program[position]);
@@ -125,12 +129,61 @@ namespace Lib.Shared
                         break;
 
                     case Instruction.JumpIfTrue:
+                        param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
+                        param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
+
+                        if (param1 != 0)
+                        {
+                            position = param2;
+                        }
+                        else
+                        {
+                            position += 3;
+                        }
                         break;
+
                     case Instruction.JumpIfFalse:
+                        param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
+                        param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
+
+                        if (param1 == 0)
+                        {
+                            position = param2;
+                        }
+                        else
+                        {
+                            position += 3;
+                        }
                         break;
+
                     case Instruction.LessThan:
+                        param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
+                        param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
+
+                        if (param1 < param2)
+                        {
+                            Program[Program[position + 3]] = 1;
+                        }
+                        else
+                        {
+                            Program[Program[position + 3]] = 0;
+                        }
+                        position += 4;
                         break;
+
                     case Instruction.Equals:
+                        param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
+                        param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
+
+                        if (param1 == param2)
+                        {
+                            Program[Program[position + 3]] = 1;
+                        }
+                        else
+                        {
+                            Program[Program[position + 3]] = 0;
+                        }
+                        position += 4;
                         break;
 
                     case Instruction.Halt:
@@ -186,15 +239,57 @@ namespace Lib.Shared
                     break;
 
                 case Instruction.Input:
-                    decomp.Append($"{position}-{position + 1}\tIN ");
+                    decomp.Append($"{position}-{position + 1}\tIN   ");
                     decomp.Append(GetAddressOrValueString(opcode.mode1, Program[position + 1]));
                     position += 2;
                     break;
 
                 case Instruction.Output:
-                    decomp.Append($"{position}-{position + 1}\tOUT ");
+                    decomp.Append($"{position}-{position + 1}\tOUT  ");
                     decomp.Append(GetAddressOrValueString(opcode.mode1, Program[position + 1]));
+                    position += 2;
                     break;
+
+                case Instruction.JumpIfTrue:
+                    decomp.Append($"{position}-{position + 3}\tJIT  ");
+                    decomp.Append(GetAddressOrValueString(opcode.mode1, Program[position + 1]));
+                    decomp.Append(" ");
+                    decomp.Append(GetAddressOrValueString(opcode.mode2, Program[position + 2]));
+                    decomp.Append(" ");
+                    decomp.Append(GetAddressOrValueString(InstructionMode.Position, Program[position + 3]));
+                    position += 4;
+                    break;
+
+                case Instruction.JumpIfFalse:
+                    decomp.Append($"{position}-{position + 3}\tJIF  ");
+                    decomp.Append(GetAddressOrValueString(opcode.mode1, Program[position + 1]));
+                    decomp.Append(" ");
+                    decomp.Append(GetAddressOrValueString(opcode.mode2, Program[position + 2]));
+                    decomp.Append(" ");
+                    decomp.Append(GetAddressOrValueString(InstructionMode.Position, Program[position + 3]));
+                    position += 4;
+                    break;
+
+                case Instruction.LessThan:
+                    decomp.Append($"{position}-{position + 3}\tLST  ");
+                    decomp.Append(GetAddressOrValueString(opcode.mode1, Program[position + 1]));
+                    decomp.Append(" ");
+                    decomp.Append(GetAddressOrValueString(opcode.mode2, Program[position + 2]));
+                    decomp.Append(" ");
+                    decomp.Append(GetAddressOrValueString(InstructionMode.Position, Program[position + 3]));
+                    position += 4;
+                    break;
+
+                case Instruction.Equals:
+                    decomp.Append($"{position}-{position + 3}\tEQL  ");
+                    decomp.Append(GetAddressOrValueString(opcode.mode1, Program[position + 1]));
+                    decomp.Append(" ");
+                    decomp.Append(GetAddressOrValueString(opcode.mode2, Program[position + 2]));
+                    decomp.Append(" ");
+                    decomp.Append(GetAddressOrValueString(InstructionMode.Position, Program[position + 3]));
+                    position += 4;
+                    break;
+
 
                 case Instruction.Halt:
                     decomp.Append($"{position}-{position + 1}\tHALT");
@@ -211,6 +306,7 @@ namespace Lib.Shared
             if (UseSimulatedInput)
             {
                 int simIn = SimulatedInput[_simulatedInputIndex];
+                Console.WriteLine($"in: {simIn}");
                 _simulatedInputIndex++;
                 return simIn;
             }
