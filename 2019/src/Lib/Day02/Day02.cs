@@ -13,10 +13,6 @@ namespace Lib.Day02
     {
         public int Day => 2;
 
-        public Day02()
-        {
-            TestPrograms();
-        }
 
         public void ProblemOne()
         {
@@ -54,51 +50,9 @@ namespace Lib.Day02
             }
         }
 
-        private void TestPrograms()
-        {
-            if(!TestProgram("1,0,0,0,99"         , "2,0,0,0,99"          ))
-            {
-                throw new Exception("Test program failed!");
-            }
-            if(!TestProgram("2,3,0,3,99"         , "2,3,0,6,99"          ))
-            {
-                throw new Exception("Test program failed!");
-            }
-            if (!TestProgram("2,4,4,5,99,0"       , "2,4,4,5,99,9801"     ))
-            {
-                throw new Exception("Test program failed!");
-            }
-            if (!TestProgram("1,1,1,4,99,5,6,0,99", "30,1,1,4,2,5,6,0,99" ))
-            {
-                throw new Exception("Test program failed!");
-            }
-        }
+        
 
-        private bool TestProgram(string input, string result)
-        {
-            IntCodeComputer computer = new IntCodeComputer();
-            
-            var inputProgram  = IntCodeComputer.ParseProgram(input );
-            var resultProgram = IntCodeComputer.ParseProgram(result);
-
-            computer.Program = inputProgram;
-            computer.Run();
-
-            if (inputProgram.Count != resultProgram.Count)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < inputProgram.Count; i++)
-            {
-                if (inputProgram[i] != resultProgram[i])
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
+        
         
         private string Example = @"1,9,10,3,2,3,11,0,99,30,40,50";
 
