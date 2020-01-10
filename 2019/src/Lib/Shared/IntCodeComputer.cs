@@ -10,7 +10,7 @@ namespace Lib.Shared
     {
         Position = 0,
         Immediate = 1,
-        //Relative = 2,
+        Relative = 2,
     }
 
     public enum Instruction
@@ -23,6 +23,7 @@ namespace Lib.Shared
         JumpIfFalse = 6,
         LessThan = 7,
         Equals = 8,
+        AdjustRelativeBase = 9,
         Halt = 99,
     }
 
@@ -40,15 +41,47 @@ namespace Lib.Shared
         public List<int> SimulatedInput = new List<int>();
         public List<int> Output = new List<int>();
         private int _simulatedInputIndex = 0;
+        private int _relativeBase = 0;
 
         public bool UseSimulatedInput { get; set; } = false;
-        public bool PrintDecompiledInstructions { get; set; } = false;
+        public bool PrintDecompiledInstructions { get; set; } = true;
         public bool WaitAfterDecompiling { get; set; } = false;
 
 
         public void LoadProgramFromString(string input)
         {
             Program = ParseProgram(input);
+        }
+
+
+        private void WriteMemory(int address, int value)
+        {
+            if (address < 0)
+            {
+                throw  new Exception($"Can't write to address bellow zero. Address: {address}.");
+            }
+
+            if (address >= Program.Count)
+            {
+                Program.AddRange(new int[(address + 1) - Program.Count]);
+            }
+
+            Program[address] = value;
+        }
+
+        private int ReadMemory(int address)
+        {
+            if (address < 0)
+            {
+                throw new Exception($"Can't write to address bellow zero. Address: {address}.");
+            }
+
+            if (address >= Program.Count)
+            {
+                Program.AddRange(new int[(address+1) - Program.Count]);
+            }
+
+            return Program[address];
         }
 
         #region Running/decompiling
@@ -62,21 +95,14 @@ namespace Lib.Shared
             switch (mode)
             {
                 case InstructionMode.Position:
-                    if (value >= 0 && value < Program.Count)
-                    {
-                        return Program[value];
-                    }
-                    else
-                    {
-                        throw new Exception($"Address {value} is outside of the range of the program.");
-                    }
-                    break;
+                    return ReadMemory(value);
                 case InstructionMode.Immediate:
                     return value;
-                    break;
+                case InstructionMode.Relative:
+                    return ReadMemory(_relativeBase + value);
+                default:
+                    throw new Exception($"Unsupported mode {mode}.");
             }
-
-            return 0;
         }
 
         public void Run()
@@ -108,7 +134,7 @@ namespace Lib.Shared
 
         public void Step()
         {
-            int param1 = 0, param2 = 0, param3 = 0;
+            int param1 = 0, param2 = 0, param3 = 0, writeAddress = 0;
 
             if (PrintDecompiledInstructions)
             {
@@ -119,26 +145,21 @@ namespace Lib.Shared
                 }
             }
 
-            var opcode = DecodeOpcode(Program[position]);
+            var opcode = DecodeOpcode(ReadMemory(position));
+            param1       = GetValueForParameter(opcode.mode1, ReadMemory(position + 1));
+            param2       = GetValueForParameter(opcode.mode2, ReadMemory(position + 2));
+            param3       = GetValueForParameter(opcode.mode3, ReadMemory(position + 3));
+            writeAddress = ReadMemory(position + 3); //writing is always at the address of the immediate value.
 
             switch (opcode.instruction)
             {
                 case Instruction.Add:
-                    //Add
-
-                    param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
-                    param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
-
-                    Program[Program[position + 3]] = param1 + param2;
+                    WriteMemory(writeAddress, param1 + param2);
                     position += 4;
                     break;
 
                 case Instruction.Multiply:
-                    //Mult
-
-                    param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
-                    param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
-                    Program[Program[position + 3]] = param1 * param2;
+                    WriteMemory(writeAddress, param1 * param2);
                     position += 4;
                     break;
 
@@ -149,7 +170,7 @@ namespace Lib.Shared
                         return;
                     }
                     var input = GetIntInput();
-                    Program[Program[position + 1]] = input;
+                    WriteMemory(writeAddress, input);
                     position += 2;
                     break;
 
@@ -170,9 +191,6 @@ namespace Lib.Shared
                     break;
 
                 case Instruction.JumpIfTrue:
-                    param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
-                    param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
-
                     if (param1 != 0)
                     {
                         position = param2;
@@ -184,8 +202,6 @@ namespace Lib.Shared
                     break;
 
                 case Instruction.JumpIfFalse:
-                    param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
-                    param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
 
                     if (param1 == 0)
                     {
@@ -198,33 +214,34 @@ namespace Lib.Shared
                     break;
 
                 case Instruction.LessThan:
-                    param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
-                    param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
 
                     if (param1 < param2)
                     {
-                        Program[Program[position + 3]] = 1;
+                        WriteMemory(writeAddress, 1);
                     }
                     else
                     {
-                        Program[Program[position + 3]] = 0;
+                        WriteMemory(writeAddress, 0);
                     }
                     position += 4;
                     break;
 
                 case Instruction.Equals:
-                    param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
-                    param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
 
                     if (param1 == param2)
                     {
-                        Program[Program[position + 3]] = 1;
+                        WriteMemory(writeAddress, 1);
                     }
                     else
                     {
-                        Program[Program[position + 3]] = 0;
+                        WriteMemory(writeAddress, 0);
                     }
                     position += 4;
+                    break;
+
+                case Instruction.AdjustRelativeBase:
+                    _relativeBase += param1;
+                    position += 2;
                     break;
 
                 case Instruction.Halt:
@@ -247,6 +264,8 @@ namespace Lib.Shared
                     return $"[{value}]";
                 case InstructionMode.Immediate:
                     return value.ToString();
+                case InstructionMode.Relative:
+                    return $"*{value}";
             }
             throw new Exception($"unsupported mode {mode}");
         }
@@ -267,7 +286,6 @@ namespace Lib.Shared
                     decomp.Append(GetAddressOrValueString(opcode.mode2, Program[position+2]));
                     decomp.Append(" ");
                     decomp.Append(GetAddressOrValueString(InstructionMode.Position, Program[position+3]));
-                    position += 4;
                     break;
 
                 case Instruction.Multiply:
@@ -277,19 +295,16 @@ namespace Lib.Shared
                     decomp.Append(GetAddressOrValueString(opcode.mode2, Program[position + 2]));
                     decomp.Append(" ");
                     decomp.Append(GetAddressOrValueString(InstructionMode.Position, Program[position + 3]));
-                    position += 4;
                     break;
 
                 case Instruction.Input:
                     decomp.Append($"{position}-{position + 1}\tIN   ");
                     decomp.Append(GetAddressOrValueString(opcode.mode1, Program[position + 1]));
-                    position += 2;
                     break;
 
                 case Instruction.Output:
                     decomp.Append($"{position}-{position + 1}\tOUT  ");
                     decomp.Append(GetAddressOrValueString(opcode.mode1, Program[position + 1]));
-                    position += 2;
                     break;
 
                 case Instruction.JumpIfTrue:
@@ -299,7 +314,6 @@ namespace Lib.Shared
                     decomp.Append(GetAddressOrValueString(opcode.mode2, Program[position + 2]));
                     decomp.Append(" ");
                     decomp.Append(GetAddressOrValueString(InstructionMode.Position, Program[position + 3]));
-                    position += 4;
                     break;
 
                 case Instruction.JumpIfFalse:
@@ -309,7 +323,6 @@ namespace Lib.Shared
                     decomp.Append(GetAddressOrValueString(opcode.mode2, Program[position + 2]));
                     decomp.Append(" ");
                     decomp.Append(GetAddressOrValueString(InstructionMode.Position, Program[position + 3]));
-                    position += 4;
                     break;
 
                 case Instruction.LessThan:
@@ -319,7 +332,6 @@ namespace Lib.Shared
                     decomp.Append(GetAddressOrValueString(opcode.mode2, Program[position + 2]));
                     decomp.Append(" ");
                     decomp.Append(GetAddressOrValueString(InstructionMode.Position, Program[position + 3]));
-                    position += 4;
                     break;
 
                 case Instruction.Equals:
@@ -329,13 +341,15 @@ namespace Lib.Shared
                     decomp.Append(GetAddressOrValueString(opcode.mode2, Program[position + 2]));
                     decomp.Append(" ");
                     decomp.Append(GetAddressOrValueString(InstructionMode.Position, Program[position + 3]));
-                    position += 4;
                     break;
 
+                case Instruction.AdjustRelativeBase:
+                    decomp.Append($"{position}-{position + 1}\tARB   ");
+                    decomp.Append(GetAddressOrValueString(opcode.mode1, Program[position + 1]));
+                    break;
 
                 case Instruction.Halt:
                     decomp.Append($"{position}-{position + 1}\tHALT");
-                    position += 2;
                     break;
             }
             return decomp.ToString();
@@ -369,6 +383,19 @@ namespace Lib.Shared
 
         public override string ToString()
         {
+            for (int i = Program.Count - 1; i > -1; i--)
+            {
+                if (Program[i] == 0)
+                {
+                    Program.RemoveAt(i);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+
             StringBuilder result = new StringBuilder("");
             for (int i = 0; i < Program.Count; i++)
             {
