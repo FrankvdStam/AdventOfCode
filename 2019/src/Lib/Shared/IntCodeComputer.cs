@@ -52,8 +52,10 @@ namespace Lib.Shared
         }
 
         #region Running/decompiling
-
-        
+        private int position = 0;
+        public bool Halted { get; private set; } = false;
+        private bool _breakBeforeInput = false;
+        private bool _breakAfterOutput = false;
 
         private int GetValueForParameter(InstructionMode mode, int value)
         {
@@ -79,126 +81,163 @@ namespace Lib.Shared
 
         public void Run()
         {
-            int position = 0;
-            int param1 = 0, param2 = 0, param3 = 0;
-
-            while (true)
+            while (!Halted)
             {
-                if (PrintDecompiledInstructions)
-                {
-                    Console.WriteLine(DecompileInstruction(position));
-                    if (WaitAfterDecompiling)
-                    {
-                        Console.ReadKey();
-                    }
-                }
-
-                var opcode = DecodeOpcode(Program[position]);
-
-                switch (opcode.instruction)
-                {
-                    case Instruction.Add:
-                        //Add
-                        
-                        param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
-                        param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
-
-                        Program[Program[position + 3]] = param1 + param2;
-                        position += 4;
-                        break;
-
-                    case Instruction.Multiply:
-                        //Mult
-
-                        param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
-                        param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
-                        Program[Program[position + 3]] = param1 * param2;
-                        position += 4;
-                        break;
-
-                    case Instruction.Input:
-                        var input = GetIntInput();
-                        Program[Program[position + 1]] = input;
-                        position += 2;
-                        break;
-
-                    case Instruction.Output:
-
-                        //Console.WriteLine("OUT: " + Program[position + 1]);
-                        int output = GetValueForParameter(opcode.mode1, Program[position + 1]);
-                        Output.Add(output);
-                        Console.WriteLine("OUT: " + output);
-                        position += 2;
-                        break;
-
-                    case Instruction.JumpIfTrue:
-                        param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
-                        param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
-
-                        if (param1 != 0)
-                        {
-                            position = param2;
-                        }
-                        else
-                        {
-                            position += 3;
-                        }
-                        break;
-
-                    case Instruction.JumpIfFalse:
-                        param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
-                        param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
-
-                        if (param1 == 0)
-                        {
-                            position = param2;
-                        }
-                        else
-                        {
-                            position += 3;
-                        }
-                        break;
-
-                    case Instruction.LessThan:
-                        param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
-                        param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
-
-                        if (param1 < param2)
-                        {
-                            Program[Program[position + 3]] = 1;
-                        }
-                        else
-                        {
-                            Program[Program[position + 3]] = 0;
-                        }
-                        position += 4;
-                        break;
-
-                    case Instruction.Equals:
-                        param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
-                        param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
-
-                        if (param1 == param2)
-                        {
-                            Program[Program[position + 3]] = 1;
-                        }
-                        else
-                        {
-                            Program[Program[position + 3]] = 0;
-                        }
-                        position += 4;
-                        break;
-
-                    case Instruction.Halt:
-                        //Halt!
-                        return;
-
-
-                    default:
-                        throw new Exception("Something went wrong.");
-                }
+                Step();
             }
         }
+
+        public void RunUntilInput()
+        {
+            _breakBeforeInput = true;
+            while (_breakBeforeInput && !Halted)
+            {
+                Step();
+            }
+        }
+
+        public void RunTillAfterOutput()
+        {
+            _breakAfterOutput = true;
+            while (_breakAfterOutput && !Halted)
+            {
+                Step();
+            }
+        }
+
+
+        public void Step()
+        {
+            int param1 = 0, param2 = 0, param3 = 0;
+
+            if (PrintDecompiledInstructions)
+            {
+                Console.WriteLine(DecompileInstruction(position));
+                if (WaitAfterDecompiling)
+                {
+                    Console.ReadKey();
+                }
+            }
+
+            var opcode = DecodeOpcode(Program[position]);
+
+            switch (opcode.instruction)
+            {
+                case Instruction.Add:
+                    //Add
+
+                    param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
+                    param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
+
+                    Program[Program[position + 3]] = param1 + param2;
+                    position += 4;
+                    break;
+
+                case Instruction.Multiply:
+                    //Mult
+
+                    param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
+                    param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
+                    Program[Program[position + 3]] = param1 * param2;
+                    position += 4;
+                    break;
+
+                case Instruction.Input:
+                    if (_breakBeforeInput)
+                    {
+                        _breakBeforeInput = false;
+                        return;
+                    }
+                    var input = GetIntInput();
+                    Program[Program[position + 1]] = input;
+                    position += 2;
+                    break;
+
+                case Instruction.Output:
+                    
+                    //Console.WriteLine("OUT: " + Program[position + 1]);
+                    int output = GetValueForParameter(opcode.mode1, Program[position + 1]);
+                    Output.Add(output);
+                    Console.WriteLine("OUT: " + output);
+                    position += 2;
+
+                    if (_breakAfterOutput)
+                    {
+                        _breakAfterOutput = false;
+                        return;
+                    }
+
+                    break;
+
+                case Instruction.JumpIfTrue:
+                    param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
+                    param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
+
+                    if (param1 != 0)
+                    {
+                        position = param2;
+                    }
+                    else
+                    {
+                        position += 3;
+                    }
+                    break;
+
+                case Instruction.JumpIfFalse:
+                    param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
+                    param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
+
+                    if (param1 == 0)
+                    {
+                        position = param2;
+                    }
+                    else
+                    {
+                        position += 3;
+                    }
+                    break;
+
+                case Instruction.LessThan:
+                    param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
+                    param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
+
+                    if (param1 < param2)
+                    {
+                        Program[Program[position + 3]] = 1;
+                    }
+                    else
+                    {
+                        Program[Program[position + 3]] = 0;
+                    }
+                    position += 4;
+                    break;
+
+                case Instruction.Equals:
+                    param1 = GetValueForParameter(opcode.mode1, Program[position + 1]);
+                    param2 = GetValueForParameter(opcode.mode2, Program[position + 2]);
+
+                    if (param1 == param2)
+                    {
+                        Program[Program[position + 3]] = 1;
+                    }
+                    else
+                    {
+                        Program[Program[position + 3]] = 0;
+                    }
+                    position += 4;
+                    break;
+
+                case Instruction.Halt:
+                    Halted = true;
+                    //Halt!
+                    return;
+
+                default:
+                    throw new Exception("Something went wrong.");
+            }
+        }
+    
+
 
         private string GetAddressOrValueString(InstructionMode mode, int value)
         {
