@@ -20,6 +20,7 @@ namespace Lib.Day11
 
         public void ProblemOne()
         {
+            return;//remove this return to run part1
             Dictionary<Vector2i, int> count = new Dictionary<Vector2i, int>();
             Dictionary<Vector2i, int> color = new Dictionary<Vector2i, int>();
 
@@ -93,13 +94,104 @@ namespace Lib.Day11
                 }
             }
 
-            var panelsPaintedOnce = color.Count(i => i.Value > 0);
+            var panelsPaintedOnce = count.Count(i => i.Value > 0);
             //computer.Run();
         }
 
         public void ProblemTwo()
         {
+            Dictionary<Vector2i, int> count = new Dictionary<Vector2i, int>();
+            Dictionary<Vector2i, int> color = new Dictionary<Vector2i, int>();
+            color[new Vector2i(0, 0)] = 1;
+
+            int GeColor(Vector2i p)
+            {
+                int c;
+                if (!color.TryGetValue(p, out c))
+                {
+                    c = 0; //black
+                    color[p] = c;
+                }
+
+                return c;
+            }
+
+            void IncrementCount(Vector2i p)
+            {
+                if (!count.ContainsKey(p))
+                {
+                    count[p] = 0;
+                }
+
+                count[p]++;
+            }
+
+            Vector2i position = new Vector2i();
+            Direction direction = Direction.Up;
+
+            IntCodeComputer computer = new IntCodeComputer(Program);
+            computer.PrintDecompiledInstructions = false;
+            computer.PrintOutput = false;
+            computer.PrintInput = false;
+            computer.UseSimulatedInput = true;
+            int cycle = 0;
+            while (!computer.Halted)
+            {
+                try
+                {
+                    computer.RunUntilInput();
+
+                    int currentColor = GeColor(position);
+                    computer.SimulatedInput.Add(currentColor);
+
+                    int newColor = (int)computer.RunTillAfterOutput(true);
+                    int rotate = (int)computer.RunTillAfterOutput(true);
+
+                    color[position] = newColor;
+                    IncrementCount(position);
+
+                    //Move
+                    if (rotate == 0)
+                    {
+                        direction = direction.RotateLeft();
+                    }
+                    else
+                    {
+                        direction = direction.RotateRight();
+                    }
+
+                    position = position.Add(Moves[direction]);
+                    cycle++;
+                    Console.WriteLine(cycle);
+                }
+                catch
+                {
+                    if (computer.Halted)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            //var panelsPaintedOnce = count.Count(i => i.Value > 0);
+            Render(color);
         }
+
+        private void Render(Dictionary<Vector2i, int> colors)
+        {
+            Console.Clear();
+            foreach (var c in colors)
+            {
+                Console.SetCursorPosition(c.Key.X, c.Key.Y);
+                Console.BackgroundColor = c.Value == 0 ? ConsoleColor.Black : ConsoleColor.White;
+                Console.Write("#");
+            }
+        }
+
 
 
         private const string Program =

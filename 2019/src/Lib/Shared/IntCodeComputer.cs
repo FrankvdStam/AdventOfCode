@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -55,11 +56,103 @@ namespace Lib.Shared
             Program = ParseProgram(input);
         }
         
+        
+
+        #region Running/decompiling ========================================================================================================
+        
+        public bool Halted { get; private set; } = false;
+        private long _position = 0;
+        private bool _breakBeforeInput = false;
+        private bool _breakAfterOutput = false;
+        //I don't like this - it's statefull. It does improve readability by heaps so I'm going to allow it.
+        private (Instruction instruction, InstructionMode mode3, InstructionMode mode2, InstructionMode mode1) _currentOpcode;
+
+        #region Helpers ========================================================================================================
+
+        private long GetParam1()
+        {
+            return GetParam(_currentOpcode.mode1, ReadMemory(_position + 1));
+        }
+
+        private long GetParam2()
+        {
+            return GetParam(_currentOpcode.mode2, ReadMemory(_position + 2));
+        }
+
+        private long GetParam3()
+        {
+            return GetParam(_currentOpcode.mode3, ReadMemory(_position + 3));
+        }
+
+        private long GetParam(InstructionMode mode, long address)
+        {
+            //if (address < 0)
+            //{
+            //    throw new Exception($"Address can't be negative! {address}");
+            //}
+            //
+            //if (address > Program.Count)
+            //{
+            //    return 0;//all outside of scope memory is zero, writing to it will automatically initialize it.
+            //}
+
+            //We made sure the given memory exists, now we can access it.
+            switch (mode)
+            {
+                case InstructionMode.Position:
+                    return ReadMemory(address);
+                case InstructionMode.Immediate:
+                    return address;
+                case InstructionMode.Relative:
+                    return ReadMemory(_relativeBase + address);
+                default:
+                    throw new Exception($"Unsupported mode {mode}.");
+            }
+        }
+
+        private long GetWriteAddress1()
+        {
+            return GetWriteAddress(_currentOpcode.mode1, _position + 1);
+        }
+
+        private long GetWriteAddress2()
+        {
+            return GetWriteAddress(_currentOpcode.mode2, _position + 2);
+        }
+
+        private long GetWriteAddress3()
+        {
+            return GetWriteAddress(_currentOpcode.mode3, _position + 3);
+        }
+
+        private long GetWriteAddress(InstructionMode mode, long address)
+        {
+            if (address < 0)
+            {
+                throw new Exception($"Address can't be negative! {address}");
+            }
+
+            if (mode == InstructionMode.Position)
+            {
+                return ReadMemory(address);
+            }
+
+            if (mode == InstructionMode.Relative)
+            {
+                return _relativeBase + ReadMemory(address);
+            }
+
+            throw new Exception("Failure at GetWriteAddress");
+        }
+
+        /// <summary>
+        /// Writes to memory, dynamically resizes if needed
+        /// </summary>
         private void WriteMemory(long address, long value)
         {
             if (address < 0)
             {
-                throw  new Exception($"Can't write to address bellow zero. Address: {address}.");
+                throw new Exception($"Can't write to address bellow zero. Address: {address}.");
             }
 
             if (address >= Program.Count)
@@ -70,6 +163,9 @@ namespace Lib.Shared
             Program[(int)address] = value;
         }
 
+        /// <summary>
+        /// Reads the memory, deals with out of bound cases
+        /// </summary>
         private long ReadMemory(long address)
         {
             if (address < 0)
@@ -79,38 +175,16 @@ namespace Lib.Shared
 
             if (address >= Program.Count)
             {
-                Program.AddRange(new long[(address+1) - Program.Count]);
+                return 0;
+                //No need to resize if we're only reading
+                //Program.AddRange(new long[(address+1) - Program.Count]);
             }
 
             return Program[(int)address];
         }
+        #endregion
 
-        #region Running/decompiling
-        private long position = 0;
-        public bool Halted { get; private set; } = false;
-        private bool _breakBeforeInput = false;
-        private bool _breakAfterOutput = false;
-
-        private long? GetValueForParameter(InstructionMode mode, long value)
-        {
-            switch (mode)
-            {
-                case InstructionMode.Position:
-                    if (value < 0)
-                    {
-                        return null;
-                    }
-                    return ReadMemory(value);
-                case InstructionMode.Immediate:
-                    return value;
-                case InstructionMode.Relative:
-                    return ReadMemory(_relativeBase + value);
-                default:
-                    return null;
-                    //throw new Exception($"Unsupported mode {mode}.");
-            }
-        }
-
+        #region running ========================================================================================================
         public void Run()
         {
             while (!Halted)
@@ -144,48 +218,41 @@ namespace Lib.Shared
             }
             return 0;
         }
+        #endregion
 
+        #region Step ========================================================================================================
 
+   
         public void Step()
         {
+            //if (_position == 382)
+            //{
+            //    Debugger.Break();
+            //}
+
             try
             {
                 if (PrintDecompiledInstructions)
                 {
-                    Console.WriteLine(DecompileInstruction(position));
+                    Console.WriteLine(DecompileInstruction(_position));
                     if (WaitAfterDecompiling)
                     {
                         Console.ReadKey();
                     }
                 }
 
-                var opcode = DecodeOpcode(ReadMemory(position));
-                long? param1 = GetValueForParameter(opcode.mode1, ReadMemory(position + 1));
-                long? param2 = GetValueForParameter(opcode.mode2, ReadMemory(position + 2));
-                long? param3 = GetValueForParameter(opcode.mode3, ReadMemory(position + 3));
+                _currentOpcode = DecodeOpcode(ReadMemory(_position));
 
-                long? writeAddress = null;
-                if (opcode.mode3 == InstructionMode.Position)
-                {
-                    writeAddress = ReadMemory(position + 3);
-                }
-
-                if (opcode.mode3 == InstructionMode.Relative)
-                {
-                    writeAddress = _relativeBase + ReadMemory(position + 3);
-                }
-                //long? writeAddress =  ReadMemory(position + 3);
-
-                switch (opcode.instruction)
+                switch (_currentOpcode.instruction)
                 {
                     case Instruction.Add:
-                        WriteMemory(writeAddress.Value, param1.Value + param2.Value);
-                        position += 4;
+                        WriteMemory(GetWriteAddress3(), GetParam1() + GetParam2());
+                        _position += 4;
                         break;
 
                     case Instruction.Multiply:
-                        WriteMemory(writeAddress.Value, param1.Value * param2.Value);
-                        position += 4;
+                        WriteMemory(GetWriteAddress3(), GetParam1() * GetParam2());
+                        _position += 4;
                         break;
 
                     case Instruction.Input:
@@ -196,31 +263,20 @@ namespace Lib.Shared
                         }
 
                         var input = GetlongInput();
-                        //Special case for writeaddress -> its at position + 1 instead of + 3
-                        if (opcode.mode3 == InstructionMode.Position)
-                        {
-                            writeAddress = ReadMemory(position + 1);
-                        }
-
-                        if (opcode.mode3 == InstructionMode.Relative)
-                        {
-                            writeAddress = _relativeBase + ReadMemory(position + 1);
-                        }
-
-
-                        WriteMemory(writeAddress.Value, input);
-                        position += 2;
+                        WriteMemory(GetWriteAddress1(), input);
+                        _position += 2;
                         break;
 
                     case Instruction.Output:
-                        Output.Add(param1.Value);
+                        long output = GetParam1();
+                        Output.Add(output);
                         if (PrintOutput)
                         {
                             Console.BackgroundColor = ConsoleColor.Red;
-                            Console.WriteLine("OUT: " + param1);
+                            Console.WriteLine("OUT: " + output);
                             Console.BackgroundColor = ConsoleColor.Black;
                         }
-                        position += 2;
+                        _position += 2;
 
                         if (_breakAfterOutput)
                         {
@@ -231,61 +287,61 @@ namespace Lib.Shared
                         break;
 
                     case Instruction.JumpIfTrue:
-                        if (param1 != 0)
+                        if (GetParam1() != 0)
                         {
-                            position = param2.Value;
+                            _position = GetParam2();
                         }
                         else
                         {
-                            position += 3;
+                            _position += 3;
                         }
 
                         break;
 
                     case Instruction.JumpIfFalse:
 
-                        if (param1 == 0)
+                        if (GetParam1() == 0)
                         {
-                            position = param2.Value;
+                            _position = GetParam2();
                         }
                         else
                         {
-                            position += 3;
+                            _position += 3;
                         }
 
                         break;
 
                     case Instruction.LessThan:
 
-                        if (param1 < param2)
+                        if (GetParam1() < GetParam2())
                         {
-                            WriteMemory(writeAddress.Value, 1);
+                            WriteMemory(GetWriteAddress3(), 1);
                         }
                         else
                         {
-                            WriteMemory(writeAddress.Value, 0);
+                            WriteMemory(GetWriteAddress3(), 0);
                         }
 
-                        position += 4;
+                        _position += 4;
                         break;
 
                     case Instruction.Equals:
 
-                        if (param1 == param2)
+                        if (GetParam1() == GetParam2())
                         {
-                            WriteMemory(writeAddress.Value, 1);
+                            WriteMemory(GetWriteAddress3(), 1);
                         }
                         else
                         {
-                            WriteMemory(writeAddress.Value, 0);
+                            WriteMemory(GetWriteAddress3(), 0);
                         }
 
-                        position += 4;
+                        _position += 4;
                         break;
 
                     case Instruction.AdjustRelativeBase:
-                        _relativeBase += param1.Value;
-                        position += 2;
+                        _relativeBase += GetParam1();
+                        _position += 2;
                         break;
 
                     case Instruction.Halt:
@@ -299,13 +355,13 @@ namespace Lib.Shared
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error at {position}. Halting...\r\n{e.Message}\r\n\r\n{e.StackTrace}");
+                Console.WriteLine($"Error at {_position}. Halting...\r\n{e.Message}\r\n\r\n{e.StackTrace}");
                 Halted = true;
                 throw e;
             }
         }
-    
 
+        #endregion
 
         private string GetAddressOrValueString(InstructionMode mode, long value)
         {
