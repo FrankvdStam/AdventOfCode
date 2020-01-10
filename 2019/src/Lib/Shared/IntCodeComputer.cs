@@ -46,14 +46,15 @@ namespace Lib.Shared
         public bool UseSimulatedInput { get; set; } = false;
         public bool PrintDecompiledInstructions { get; set; } = true;
         public bool WaitAfterDecompiling { get; set; } = false;
+        public bool PrintInput { get; set; } = true;
+        public bool PrintOutput { get; set; } = true;
 
 
         public void LoadProgramFromString(string input)
         {
             Program = ParseProgram(input);
         }
-
-
+        
         private void WriteMemory(long address, long value)
         {
             if (address < 0)
@@ -92,8 +93,6 @@ namespace Lib.Shared
 
         private long? GetValueForParameter(InstructionMode mode, long value)
         {
-            
-
             switch (mode)
             {
                 case InstructionMode.Position:
@@ -129,13 +128,21 @@ namespace Lib.Shared
             }
         }
 
-        public void RunTillAfterOutput()
+        public long RunTillAfterOutput(bool returnOutputAndClearbuffer = false)
         {
             _breakAfterOutput = true;
             while (_breakAfterOutput && !Halted)
             {
                 Step();
             }
+
+            if (returnOutputAndClearbuffer)
+            {
+                long output = Output.First();
+                Output.Clear();
+                return output;
+            }
+            return 0;
         }
 
 
@@ -189,13 +196,30 @@ namespace Lib.Shared
                         }
 
                         var input = GetlongInput();
+                        //Special case for writeaddress -> its at position + 1 instead of + 3
+                        if (opcode.mode3 == InstructionMode.Position)
+                        {
+                            writeAddress = ReadMemory(position + 1);
+                        }
+
+                        if (opcode.mode3 == InstructionMode.Relative)
+                        {
+                            writeAddress = _relativeBase + ReadMemory(position + 1);
+                        }
+
+
                         WriteMemory(writeAddress.Value, input);
                         position += 2;
                         break;
 
                     case Instruction.Output:
                         Output.Add(param1.Value);
-                        Console.WriteLine("OUT: " + param1);
+                        if (PrintOutput)
+                        {
+                            Console.BackgroundColor = ConsoleColor.Red;
+                            Console.WriteLine("OUT: " + param1);
+                            Console.BackgroundColor = ConsoleColor.Black;
+                        }
                         position += 2;
 
                         if (_breakAfterOutput)
@@ -277,6 +301,7 @@ namespace Lib.Shared
             {
                 Console.WriteLine($"Error at {position}. Halting...\r\n{e.Message}\r\n\r\n{e.StackTrace}");
                 Halted = true;
+                throw e;
             }
         }
     
@@ -284,21 +309,40 @@ namespace Lib.Shared
 
         private string GetAddressOrValueString(InstructionMode mode, long value)
         {
+            string positionValue, relativeValue;
+            try
+            {
+                positionValue = ReadMemory(value).ToString();
+            }
+            catch
+            {
+                positionValue = "ERR";
+            }
+
+            try
+            {
+                relativeValue = ReadMemory(_relativeBase + value).ToString();
+            }
+            catch
+            {
+                relativeValue = "ERR";
+            }
+
             switch (mode)
             {
                 case InstructionMode.Position:
-                    return $"[{value}]";
+                    return $"[{value}]({positionValue})";
                 case InstructionMode.Immediate:
                     return value.ToString();
                 case InstructionMode.Relative:
-                    return $"*{value}";
+                    return $"*{value}({relativeValue})";
             }
             throw new Exception($"unsupported mode {mode}");
         }
 
         public string DecompileInstruction(long position)
         {
-            StringBuilder decomp = new StringBuilder();
+            StringBuilder decomp = new StringBuilder();//maybe we don't need this.
             //long param1 = 0, param2 = 0, param3 = 0;
 
             var opcode = DecodeOpcode(ReadMemory(position));
@@ -367,16 +411,31 @@ namespace Lib.Shared
 
         private long GetlongInput()
         {
+            Console.BackgroundColor = ConsoleColor.Red;
+
             if (UseSimulatedInput)
             {
-                long simIn = SimulatedInput[_simulatedInputIndex];
-                Console.WriteLine($"in: {simIn}");
-                _simulatedInputIndex++;
-                return simIn;
+                if (_simulatedInputIndex >= 0 && _simulatedInputIndex < SimulatedInput.Count)
+                {
+                    long simIn = SimulatedInput[_simulatedInputIndex];
+                    if (PrintInput)
+                    {
+                        Console.WriteLine($"in: {simIn}");
+                    }
+                    _simulatedInputIndex++;
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    return simIn;
+                }
+                else
+                {
+                    throw new Exception($"Simulated input missing at {_simulatedInputIndex}.");
+                }
             }
 
-
-            Console.Write("in: ");
+            if (PrintInput)
+            {
+                Console.Write("in: ");
+            }
             var input = Console.ReadLine();
             long result;
             while (!long.TryParse(input, out result))
@@ -385,6 +444,7 @@ namespace Lib.Shared
                 Console.Write("in: ");
                 input = Console.ReadLine();
             }
+            Console.BackgroundColor = ConsoleColor.Black;
             return result;
         }
 

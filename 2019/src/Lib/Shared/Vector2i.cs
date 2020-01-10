@@ -8,6 +8,14 @@ namespace Lib.Shared
 {
     public struct Vector2i : IEquatable<Vector2i>
     {
+        public Vector2i(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+
+
+
         public int X;
         public int Y;
 
