@@ -1,6 +1,0 @@
-C:\Projects\AdventOfCode\Day11\bin\Debug\Day11.exe
-C:\Projects\AdventOfCode\Day11\bin\Debug\Day11.pdb
-C:\Projects\AdventOfCode\Day11\obj\Debug\Day11.csprojAssemblyReference.cache
-C:\Projects\AdventOfCode\Day11\obj\Debug\Day11.csproj.CoreCompileInputs.cache
-C:\Projects\AdventOfCode\Day11\obj\Debug\Day11.exe
-C:\Projects\AdventOfCode\Day11\obj\Debug\Day11.pdb

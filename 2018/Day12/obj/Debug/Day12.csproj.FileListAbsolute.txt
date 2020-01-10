@@ -1,6 +1,0 @@
-C:\Projects\AdventOfCode\Day12\bin\Debug\Day12.exe
-C:\Projects\AdventOfCode\Day12\bin\Debug\Day12.pdb
-C:\Projects\AdventOfCode\Day12\obj\Debug\Day12.csproj.CoreCompileInputs.cache
-C:\Projects\AdventOfCode\Day12\obj\Debug\Day12.exe
-C:\Projects\AdventOfCode\Day12\obj\Debug\Day12.pdb
-C:\Projects\AdventOfCode\Day12\obj\Debug\Day12.csprojAssemblyReference.cache
