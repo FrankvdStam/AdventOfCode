@@ -13,15 +13,15 @@ namespace Lib.Day07
 
         public void ProblemOne()
         {
-            var permutations = GetPermutations(new List<int> {0, 1, 2, 3, 4}, 5).ToList();
-            Dictionary<List<int>, int> results = new Dictionary<List<int>, int>();
+            var permutations = GetPermutations(new List<long> {0, 1, 2, 3, 4}, 5).ToList();
+            Dictionary<List<long>, long> results = new Dictionary<List<long>, long>();
             foreach (var permutation in permutations)
             {
-                int thrusterSignal = CalculateThrusterSignal(permutation, ActualProgram);
+                long thrusterSignal = CalculateThrusterSignal(permutation, ActualProgram);
                 results.Add(permutation.ToList(), thrusterSignal);
             }
 
-            int maxThrusterSignal = results.Values.Max();
+            long maxThrusterSignal = results.Values.Max();
         }
 
 
@@ -33,19 +33,19 @@ namespace Lib.Day07
         {
             Console.Clear();
             
-            var permutations = GetPermutations(new List<int> { 5, 6, 7, 8, 9 }, 5).ToList();
-            Dictionary<List<int>, int> results = new Dictionary<List<int>, int>();
+            var permutations = GetPermutations(new List<long> { 5, 6, 7, 8, 9 }, 5).ToList();
+            Dictionary<List<long>, long> results = new Dictionary<List<long>, long>();
             foreach (var permutation in permutations)
             {
-                int thrusterSignal = CalculateThrusterSignalWithFeedbackLoop(permutation.ToList(), ActualProgram);
+                long thrusterSignal = CalculateThrusterSignalWithFeedbackLoop(permutation.ToList(), ActualProgram);
                 results.Add(permutation.ToList(), thrusterSignal);
             }
-            int maxThrusterSignal = results.Values.Max();
+            long maxThrusterSignal = results.Values.Max();
         }
 
-        public int CalculateThrusterSignal(IEnumerable<int> phaseSequence, string program)
+        public long CalculateThrusterSignal(IEnumerable<long> phaseSequence, string program)
         {
-            int output = 0;
+            long output = 0;
             foreach (int phaseSeq in phaseSequence)
             {
                 Console.WriteLine("\r\n=== Spinning up intcomputer ===\r\n");
@@ -66,19 +66,19 @@ namespace Lib.Day07
         }
 
 
-        public int CalculateThrusterSignalWithFeedbackLoop(List<int> phaseSequence, string program)
+        public long CalculateThrusterSignalWithFeedbackLoop(List<long> phaseSequence, string program)
         {
             bool printDecompiledInstructions = true;
             List < IntCodeComputer > computers = new List<IntCodeComputer>()
             {
-                new IntCodeComputer(program) {UseSimulatedInput = true, PrintDecompiledInstructions = printDecompiledInstructions, SimulatedInput = new List<int>(){phaseSequence[0], 0}},
-                new IntCodeComputer(program) {UseSimulatedInput = true, PrintDecompiledInstructions = printDecompiledInstructions, SimulatedInput = new List<int>(){phaseSequence[1]}},
-                new IntCodeComputer(program) {UseSimulatedInput = true, PrintDecompiledInstructions = printDecompiledInstructions, SimulatedInput = new List<int>(){phaseSequence[2]}},
-                new IntCodeComputer(program) {UseSimulatedInput = true, PrintDecompiledInstructions = printDecompiledInstructions, SimulatedInput = new List<int>(){phaseSequence[3]}},
-                new IntCodeComputer(program) {UseSimulatedInput = true, PrintDecompiledInstructions = printDecompiledInstructions, SimulatedInput = new List<int>(){phaseSequence[4]}},
+                new IntCodeComputer(program) {UseSimulatedInput = true, PrintDecompiledInstructions = printDecompiledInstructions, SimulatedInput = new List<long>(){phaseSequence[0], 0}},
+                new IntCodeComputer(program) {UseSimulatedInput = true, PrintDecompiledInstructions = printDecompiledInstructions, SimulatedInput = new List<long>(){phaseSequence[1]}},
+                new IntCodeComputer(program) {UseSimulatedInput = true, PrintDecompiledInstructions = printDecompiledInstructions, SimulatedInput = new List<long>(){phaseSequence[2]}},
+                new IntCodeComputer(program) {UseSimulatedInput = true, PrintDecompiledInstructions = printDecompiledInstructions, SimulatedInput = new List<long>(){phaseSequence[3]}},
+                new IntCodeComputer(program) {UseSimulatedInput = true, PrintDecompiledInstructions = printDecompiledInstructions, SimulatedInput = new List<long>(){phaseSequence[4]}},
             };
 
-            int output = 0;
+            long output = 0;
             while (true)
             {
                 for (int i = 0; i < computers.Count; i++)

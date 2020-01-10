@@ -20,14 +20,14 @@ namespace Lib.Day02
             computer.Program[1] = 12;
             computer.Program[2] = 2;
             computer.Run();
-            int value = computer.Program[0];
+            long value = computer.Program[0];
             Console.WriteLine($"Halted with position 0: {value}");
         }
 
         public void ProblemTwo()
         {
             IntCodeComputer computer = new IntCodeComputer();
-            List<int> program = IntCodeComputer.ParseProgram(Input);
+            List<long> program = IntCodeComputer.ParseProgram(Input);
 
             for (int x = 0; x <= 99; x++)
             {
@@ -38,7 +38,7 @@ namespace Lib.Day02
                     computer.Program[2] = y;
                     computer.Run();
                     Console.WriteLine($"({x}, {y})");
-                    int value = computer.Program[0];
+                    long value = computer.Program[0];
 
                     if (value == 19690720)
                     {
