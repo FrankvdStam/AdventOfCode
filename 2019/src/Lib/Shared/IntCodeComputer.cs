@@ -90,18 +90,25 @@ namespace Lib.Shared
         private bool _breakBeforeInput = false;
         private bool _breakAfterOutput = false;
 
-        private long GetValueForParameter(InstructionMode mode, long value)
+        private long? GetValueForParameter(InstructionMode mode, long value)
         {
+            
+
             switch (mode)
             {
                 case InstructionMode.Position:
+                    if (value < 0)
+                    {
+                        return null;
+                    }
                     return ReadMemory(value);
                 case InstructionMode.Immediate:
                     return value;
                 case InstructionMode.Relative:
                     return ReadMemory(_relativeBase + value);
                 default:
-                    throw new Exception($"Unsupported mode {mode}.");
+                    return null;
+                    //throw new Exception($"Unsupported mode {mode}.");
             }
         }
 
@@ -134,118 +141,142 @@ namespace Lib.Shared
 
         public void Step()
         {
-            if (PrintDecompiledInstructions)
+            try
             {
-                Console.WriteLine(DecompileInstruction(position));
-                if (WaitAfterDecompiling)
+                if (PrintDecompiledInstructions)
                 {
-                    Console.ReadKey();
+                    Console.WriteLine(DecompileInstruction(position));
+                    if (WaitAfterDecompiling)
+                    {
+                        Console.ReadKey();
+                    }
+                }
+
+                var opcode = DecodeOpcode(ReadMemory(position));
+                long? param1 = GetValueForParameter(opcode.mode1, ReadMemory(position + 1));
+                long? param2 = GetValueForParameter(opcode.mode2, ReadMemory(position + 2));
+                long? param3 = GetValueForParameter(opcode.mode3, ReadMemory(position + 3));
+
+                long? writeAddress = null;
+                if (opcode.mode3 == InstructionMode.Position)
+                {
+                    writeAddress = ReadMemory(position + 3);
+                }
+
+                if (opcode.mode3 == InstructionMode.Relative)
+                {
+                    writeAddress = _relativeBase + ReadMemory(position + 3);
+                }
+                //long? writeAddress =  ReadMemory(position + 3);
+
+                switch (opcode.instruction)
+                {
+                    case Instruction.Add:
+                        WriteMemory(writeAddress.Value, param1.Value + param2.Value);
+                        position += 4;
+                        break;
+
+                    case Instruction.Multiply:
+                        WriteMemory(writeAddress.Value, param1.Value * param2.Value);
+                        position += 4;
+                        break;
+
+                    case Instruction.Input:
+                        if (_breakBeforeInput)
+                        {
+                            _breakBeforeInput = false;
+                            return;
+                        }
+
+                        var input = GetlongInput();
+                        WriteMemory(writeAddress.Value, input);
+                        position += 2;
+                        break;
+
+                    case Instruction.Output:
+                        Output.Add(param1.Value);
+                        Console.WriteLine("OUT: " + param1);
+                        position += 2;
+
+                        if (_breakAfterOutput)
+                        {
+                            _breakAfterOutput = false;
+                            return;
+                        }
+
+                        break;
+
+                    case Instruction.JumpIfTrue:
+                        if (param1 != 0)
+                        {
+                            position = param2.Value;
+                        }
+                        else
+                        {
+                            position += 3;
+                        }
+
+                        break;
+
+                    case Instruction.JumpIfFalse:
+
+                        if (param1 == 0)
+                        {
+                            position = param2.Value;
+                        }
+                        else
+                        {
+                            position += 3;
+                        }
+
+                        break;
+
+                    case Instruction.LessThan:
+
+                        if (param1 < param2)
+                        {
+                            WriteMemory(writeAddress.Value, 1);
+                        }
+                        else
+                        {
+                            WriteMemory(writeAddress.Value, 0);
+                        }
+
+                        position += 4;
+                        break;
+
+                    case Instruction.Equals:
+
+                        if (param1 == param2)
+                        {
+                            WriteMemory(writeAddress.Value, 1);
+                        }
+                        else
+                        {
+                            WriteMemory(writeAddress.Value, 0);
+                        }
+
+                        position += 4;
+                        break;
+
+                    case Instruction.AdjustRelativeBase:
+                        _relativeBase += param1.Value;
+                        position += 2;
+                        break;
+
+                    case Instruction.Halt:
+                        Halted = true;
+                        //Halt!
+                        return;
+
+                    default:
+                        throw new Exception("Something went wrong.");
                 }
             }
-
-            var opcode = DecodeOpcode(ReadMemory(position));
-            long param1       = GetValueForParameter(opcode.mode1, ReadMemory(position + 1));
-            long param2       = GetValueForParameter(opcode.mode2, ReadMemory(position + 2));
-            long param3       = GetValueForParameter(opcode.mode3, ReadMemory(position + 3));
-            long writeAddress = ReadMemory(position + 3); //writing is always at the address of the immediate value.
-
-            switch (opcode.instruction)
+            catch (Exception e)
             {
-                case Instruction.Add:
-                    WriteMemory(writeAddress, param1 + param2);
-                    position += 4;
-                    break;
-
-                case Instruction.Multiply:
-                    WriteMemory(writeAddress, param1 * param2);
-                    position += 4;
-                    break;
-
-                case Instruction.Input:
-                    if (_breakBeforeInput)
-                    {
-                        _breakBeforeInput = false;
-                        return;
-                    }
-                    var input = GetlongInput();
-                    WriteMemory(writeAddress, input);
-                    position += 2;
-                    break;
-
-                case Instruction.Output:
-                    Output.Add(param1);
-                    Console.WriteLine("OUT: " + param1);
-                    position += 2;
-
-                    if (_breakAfterOutput)
-                    {
-                        _breakAfterOutput = false;
-                        return;
-                    }
-
-                    break;
-
-                case Instruction.JumpIfTrue:
-                    if (param1 != 0)
-                    {
-                        position = param2;
-                    }
-                    else
-                    {
-                        position += 3;
-                    }
-                    break;
-
-                case Instruction.JumpIfFalse:
-
-                    if (param1 == 0)
-                    {
-                        position = param2;
-                    }
-                    else
-                    {
-                        position += 3;
-                    }
-                    break;
-
-                case Instruction.LessThan:
-
-                    if (param1 < param2)
-                    {
-                        WriteMemory(writeAddress, 1);
-                    }
-                    else
-                    {
-                        WriteMemory(writeAddress, 0);
-                    }
-                    position += 4;
-                    break;
-
-                case Instruction.Equals:
-
-                    if (param1 == param2)
-                    {
-                        WriteMemory(writeAddress, 1);
-                    }
-                    else
-                    {
-                        WriteMemory(writeAddress, 0);
-                    }
-                    position += 4;
-                    break;
-
-                case Instruction.AdjustRelativeBase:
-                    _relativeBase += param1;
-                    position += 2;
-                    break;
-
-                case Instruction.Halt:
-                    Halted = true;
-                    //Halt!
-                    return;
-
-                default:
-                    throw new Exception("Something went wrong.");
+                Console.WriteLine($"Error at {position}. Halting...\r\n{e.Message}\r\n\r\n{e.StackTrace}");
+                Halted = true;
             }
         }
     
@@ -275,7 +306,17 @@ namespace Lib.Shared
             string param1 = GetAddressOrValueString(opcode.mode1, ReadMemory(position + 1));
             string param2 = GetAddressOrValueString(opcode.mode2, ReadMemory(position + 2));
             string param3 = GetAddressOrValueString(opcode.mode3, ReadMemory(position + 3));
-            string writeAddress = GetAddressOrValueString(InstructionMode.Position, ReadMemory(position + 3)); //writing is always at the address of the immediate value.
+
+            string writeAddress = "";
+            if (opcode.mode3 == InstructionMode.Position)
+            {
+                writeAddress = GetAddressOrValueString(InstructionMode.Position, ReadMemory(position + 3)); //writing is always at the address of the immediate value.
+            }
+
+            if (opcode.mode3 == InstructionMode.Relative)
+            {
+                writeAddress = GetAddressOrValueString(InstructionMode.Relative, ReadMemory(position + 3));
+            }
 
             switch (opcode.instruction)
             {
