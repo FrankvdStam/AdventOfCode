@@ -28,6 +28,13 @@ namespace Lib.Shared
         Halt = 99,
     }
 
+    public enum BreakReason
+    {
+        Input,
+        Output,
+        Halt
+    }
+
     public class IntCodeComputer
     {
         public IntCodeComputer() { }
@@ -241,6 +248,35 @@ namespace Lib.Shared
             output = Output.First();
             Output.Clear();
             return true;
+        }
+
+        public BreakReason RunTillInputOrOutput()
+        {
+            _breakAfterOutput = true;
+            _breakBeforeInput = true;
+
+            int outputCount = Output.Count;
+            while (_breakAfterOutput && _breakBeforeInput && !Halted)
+            {
+                Step();
+            }
+
+
+
+            _breakAfterOutput = false;
+            _breakBeforeInput = false;
+
+            if (Halted)
+            {
+                return BreakReason.Halt;
+            }
+            //bit hacky..
+            if (outputCount < Output.Count)
+            {
+                return BreakReason.Output;
+            }
+
+            return BreakReason.Input;
         }
         #endregion
 
