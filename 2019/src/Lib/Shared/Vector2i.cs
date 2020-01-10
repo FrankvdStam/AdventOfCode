@@ -29,10 +29,10 @@ namespace Lib.Shared
             };
         }
 
-        public bool Equals(Vector2i vector)
-        {
-            return vector.X == X && vector.Y == Y;
-        }
+        //public bool Equals(Vector2i vector)
+        //{
+        //    return vector.X == X && vector.Y == Y;
+        //}
 
         public static bool operator ==(Vector2i first, Vector2i second)
         {
@@ -44,6 +44,20 @@ namespace Lib.Shared
             return !first.Equals(second);
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is Vector2i v)
+            {
+                return v.X == X && v.Y == Y;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return X.GetHashCode() + Y.GetHashCode();
+        }
+
         public int ManhattanDistance(Vector2i vector)
         {
             return Math.Abs(X - vector.X) + Math.Abs(Y - vector.Y);
@@ -52,6 +66,11 @@ namespace Lib.Shared
         public override string ToString()
         {
             return $"({X}, {Y})";
+        }
+
+        public bool Equals(Vector2i other)
+        {
+            return Equals((object)other);
         }
     }
 }

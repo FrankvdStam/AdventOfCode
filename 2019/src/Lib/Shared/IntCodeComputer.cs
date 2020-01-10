@@ -210,6 +210,11 @@ namespace Lib.Shared
                 Step();
             }
 
+            if (Halted)
+            {
+                return 0;
+            }
+
             if (returnOutputAndClearbuffer)
             {
                 long output = Output.First();
@@ -217,6 +222,25 @@ namespace Lib.Shared
                 return output;
             }
             return 0;
+        }
+
+        public bool RunGetNextOutput(out long output)
+        {
+            output = 0;
+            _breakAfterOutput = true;
+            while (_breakAfterOutput && !Halted)
+            {
+                Step();
+            }
+
+            if (Halted)
+            {
+                Output.Clear();
+                return false;
+            }
+            output = Output.First();
+            Output.Clear();
+            return true;
         }
         #endregion
 
