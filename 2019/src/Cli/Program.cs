@@ -26,7 +26,7 @@ namespace Cli
             }
             
 
-            int day = 3;
+            int day = 12;
 
             var activeDay = Days.First(i => i.Day == day);
 
