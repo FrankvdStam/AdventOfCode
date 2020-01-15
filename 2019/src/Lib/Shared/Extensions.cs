@@ -64,5 +64,35 @@ namespace Lib.Shared
             }
             throw new Exception($"Unsupported ");
         }
+
+        public static void Draw(this List<Vector2i> vectors, char c)
+        {
+            int minx = vectors.Min(i => i.X);
+            int maxx = vectors.Max(i => i.X);
+            int width = maxx - minx;
+            int miny = vectors.Min(i => i.Y);
+            int maxy = vectors.Max(i => i.Y);
+            int height = maxy - miny;
+
+            int transformX = 0;
+            if (minx < 0)
+            {
+                transformX = Math.Abs(minx);
+            }
+
+            int transformY = 0;
+            if (miny < 0)
+            {
+                transformY = Math.Abs(miny);
+            }
+
+            //Console.SetWindowSize(width, height);
+
+            foreach (Vector2i v in vectors)
+            {
+                Console.SetCursorPosition(v.X + transformX, v.Y + transformY);
+                Console.Write(c);
+            }
+        }
     }
 }

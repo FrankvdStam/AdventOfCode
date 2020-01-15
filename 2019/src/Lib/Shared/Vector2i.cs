@@ -22,11 +22,7 @@ namespace Lib.Shared
 
         public Vector2i Add(Vector2i vector)
         {
-            return new Vector2i
-            {
-                X = X + vector.X,
-                Y = Y + vector.Y
-            };
+            return new Vector2i(X + vector.X, Y + vector.Y);
         }
 
         //public bool Equals(Vector2i vector)
@@ -58,9 +54,9 @@ namespace Lib.Shared
             return X.GetHashCode() + Y.GetHashCode();
         }
 
-        public int ManhattanDistance(Vector2i vector)
+        public static int ManhattanDistance(Vector2i vector1, Vector2i vector2)
         {
-            return Math.Abs(X - vector.X) + Math.Abs(Y - vector.Y);
+            return Math.Abs(vector1.X - vector2.X) + Math.Abs(vector1.Y - vector2.Y);
         }
 
         public override string ToString()
@@ -70,7 +66,9 @@ namespace Lib.Shared
 
         public bool Equals(Vector2i other)
         {
-            return Equals((object)other);
+            return other.X == X && other.Y == Y;
         }
+
+        public static readonly Vector2i Zero = new Vector2i(0, 0);
     }
 }
