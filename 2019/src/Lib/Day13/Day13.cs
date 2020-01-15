@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using Lib.Shared;
 
@@ -21,6 +22,7 @@ namespace Lib.Day13
 
         public void ProblemOne()
         {
+            return;
             IntCodeComputer computer = new IntCodeComputer(Program);
             computer.PrintDecompiledInstructions = false;
             
@@ -45,8 +47,10 @@ namespace Lib.Day13
         {
             IntCodeComputer computer = new IntCodeComputer(Program);
             computer.Program[0] = 2;
-            computer.UseSimulatedInput = true;
+            computer.PrintInput = false;
+            computer.PrintOutput = false;
             computer.PrintDecompiledInstructions = false;
+            computer.UseSimulatedInput = true;
 
             bool started = false;
 
@@ -54,34 +58,44 @@ namespace Lib.Day13
             Vector2i ballPosition = new Vector2i(0, 0);
             Vector2i paddlePosition = new Vector2i(0, 0);
 
+            long score = 0;
+            int cycle = 0;
             while (!computer.Halted)
             {
-                try
+                BreakReason r = computer.RunTillInputOrOutput();
+                switch (r)
                 {
+                    case BreakReason.Output:
+                        //Parse x,y,tile
+                        int x = (int)computer.Output.First();
+                        computer.Output.Clear();
+                        int y = (int)computer.RunTillAfterOutput(true);
+                        long z = computer.RunTillAfterOutput(true);
 
-                    int x = (int)computer.RunTillAfterOutput(true);
-                    int y = (int)computer.RunTillAfterOutput(true);
-                    Tile t = (Tile)computer.RunTillAfterOutput(true);
-                    screen[new Vector2i(x, y)] = t;
-                    
-                    if (t == Tile.Ball)
-                    {
-                        ballPosition = new Vector2i(x, y);
-                    }
+                        if (x == -1 && y == 0)
+                        {
+                            score = z;
+                        }
+                        else
+                        {
+                            Tile t = (Tile) z;
+                            screen[new Vector2i(x, y)] = t;
 
-                    if (t == Tile.HorizontalPaddle)
-                    {
-                        paddlePosition = new Vector2i(x, y);
-                    }
+                            if (t == Tile.Ball)
+                            {
+                                ballPosition = new Vector2i(x, y);
+                            }
 
-                    if (x == 42 && y == 22)
-                    {
-                        started = true;
-                    }
-                    
+                            if (t == Tile.HorizontalPaddle)
+                            {
+                                paddlePosition = new Vector2i(x, y);
+                            }
+                        }
 
-                    if (started)
-                    {
+                        break;
+
+                    case BreakReason.Input:
+                        //Game is requesting input
                         long input = 0;
                         if (ballPosition.X == paddlePosition.X)
                         {
@@ -99,21 +113,22 @@ namespace Lib.Day13
                         }
 
                         computer.SimulatedInput.Add(input);
-
-                        Render(screen);
-                    }
-
+                        computer.Step();//step over the input instruction so that we can run again via RunTillInputOrOutput
+                        //Render(screen);
+                        Console.WriteLine(cycle++);
+                        break;
+                    case BreakReason.Halt:
+                        Console.WriteLine($"Score: {score}");
+                        return;
                 }
-                catch { }
             }
-
-            int blocks = screen.Count(i => i.Value == Tile.Block);
         }
 
         private void Render(Dictionary<Vector2i, Tile> screen)
         {
             foreach (var s in screen)
             {
+
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.SetCursorPosition(s.Key.X, s.Key.Y);
                 switch (s.Value)
