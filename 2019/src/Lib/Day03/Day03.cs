@@ -23,6 +23,7 @@ namespace Lib.Day03
 
         public void ProblemOne()
         {
+            return;
             int result = FindMinimumManhattanDistanceOfIntersectedLines(line1, line2);
             Console.WriteLine(result);
             Console.ReadKey();
@@ -30,6 +31,9 @@ namespace Lib.Day03
 
         public void ProblemTwo()
         {
+            int result = FindMinimumNumberOfStepsToIntersection(line1, line2);
+            Console.WriteLine(result);
+            Console.ReadKey();
         }
 
 
@@ -41,39 +45,68 @@ namespace Lib.Day03
             Dictionary<string, int> line1Lookup = new Dictionary<string, int>();
             Dictionary<string, int> line2Lookup = new Dictionary<string, int>();
 
+            List<int> results = new List<int>();
+
             int step = 0;
             string zero = Vector2i.Zero.ToString();
-            while (true)
+            while (step < Math.Max(line1Vectors.Count, line2Vectors.Count))
             {
-                string one = line1Vectors[step].ToString();
-                if (line2Lookup.Keys.Contains(one) && one != zero)
+                if (step == 610)
                 {
-                    return step + line2Lookup[one];
-                }
-                else
-                {
-                    line1Lookup.Add(one, step);
+
                 }
 
-                string two = line2Vectors[step].ToString();
-                if (line1Lookup.Keys.Contains(two) && two != zero)
+                if (step < line1Vectors.Count)
                 {
-                    return step + line1Lookup[two];
-                }
-                else
-                {
-                    line2Lookup.Add(two, step);
+                    string one = line1Vectors[step].ToString();
+
+                    if (line2Lookup.ContainsKey(one) && one != zero)
+                    {
+                        results.Add(step + line2Lookup[one]);
+                        //return step + line2Lookup[one];
+                    }
+
+                    if (!line1Lookup.ContainsKey(one))
+                    {
+                        line1Lookup.Add(one, step);
+                    }
                 }
 
-                if (one == two && one != zero)
+                if (step < line2Vectors.Count)
                 {
-                    return step*2;
+                    string two = line2Vectors[step].ToString();
+
+                    if (line1Lookup.ContainsKey(two) && two != zero)
+                    {
+                        results.Add(step + line1Lookup[two]);
+                        //return step + line1Lookup[two];
+                    }
+
+                    if (!line2Lookup.ContainsKey(two))
+                    {
+                        line2Lookup.Add(two, step);
+                    }
+                }
+
+                if (step < line2Vectors.Count && step < line1Vectors.Count)
+                {
+                    string one = line1Vectors[step].ToString();
+                    string two = line2Vectors[step].ToString();
+
+                    if (one == two && one != zero)
+                    {
+                        results.Add(step * 2);
+                        //return step * 2;
+
+                        //Don't add to lookup - they're already added.
+                    }
                 }
 
                 Console.WriteLine($"{step}/{line1Vectors.Count}/{line2Vectors.Count}");
                 step++;
             }
 
+            return results.Min();
         }
 
 

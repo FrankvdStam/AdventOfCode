@@ -28,7 +28,7 @@ namespace Cli
 
             int day = 3;
 
-            var activeDay = Days.FirstOrDefault(i => i.Day == day);
+            var activeDay = Days.First(i => i.Day == day);
 
             activeDay.ProblemOne();
             activeDay.ProblemTwo();
