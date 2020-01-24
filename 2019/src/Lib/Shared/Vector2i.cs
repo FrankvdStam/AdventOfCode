@@ -168,7 +168,7 @@ namespace Lib.Shared
         public List<Vector2i> PlotLine(Vector2i vec)
         {
             var line = PlotLine(X, Y, vec.X, vec.Y);
-            line.Add(vec);
+            //line.Add(vec);
             return line;
         }
 
