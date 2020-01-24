@@ -27,8 +27,8 @@ namespace Lib.Day08
                 twosCount[y] = CountNumber(y, 2);
             }
 
-            int maxZeroLayerIndex = zerosCount.ToList().IndexOf(zerosCount.Max());
-            var result = onesCount[maxZeroLayerIndex] * twosCount[maxZeroLayerIndex];
+            int minZeroLayerIndex = zerosCount.ToList().IndexOf(zerosCount.Min());
+            var result = onesCount[minZeroLayerIndex] * twosCount[minZeroLayerIndex];
 
         }
 
@@ -78,24 +78,30 @@ namespace Lib.Day08
             for (int x = 0; x < Width; x++)
             {
                 var color = _image[x, layer];
-                
+
+                if(color.R == number && color.G == number && color.B == number)
+                {
+                    count++;
+                }
+
+
                 //if(color.R == number || color.G == number || color.B == number)
                 //{
                 //    count++;
                 //}
 
-                if (color.R == number)
-                {
-                    count++;
-                }
-                if (color.G == number)
-                {
-                    count++;
-                }
-                if (color.B == number)
-                {
-                    count++;
-                }
+                //if (color.R == number)
+                //{
+                //    count++;
+                //}
+                //if (color.G == number)
+                //{
+                //    count++;
+                //}
+                //if (color.B == number)
+                //{
+                //    count++;
+                //}
             }
             return count;
         }
@@ -141,6 +147,17 @@ namespace Lib.Day08
                     Console.BackgroundColor = color;
                     Console.Write("#");
                 }
+            }
+
+            Console.SetCursorPosition(Width, Height);
+            Console.WriteLine("\n\n");
+
+            foreach (var unit in colorMap)
+            {
+                Console.Write(unit.Key + " - ");
+                Console.BackgroundColor = unit.Value;
+                Console.WriteLine(unit.Value);
+                Console.BackgroundColor = ConsoleColor.Black;
             }
         }
 
