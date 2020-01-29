@@ -82,7 +82,6 @@ namespace Lib.Shared
         private List<Vector2i> PlotLineLow(int x0, int y0, int x1, int y1)
         {
             List<Vector2i> line = new List<Vector2i>();
-
             int dx = x1 - x0;
             int dy = y1 - y0;
             int yi = 1;
@@ -141,35 +140,44 @@ namespace Lib.Shared
 
         private List<Vector2i> PlotLine(int x0, int y0, int x1, int y1)
         {
+            List<Vector2i> line = new List<Vector2i>();
             if (Math.Abs(y1 - y0) < Math.Abs(x1 - x0))
             {
                 if (x0 > x1)
                 {
-                    return PlotLineLow(x1, y1, x0, y0);
+                    line.Add(new Vector2i(x0, y0));//Origin
+                    var temp = PlotLineLow(x1, y1, x0, y0);
+                    temp.Reverse();
+                    line.AddRange(temp);
                 }
                 else
                 {
-                    return PlotLineLow(x0, y0, x1, y1);
+                    line.AddRange(PlotLineLow(x0, y0, x1, y1));
+                    line.Add(new Vector2i(x1, y1)); //Add end
                 }
             }
             else
             {
                 if (y0 > y1)
                 {
-                    return PlotLineHigh(x1, y1, x0, y0);
+                    line.Add(new Vector2i(x0, y0));//Origin
+                    var temp = PlotLineHigh(x1, y1, x0, y0);
+                    temp.Reverse();
+                    line.AddRange(temp);
                 }
                 else
                 {
-                    return PlotLineHigh(x0, y0, x1, y1);
+                    line.AddRange(PlotLineHigh(x0, y0, x1, y1));
+                    line.Add(new Vector2i(x1, y1)); //Add end
                 }
             }
+
+            return line;
         }
 
         public List<Vector2i> PlotLine(Vector2i vec)
         {
-            var line = PlotLine(X, Y, vec.X, vec.Y);
-            //line.Add(vec);
-            return line;
+            return PlotLine(X, Y, vec.X, vec.Y);
         }
 
         #endregion

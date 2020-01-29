@@ -12,16 +12,28 @@ namespace Lib.Day10
         public void ProblemOne()
         {
             var asteroids = ParseMap(Example1, out int width, out int height);
+            RenderMap(asteroids, width, height);
+            Console.SetCursorPosition(width, height);
+            Console.WriteLine("\n\nFound this map");
+            Console.ReadKey();
+            Console.Clear();
+
             var edges = GetOuterEdgeCoords(width, height);
+            RenderMap(edges, width, height);
+            Console.SetCursorPosition(width, height);
+            Console.WriteLine("\n\nFound these edges");
+            Console.ReadKey();
+            Console.Clear();
 
             Dictionary<Vector2i, int> results = new Dictionary<Vector2i, int>();
             foreach (var asteroid in asteroids)
             {
                 int count = CountVisibleAsteroids(asteroid, asteroids, edges);
                 results.Add(asteroid, count);
+                Console.SetCursorPosition(asteroid.X, asteroid.Y);
+                Console.Write(count);
+                Console.ReadKey();
             }
-
-            RenderMap(asteroids, width, height);
         }
 
         
@@ -43,7 +55,7 @@ namespace Lib.Day10
                     var line = position.PlotLine(edge);
                     foreach (var step in line)//:)
                     {
-                        if (asteroids.Contains(step))
+                        if (step != position && asteroids.Contains(step))
                         {
                             //Match!
                             //Increment the count - we just hit an asteroid. Everything else on this line is being blocked by this asteroid tho.
@@ -60,9 +72,7 @@ namespace Lib.Day10
                 }
             }
 
-
-
-            return 0;
+            return count;
         }
 
 
@@ -144,5 +154,11 @@ namespace Lib.Day10
 #####
 ....#
 ...##";
+
+       // .7..7
+       // .....
+       // 67775
+       // ....7
+       // ...87
     }
 }
