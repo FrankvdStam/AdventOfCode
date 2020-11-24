@@ -6,6 +6,6 @@ use crate::year2015::*;
 
 fn main()
 {
-    day05::problem1();
-    day05::problem2();
+    day06::problem1();
+    day06::problem2();
 }
