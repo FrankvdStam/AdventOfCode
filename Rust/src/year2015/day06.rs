@@ -117,9 +117,122 @@ pub fn problem1()
     println!("lights: {}", count);
 }
 
+
+
+
+
+
+fn increase_brightness_by_n(lights: &mut Vec<i32>, from: Vector2i, to: Vector2i, n: i32)
+{
+    for i in from.x..to.x+1
+    {
+        for j in from.y..to.y+1
+        {
+            let mut value = lights[(i + (j * 1000)) as usize];
+            //println!("{} {}", value, n);
+            if value + n < 0
+            {
+                value = 0;
+            }
+            else
+            {
+                value += n;
+            }
+
+            lights[(i + (j * 1000)) as usize] = value;
+        }
+    }
+}
+
+
 pub fn problem2()
 {
-    
+    let mut lights: Vec<i32> = Vec::with_capacity(1000*1000);
+
+
+    for _ in 0..1000*1000
+    {
+        lights.push(0);
+    }
+
+
+    for line in INPUT.split("\n")
+    {
+        let mut chars = line.chars().collect::<Vec<char>>();
+
+        //find the vectors
+        chars.push(';');
+        let mut numbers = Vec::new();
+        let mut start_index = 0;
+        let mut in_digit = false;
+
+        for i in 0..chars.len()
+        {
+            if chars[i].is_numeric()
+            {
+                if !in_digit
+                {
+                    start_index = i;
+                    in_digit = true;
+                }
+            }
+            else {
+                if in_digit
+                {
+                    in_digit = false;
+                    let mut string = String::new();
+                    for j in start_index..i
+                    {
+                        string.push(chars[j]);
+                    }
+                    numbers.push(string.parse::<i32>().unwrap());
+                }
+            }
+
+            //if( i == chars.len())
+            //{
+            //    let mut string = String::new();
+            //    for j in start_index..i
+            //    {
+            //        string.push(chars[j]);
+            //    }
+            //    numbers.push(string.parse::<i32>().unwrap());
+            //}
+        }
+
+        let from = Vector2i{ x: numbers[0], y: numbers[1] };
+        let to = Vector2i{ x: numbers[2], y: numbers[3] };
+
+
+
+        //now find what we have to do:
+        //Turn
+        if chars[1] == 'u'
+        {
+            //off
+            if chars[6] == 'f'
+            {
+                increase_brightness_by_n(&mut lights, from, to, -1);
+            }
+            //on
+            else
+            {
+                increase_brightness_by_n(&mut lights, from, to, 1);
+            }
+        }
+        //Toggle
+        else
+        {
+            increase_brightness_by_n(&mut lights, from, to, 2);
+        }
+    }
+
+    let mut count = 0;
+    for l in lights
+    {
+        count += l;
+    }
+    println!("lights: {}", count);
 }
 
 
