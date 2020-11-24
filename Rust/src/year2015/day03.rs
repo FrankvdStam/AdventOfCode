@@ -63,6 +63,36 @@ pub fn problem1()
 
 pub fn problem2()
 {
+    let mut count = 0;
+    let mut position1 = Vector2i {x: 0, y: 0};
+    let mut position2 = Vector2i {x: 0, y: 0};
+    let mut turn = true;
+    let mut visited: Vec<Vector2i> = Vec::new();
+    let mut new_position: Vector2i;// = Vector2i{x: 0, y: 0};
 
+    for c in INPUT.chars()
+    {
+        let direction = char_to_direction(c);
+        if turn
+        {
+            new_position = position1.add(&direction);
+            position1 = new_position;
+        }
+        else
+        {
+            new_position = position2.add(&direction);
+            position2 = new_position;
+        }
+
+        turn = !turn;
+
+        if !visited.contains(&new_position)
+        {
+            count += 1;
+        }
+        visited.push(new_position);
+    }
+
+    println!("Houses with at least 1 present: {}", count);
 
 }
