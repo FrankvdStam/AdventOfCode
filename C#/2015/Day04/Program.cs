@@ -57,7 +57,7 @@ namespace Day04
             }
         }
 
-        static void Main(string[] args)
+        static void Main2(string[] args)
         {
             MD5Hasher hasher = new MD5Hasher();
 
@@ -80,7 +80,7 @@ namespace Day04
         }
         #endregion
 
-        static void Main2(string[] args)
+        static void Main(string[] args)
         {
             ProblemOne(input);
             Console.ReadKey();
@@ -88,7 +88,7 @@ namespace Day04
 
         static void ProblemOne(string input)
         {
-            int count = 10000000;
+            int count = 0;
             MD5 md5 = System.Security.Cryptography.MD5.Create();
             StringBuilder sb = new StringBuilder();
             Dictionary<string, string> hashes = new Dictionary<string, string>(count);
