@@ -3,9 +3,6 @@ use crate::year2019::intcode_computer::computer::Computer;
 pub fn problem1()
 {
     let mut computer = Computer::from_str(INPUT);
-
-   // println!("at 225: {}", computer.memory_read(&Mode::Position, 225));
-
     computer.print_output = true;
     computer.input.push(1);
     computer.run();
@@ -14,23 +11,9 @@ pub fn problem1()
 
 pub fn problem2()
 {
-
-
-    let program = "3,3,1107,-1,8,3,4,3,99";
-
-    let mut computer = Computer::from_str(program);
+    let mut computer = Computer::from_str(INPUT);
     computer.print_output = true;
-    computer.print_disassembly = true;
-    //computer.break_pointer = Some(288);
-    computer.input.push(1);
-    computer.run();
-    println!("{}", computer.memory_to_string());
-
-    println!();
-    println!();
-
-    computer.reset_from_str(program);
-    computer.input.push(8);
+    computer.input.push(5);
     computer.run();
     println!("{}", computer.memory_to_string());
 }
