@@ -19,6 +19,25 @@ pub fn problem1()
 
 pub fn problem2()
 {
+    'outer: for noun in 0..100
+    {
+        for verb in 0..100
+        {
+            println!("{} {}", noun, verb);
+
+            let mut computer = Computer::from_str(INPUT);
+            computer.memory_write(1, noun);
+            computer.memory_write(2, verb);
+            computer.run();
+            let result = computer.memory_read(&Mode::Position, 0);
+
+            if result == 19690720
+            {
+                println!("Match! result: {}", 100 * noun + verb);
+                break 'outer;
+            }
+        }
+    }
 
 }
 
