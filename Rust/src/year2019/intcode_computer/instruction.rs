@@ -26,7 +26,7 @@ impl From<i64> for Mode
 }
 
 #[allow(dead_code)]
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Clone)]
 pub enum State
 {
     Running,

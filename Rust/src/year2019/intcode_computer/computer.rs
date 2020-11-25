@@ -80,7 +80,7 @@ impl Computer
         }
     }
 
-    pub fn step(&mut self)
+    pub fn step(&mut self) -> State
     {
         let instruction = Instruction::parse(&self.memory, self.instruction_pointer);
 
@@ -116,7 +116,10 @@ impl Computer
             {
                 self.memory_write(instruction.arguments[2], numbers[0] * numbers[1]);
             }
+            Opcode::Input =>
+            {
 
+            }
 
 
             Opcode::Halt =>
@@ -126,6 +129,7 @@ impl Computer
             _ => panic!("Opcode not implemented."),
         }
         self.instruction_pointer += instruction.size as u64;
+        return self.state.clone();
     }
     //============================================================================================================================
 }
