@@ -31,7 +31,7 @@ pub enum State
 {
     Running,
     WaitingForInput,
-    Output,
+    PushedOutput,
     Halt
 }
 

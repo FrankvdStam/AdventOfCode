@@ -1,6 +1,6 @@
 use crate::year2019::intcode_computer::instruction::{Instruction, State, Mode};
 use crate::year2019::intcode_computer::opcode::Opcode;
-
+use std::io::{self, Write};
 
 
 pub struct Computer
@@ -9,6 +9,10 @@ pub struct Computer
 
     instruction_pointer: u64,
     state: State,
+
+    //I/O
+    pub input:  Vec<i64>,
+    pub output: Vec<i64>,
 
     //Settings:
     pub print_disassembly: bool,
@@ -24,7 +28,11 @@ impl Computer
             memory: Vec::new(),
             instruction_pointer: 0,
             state: State::Running,
-            print_disassembly: false,
+
+            input: Vec::new(),
+            output: Vec::new(),
+
+            print_disassembly: true,
         }
     }
 
@@ -74,14 +82,40 @@ impl Computer
     //Code execution ============================================================================================================================
     pub fn run(&mut self)
     {
-        while self.state == State::Running
+        loop
         {
-            self.step();
+            let state = self.step();
+            match state
+            {
+                State::WaitingForInput =>
+                {
+                    print!("in: ");
+                    io::stdout().flush().unwrap();
+                    let mut buffer = String::new();
+                    io::stdin().read_line(&mut buffer).unwrap();
+                    let num = buffer.trim().parse::<i64>().unwrap();
+                    self.input.push(num);
+                    println!();
+                }
+                State::PushedOutput =>
+                {
+                    println!("out: {}", self.output[0]);
+                    self.output.remove(0);
+                }
+                State::Halt => return,
+
+                //In all other cases just keep running
+                _ => {}
+            }
         }
     }
 
+    //Breaks out on input
     pub fn step(&mut self) -> State
     {
+        //Clear any flags recieved previously
+        self.state = State::Running;
+
         let instruction = Instruction::parse(&self.memory, self.instruction_pointer);
 
         if self.print_disassembly
@@ -118,9 +152,26 @@ impl Computer
             }
             Opcode::Input =>
             {
-
+                if self.input.len() > 0
+                {
+                    let input = self.input[0];
+                    //Erase the value we just used as input
+                    self.input.remove(0);
+                    self.memory_write(instruction.arguments[0], input);
+                }
+                else
+                {
+                    //We have no input: Do not increment instruction pointer, break out so that input can be supplied
+                    self.state = State::WaitingForInput;
+                    return self.state.clone();
+                }
             }
-
+            Opcode::Output =>
+            {
+                self.output.push(numbers[0]);
+                //Notify consumers of step that we pushed an output, do increment the instruction pointer so that we don't loop.
+                self.state = State::PushedOutput;
+            }
 
             Opcode::Halt =>
             {

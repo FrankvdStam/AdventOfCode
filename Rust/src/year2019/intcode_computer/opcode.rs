@@ -43,6 +43,8 @@ impl Opcode
         {
             Opcode::Add             => return 3,
             Opcode::Multiply        => return 3,
+            Opcode::Input           => return 1,
+            Opcode::Output          => return 1,
             Opcode::Halt            => return 0,
             _ => panic!("Failed to get argument count for {}", self)
         }
