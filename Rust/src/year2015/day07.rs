@@ -1,6 +1,6 @@
 use std::str::FromStr;
 use std::fmt::Error;
-use std::collections::HashMap;
+//use std::collections::HashMap;
 
 pub fn problem1()
 {
@@ -12,46 +12,46 @@ pub fn problem1()
         instructions.push(instruction);
     }
 
-    //solve
-    let mut wire_values = HashMap::new();
-    let mut change = false;
-    loop
-    {
-        for mut i in instructions
-        {
-            //Only look at unsolved wires
-            if wire_values.contains_key(i.output_name.as_str())
-            {
-                match i.operator
-                {
-                    Operator::Value =>
-                    {
-                        wire_values.insert(i.output_name, i.output_value);
-                        change = true;
-                    }
-
-                    Operator::And =>
-                    {
-                        if wire_values.contains_key(i.input_a_name.as_str()) && wire_values.contains_key(i.input_b_name.as_str())
-                        {
-                            i.output_value = wire_values.get(i.input_a_name.as_str()).unwrap() & wire_values.get(i.input_a_name.as_str()).unwrap();
-                        }
-                    }
-                    Operator::Or =>
-                    {
-
-                    }
-                    Operator::LeftShift=> {}
-                    Operator::RightShift=> {}
-                    Operator::Not=> {}
-                }
-            }
-        }
-        if !change
-        {
-            break;
-        }
-    }
+   //// //solve
+   //// let mut wire_values = HashMap::new();
+   //// let mut change = false;
+   //// loop
+   //// {
+   ////     for i in &mut instructions
+   ////     {
+   ////         //Only look at unsolved wires
+   ////         if wire_values.contains_key(i.output_name.as_str())
+   ////         {
+   ////             match i.operator
+   ////             {
+   ////                 Operator::Value =>
+   ////                 {
+   ////                     wire_values.insert(&i.output_name, &i.output_value);
+   ////                     change = true;
+   ////                 }
+////
+   ////                 Operator::And =>
+   ////                 {
+   ////                     //if wire_values.contains_key(&i.input_a_name.as_str()) && wire_values.contains_key(&i.input_b_name.as_str())
+   ////                     //{
+   ////                     //    //i.output_value = wire_values.get(i.input_a_name.as_str()).unwrap() & wire_values.get(i.input_a_name.as_str()).unwrap();
+   ////                     //}
+   ////                 }
+   ////                 Operator::Or =>
+   ////                 {
+////
+   ////                 }
+   ////                 Operator::LeftShift=> {}
+   ////                 Operator::RightShift=> {}
+   ////                 Operator::Not=> {}
+   ////             }
+   ////         }
+   ////     }
+   ////     if !change
+   ////     {
+   ////         break;
+   ////     }
+   //// }
 
 }
 
