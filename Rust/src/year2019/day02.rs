@@ -1,5 +1,5 @@
 use crate::year2019::intcode_computer::computer::Computer;
-use crate::year2019::intcode_computer::enums::Mode;
+use crate::year2019::intcode_computer::instruction::Mode;
 
 pub fn problem1()
 {

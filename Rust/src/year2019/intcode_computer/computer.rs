@@ -1,6 +1,7 @@
-use crate::year2019::intcode_computer::enums::{State, Mode};
-use crate::year2019::intcode_computer::instruction::Instruction;
+use crate::year2019::intcode_computer::instruction::{Instruction, State, Mode};
 use crate::year2019::intcode_computer::opcode::Opcode;
+
+
 
 pub struct Computer
 {
