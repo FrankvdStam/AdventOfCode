@@ -141,7 +141,6 @@ impl Computer
         }
     }
 
-    //Breaks out on input
     pub fn step(&mut self) -> State
     {
         //Clear any flags recieved previously
@@ -153,8 +152,8 @@ impl Computer
             {
                  if self.instruction_pointer == number
                  {
-                     self.state == State::Break;
-                     return State::Break;
+                     self.state = State::Break;
+                     return self.state.clone();
                  }
             }
             _ => {}
