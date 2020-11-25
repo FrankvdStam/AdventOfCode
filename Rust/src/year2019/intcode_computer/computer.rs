@@ -1,13 +1,24 @@
-use crate::year2019::intcode_computer::instruction::{Instruction, State, Mode};
+use crate::year2019::intcode_computer::instruction::{Instruction, Mode};
 use crate::year2019::intcode_computer::opcode::Opcode;
-use std::io::{self, Write};
+use std::io::{self, Write, Read};
 
+#[allow(dead_code)]
+#[derive(PartialEq, Eq, Clone)]
+pub enum State
+{
+    Running,
+    WaitingForInput,
+    PushedOutput,
+    Break,
+    Halt,
+}
 
 pub struct Computer
 {
     memory: Vec<i64>,
 
     instruction_pointer: u64,
+    relative_base_pointer: u64,
     state: State,
 
     //I/O
@@ -17,6 +28,8 @@ pub struct Computer
     //Settings:
     pub print_disassembly: bool,
     pub print_output: bool,
+
+    pub break_pointer: Option<u64>,
 }
 
 impl Computer
@@ -28,6 +41,7 @@ impl Computer
         {
             memory: Vec::new(),
             instruction_pointer: 0,
+            relative_base_pointer: 0,
             state: State::Running,
 
             input: Vec::new(),
@@ -35,6 +49,7 @@ impl Computer
 
             print_disassembly: true,
             print_output: true,
+            break_pointer: None,
         }
     }
 
@@ -89,6 +104,7 @@ impl Computer
             let state = self.step();
             match state
             {
+                State::Running => {/*just keep running*/}
                 State::WaitingForInput =>
                 {
                     print!("in: ");
@@ -107,10 +123,20 @@ impl Computer
                         self.output.remove(0);
                     }
                 }
-                State::Halt => return,
+                State::Break =>
+                {
+                    println!("computer entered break mode. Press any key to continue.");
+                    io::stdout().flush().unwrap();
 
-                //In all other cases just keep running
-                _ => {}
+                    //Read so a keypress is required
+                    let mut buffer = [0, 10];
+                    io::stdin().read(&mut buffer).unwrap();
+
+                    //Clear this breakpoint to prevent a loop
+                    self.break_pointer = None;
+                    self.state = State::Running;
+                }
+                State::Halt => return,
             }
         }
     }
@@ -121,11 +147,24 @@ impl Computer
         //Clear any flags recieved previously
         self.state = State::Running;
 
-        let instruction = Instruction::parse(&self.memory, self.instruction_pointer);
+        match self.break_pointer
+        {
+            Some(number) =>
+            {
+                 if self.instruction_pointer == number
+                 {
+                     self.state == State::Break;
+                     return State::Break;
+                 }
+            }
+            _ => {}
+        }
 
+
+        let instruction = Instruction::parse(self.instruction_pointer, &self.memory);
         if self.print_disassembly
         {
-            println!("{}", instruction.disassemble());
+            println!("{}", instruction.disassemble(self.instruction_pointer, self.relative_base_pointer, &self.memory));
         }
 
         //Instead of fetching the arguments from memory at every twist and turn, we'll fetch them beforehand
@@ -173,9 +212,45 @@ impl Computer
             }
             Opcode::Output =>
             {
-                self.output.push(numbers[0]);
                 //Notify consumers of step that we pushed an output, do increment the instruction pointer so that we don't loop.
+                self.output.push(numbers[0]);
                 self.state = State::PushedOutput;
+            }
+            Opcode::JumpIfTrue =>
+            {
+                if numbers[0] != 0
+                {
+                    self.instruction_pointer = instruction.arguments[1] as u64;
+                    //Exit without incrementing the instruction pointer
+                    return self.state.clone();
+                }
+            }
+            Opcode::JumpIfFalse =>
+            {
+                if numbers[0] == 0
+                {
+                    self.instruction_pointer = instruction.arguments[1] as u64;
+                    //Exit without incrementing the instruction pointer
+                    return self.state.clone();
+                }
+            }
+            Opcode::LessThan =>
+            {
+                let mut num = 0;
+                if numbers[0] < numbers[1]
+                {
+                    num = 1;
+                }
+                self.memory_write(instruction.arguments[2], num);
+            }
+            Opcode::Equals =>
+            {
+                let mut num = 0;
+                if numbers[0] == numbers[1]
+                {
+                    num = 1;
+                }
+                self.memory_write(instruction.arguments[2], num);
             }
 
             Opcode::Halt =>
@@ -200,6 +275,14 @@ mod computer_tests
     use crate::year2019::intcode_computer::computer::Computer;
 
     const AMOUNT_OF_TESTS: usize = 11;
+
+
+    //3,9,8,9,10,9,4,9,99,-1,8 - Using position mode, consider whether the input is equal to 8; output 1 (if it is) or 0 (if it is not).
+    //3,9,7,9,10,9,4,9,99,-1,8 - Using position mode, consider whether the input is less than 8; output 1 (if it is) or 0 (if it is not).
+    //3,3,1108,-1,8,3,4,3,99 - Using immediate mode, consider whether the input is equal to 8; output 1 (if it is) or 0 (if it is not).
+    //3,3,1107,-1,8,3,4,3,99 - Using immediate mode, consider whether the input is less than 8; output 1 (if it is) or 0 (if it is not).
+
+
 
     const PROGRAMS: [&'static str; AMOUNT_OF_TESTS] = [
         "1,0,0,3,99",

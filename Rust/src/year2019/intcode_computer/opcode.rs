@@ -22,12 +22,12 @@ impl fmt::Display for Opcode {
         match *self {
             Opcode::Add                => write!(f, "ADD"),
             Opcode::Multiply           => write!(f, "MUL"),
-            Opcode::Input              => write!(f, "IPT"),
-            Opcode::Output             => write!(f, "OPT"),
+            Opcode::Input              => write!(f, "INP"),
+            Opcode::Output             => write!(f, "OUT"),
             Opcode::JumpIfTrue         => write!(f, "JIT"),
             Opcode::JumpIfFalse        => write!(f, "JIF"),
             Opcode::LessThan           => write!(f, "LTN"),
-            Opcode::Equals             => write!(f, "UQA"),
+            Opcode::Equals             => write!(f, "EQL"),
             Opcode::AdjustRelativeBase => write!(f, "ARB"),
             Opcode::Halt               => write!(f, "HLT"),
         }
@@ -39,14 +39,18 @@ impl Opcode
 {
     pub fn get_argument_count(&self) -> usize
     {
-        match self
+        return match self
         {
-            Opcode::Add             => return 3,
-            Opcode::Multiply        => return 3,
-            Opcode::Input           => return 1,
-            Opcode::Output          => return 1,
-            Opcode::Halt            => return 0,
-            _ => panic!("Failed to get argument count for {}", self)
+            Opcode::Add                 => 3,
+            Opcode::Multiply            => 3,
+            Opcode::Input               => 1,
+            Opcode::Output              => 1,
+            Opcode::JumpIfTrue          => 2,
+            Opcode::JumpIfFalse         => 2,
+            Opcode::LessThan            => 3,
+            Opcode::Equals              => 3,
+            Opcode::AdjustRelativeBase  => 1,
+            Opcode::Halt                => 0,
         }
     }
 }

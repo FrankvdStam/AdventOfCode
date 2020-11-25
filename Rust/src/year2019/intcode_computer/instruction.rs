@@ -25,16 +25,6 @@ impl From<i64> for Mode
     }
 }
 
-#[allow(dead_code)]
-#[derive(PartialEq, Eq, Clone)]
-pub enum State
-{
-    Running,
-    WaitingForInput,
-    PushedOutput,
-    Halt
-}
-
 pub struct Instruction
 {
     pub opcode: Opcode,
@@ -58,7 +48,7 @@ impl Instruction
         }
     }
 
-    pub fn parse(program: &Vec<i64>, instruction_pointer: u64) -> Self
+    pub fn parse(instruction_pointer: u64, program: &Vec<i64>) -> Self
     {
         let mut instruction = Instruction::new();
 
@@ -113,34 +103,43 @@ impl Instruction
     }
 
     #[allow(dead_code)]
-    pub fn disassemble(&self) -> String
+    pub fn disassemble(&self, instruction_pointer: u64, relative_base_pointer: u64, memory: &Vec<i64>) -> String
     {
         let mut disassembly = String::new();
+        disassembly.push_str(format!("{: <8}", instruction_pointer.to_string()).as_str());
 
         //disassemble
-        disassembly.push_str(self.opcode.to_string().as_str());
-        disassembly.push(' ');
+        disassembly.push_str(format!("{: <8}", self.opcode.to_string()).as_str());
 
         for i in 0..self.argument_count
         {
+            let mut argument = String::new();
             match self.argument_modes[i as usize]
             {
                 Mode::Position =>
-                    {
-                        disassembly.push('P');
-                        disassembly.push_str(self.arguments[i as usize].to_string().as_str());
-                    }
+                {
+                    argument.push('[');
+                    argument.push_str(self.arguments[i as usize].to_string().as_str());
+                    argument.push(']');
+                    argument.push_str(memory[self.arguments[i as usize] as usize].to_string().as_str());
+
+
+                }
                 Mode::Immediate =>
-                    {
-                        disassembly.push('I');
-                        disassembly.push_str(self.arguments[i as usize].to_string().as_str());
-                    }
+                {
+                    argument.push_str(self.arguments[i as usize].to_string().as_str());
+                }
                 Mode::Relative =>
-                    {
-                        disassembly.push('R');
-                        disassembly.push_str(self.arguments[i as usize].to_string().as_str());
-                    }
+                {
+                    argument.push_str(self.arguments[i as usize].to_string().as_str());
+                    argument.push('+');
+                    argument.push_str(relative_base_pointer.to_string().as_str());
+                    argument.push('*');
+                    argument.push(' ');
+                    argument.push_str(memory[self.arguments[i as usize] as usize + relative_base_pointer as usize].to_string().as_str());
+                }
             }
+            disassembly.push_str(format!("{: <12}", argument).as_str());
             disassembly.push(' ');
         }
 

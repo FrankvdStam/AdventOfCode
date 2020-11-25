@@ -1,6 +1,3 @@
-#[allow(dead_code)]
-#[allow(unused_imports)]
-
 mod utils;
 mod year2015;
 mod year2019;
@@ -10,6 +7,6 @@ use crate::year2019::day05::problem2;
 
 fn main()
 {
-    problem1();
+    //problem1();
     problem2();
 }
