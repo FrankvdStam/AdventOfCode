@@ -4,6 +4,7 @@ use crate::year2019::intcode_computer::instruction::Instruction;
 use crate::year2019::intcode_computer::enums::Mode;
 use crate::year2019::intcode_computer::opcode::Opcode;
 
+#[allow(dead_code)]
 pub struct Program
 {
     original_data: String,
@@ -39,6 +40,7 @@ impl Program
         return self.data.clone();
     }
 
+    #[allow(dead_code)]
     pub fn disassemble(&self) -> String
     {
         let mut disassembly = String::new();

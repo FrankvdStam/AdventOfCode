@@ -30,7 +30,7 @@ impl Instruction
         let mut instruction = Instruction::new();
 
         //Parse the opcode by splitting the digits
-        let mut num: i64 = program[instruction_pointer as usize];
+        let num: i64 = program[instruction_pointer as usize];
         let mut digits: Vec<i64> = digits(num).collect();
         digits.reverse();
 
@@ -68,5 +68,40 @@ impl Instruction
         }
 
         return instruction;
+    }
+
+    #[allow(dead_code)]
+    pub fn disassemble(&self) -> String
+    {
+        let mut disassembly = String::new();
+
+        //disassemble
+        disassembly.push_str(self.opcode.to_string().as_str());
+        disassembly.push(' ');
+
+        for i in 0..self.argument_count
+        {
+            match self.argument_modes[i as usize]
+            {
+                Mode::Position =>
+                    {
+                        disassembly.push('P');
+                        disassembly.push_str(self.arguments[i as usize].to_string().as_str());
+                    }
+                Mode::Immediate =>
+                    {
+                        disassembly.push('I');
+                        disassembly.push_str(self.arguments[i as usize].to_string().as_str());
+                    }
+                Mode::Relative =>
+                    {
+                        disassembly.push('R');
+                        disassembly.push_str(self.arguments[i as usize].to_string().as_str());
+                    }
+            }
+            disassembly.push(' ');
+        }
+
+        return disassembly;
     }
 }

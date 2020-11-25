@@ -1,5 +1,4 @@
 use std::convert::From;
-use core::fmt;
 
 #[derive(PartialEq, Eq)]
 pub enum Mode
@@ -24,6 +23,7 @@ impl From<i64> for Mode
     }
 }
 
+#[allow(dead_code)]
 #[derive(PartialEq, Eq)]
 pub enum State
 {

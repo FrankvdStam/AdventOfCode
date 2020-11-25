@@ -1,6 +1,5 @@
 use std::convert::From;
 use core::fmt;
-use std::fmt::Error;
 
 #[derive(PartialEq, Eq)]
 pub enum Opcode
@@ -31,7 +30,6 @@ impl fmt::Display for Opcode {
             Opcode::Equals             => write!(f, "UQA"),
             Opcode::AdjustRelativeBase => write!(f, "ARB"),
             Opcode::Halt               => write!(f, "HLT"),
-            _ => panic!("Failed to format opcode.")
         }
     }
 }

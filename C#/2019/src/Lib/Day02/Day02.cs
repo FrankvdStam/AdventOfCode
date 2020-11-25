@@ -19,9 +19,11 @@ namespace Lib.Day02
             IntCodeComputer computer = new IntCodeComputer(Input);
             computer.Program[1] = 12;
             computer.Program[2] = 2;
+            computer.PrintDecompiledInstructions = true;
             computer.Run();
             long value = computer.Program[0];
             Console.WriteLine($"Halted with position 0: {value}");
+            Console.ReadKey();
         }
 
         public void ProblemTwo()
