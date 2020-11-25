@@ -57,7 +57,6 @@ impl Instruction
                 digits.push(0);
             }
 
-
             //Parse the modes of the arguments and the numeric values
             instruction.argument_count = digits.len() as u8;
             for i in 0..digits.len()

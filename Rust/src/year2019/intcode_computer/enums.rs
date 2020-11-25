@@ -1,6 +1,7 @@
 use std::convert::From;
 use core::fmt;
 
+#[derive(PartialEq, Eq)]
 pub enum Mode
 {
     Position = 0,
@@ -23,6 +24,7 @@ impl From<i64> for Mode
     }
 }
 
+#[derive(PartialEq, Eq)]
 pub enum State
 {
     Running,
