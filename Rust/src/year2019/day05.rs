@@ -3,8 +3,9 @@ use crate::year2019::intcode_computer::computer::Computer;
 pub fn problem1()
 {
     let mut computer = Computer::from_str(INPUT);
+    computer.print_output = true;
     computer.run();
-    println!("Thermal Environment Supervision Terminal result: ");
+    println!("{}", computer.memory_to_string());
 }
 
 pub fn problem2()
