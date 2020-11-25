@@ -14,24 +14,23 @@ pub fn problem1()
 
 pub fn problem2()
 {
-    //3,9,8,9,10,9,4,9,99,-1,8 - Using position mode, consider whether the input is equal to 8; output 1 (if it is) or 0 (if it is not).
-    //in 1 out 0 mem 3,9,8,9,10,9,4,9,99,0,8
-    //in 8 out 1 mem 3,9,8,9,10,9,4,9,99,1,8
-
-    //3,9,7,9,10,9,4,9,99,-1,8 - Using position mode, consider whether the input is less than 8; output 1 (if it is) or 0 (if it is not).
-
-    //3,3,1108,-1,8,3,4,3,99 - Using immediate mode, consider whether the input is equal to 8; output 1 (if it is) or 0 (if it is not).
-
-    //3,3,1107,-1,8,3,4,3,99 - Using immediate mode, consider whether the input is less than 8; output 1 (if it is) or 0 (if it is not).
 
 
+    let program = "3,3,1107,-1,8,3,4,3,99";
 
-
-    let mut computer = Computer::from_str("3,9,8,9,10,9,4,9,99,-1,8");
+    let mut computer = Computer::from_str(program);
     computer.print_output = true;
     computer.print_disassembly = true;
-    computer.break_pointer = Some(288);
+    //computer.break_pointer = Some(288);
     computer.input.push(1);
+    computer.run();
+    println!("{}", computer.memory_to_string());
+
+    println!();
+    println!();
+
+    computer.reset_from_str(program);
+    computer.input.push(8);
     computer.run();
     println!("{}", computer.memory_to_string());
 }
