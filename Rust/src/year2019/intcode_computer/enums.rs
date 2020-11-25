@@ -17,7 +17,6 @@ impl From<i64> for Mode
             0 => return Mode::Position,
             1 => return Mode::Immediate,
             2 => return Mode::Relative,
-
             _ => panic!("Failed to parse mode {}", num)
         }
     }

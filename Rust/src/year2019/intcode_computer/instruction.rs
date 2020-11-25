@@ -45,7 +45,16 @@ impl Instruction
         else
         {
             instruction.opcode = Opcode::from(digits[0]);
+
+
+            //Remove the opcode itself so that only arguments remain.
+            //If there are any modes specified, we'll have to remove 2 digits.
             digits.remove(0);
+            if digits.len() > 0
+            {
+                digits.remove(0);
+            }
+
 
             //Figure out how many arguments to expect
             let argument_count = instruction.opcode.get_argument_count();

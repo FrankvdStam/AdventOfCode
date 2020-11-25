@@ -1,7 +1,6 @@
 use crate::year2019::intcode_computer::computer::Computer;
 use crate::year2019::intcode_computer::enums::Mode;
 
-
 pub fn problem1()
 {
     let mut computer = Computer::from_str(INPUT);
@@ -15,6 +14,7 @@ pub fn problem1()
 
     let result = computer.memory_read(&Mode::Position, 0);
     println!("1202 program alarm: {}", result);
+    println!("{}", computer.memory_to_string());
 }
 
 pub fn problem2()
@@ -34,6 +34,7 @@ pub fn problem2()
             if result == 19690720
             {
                 println!("Match! result: {}", 100 * noun + verb);
+                println!("{}", computer.memory_to_string());
                 break 'outer;
             }
         }
