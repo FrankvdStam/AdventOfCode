@@ -189,6 +189,9 @@ impl Computer
 
     pub fn step(&mut self) -> State
     {
+        //========================================================================================================================================================================
+        //Parsing
+
         //Clear any flags recieved previously
         self.state = State::Running;
 
@@ -207,10 +210,16 @@ impl Computer
 
 
         let instruction = Instruction::parse(self.instruction_pointer, &self.memory);
+
         if self.print_disassembly
         {
             println!("{}", instruction.disassemble(self.instruction_pointer, self.relative_base_pointer, &self));
         }
+
+
+        //========================================================================================================================================================================
+        //Pre calculation: calculating a couple things here that will make life easier when executing the instructions
+
 
         //Instead of fetching the arguments from memory at every twist and turn, we'll fetch them beforehand
         //we will only be fetching the correct amount else we might be reading outside of our memory
@@ -230,7 +239,7 @@ impl Computer
         if instruction.argument_count > 0
         {
             //On instructions that can write, the last argument is always the write address
-            let last_argument_index = instruction.argument_count-1;
+            let last_argument_index = (instruction.argument_count-1) as usize;
             write_address = match instruction.argument_modes[last_argument_index]
             {
                 Mode::Relative => self.relative_base_pointer + instruction.arguments[last_argument_index],
@@ -244,15 +253,18 @@ impl Computer
         //Take this for example: 1,0,0,0,99
         //Will try to read the 3rd 0 and write the result to location 1. The result should be in location 0.
 
+        //========================================================================================================================================================================
+        //Executing
+
         match instruction.opcode
         {
             Opcode::Add =>
             {
-                self.memory_write(instruction.arguments[2], numbers[0] + numbers[1]);
+                self.memory_write(write_address, numbers[0] + numbers[1]);
             }
             Opcode::Multiply =>
             {
-                self.memory_write(instruction.arguments[2], numbers[0] * numbers[1]);
+                self.memory_write(write_address, numbers[0] * numbers[1]);
             }
             Opcode::Input =>
             {
@@ -262,14 +274,7 @@ impl Computer
                     //Erase the value we just used as input
                     self.input.remove(0);
 
-                    //Figure out where to write
-                    let output_address = match instruction.argument_modes[0]
-                    {
-                        Mode::Relative  => self.relative_base_pointer + instruction.arguments[0],
-                        _               => instruction.arguments[0],
-                    };
-
-                    self.memory_write(address, input);
+                    self.memory_write(write_address, input);
                 }
                 else
                 {
@@ -309,7 +314,7 @@ impl Computer
                 {
                     num = 1;
                 }
-                self.memory_write(instruction.arguments[2], num);
+                self.memory_write(write_address, num);
             }
             Opcode::Equals =>
             {
@@ -318,7 +323,7 @@ impl Computer
                 {
                     num = 1;
                 }
-                self.memory_write(instruction.arguments[2], num);
+                self.memory_write(write_address, num);
             }
             Opcode::AdjustRelativeBase =>
             {

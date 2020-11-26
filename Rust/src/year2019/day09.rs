@@ -12,7 +12,12 @@ pub fn problem1()
 
 pub fn problem2()
 {
-
+    let mut computer = Computer::from_str(INPUT);
+    computer.print_output = true;
+    computer.print_disassembly = true;
+    computer.input.push(2);
+    computer.run();
+    println!("{}", computer.memory_to_string());
 }
 
 static EXAMPLE: &'static str = "1102,34915192,34915192,7,4,7,99,0";
