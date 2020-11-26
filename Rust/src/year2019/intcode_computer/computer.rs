@@ -109,7 +109,16 @@ impl Computer
             let instruction = Instruction::parse(ptr, &self.memory);
             println!("{}", instruction.disassemble(ptr, self.relative_base_pointer, &self.memory));
             ptr += instruction.size as u64;
+            if instruction.opcode == Opcode::Halt
+            {
+                break;
+            }
         }
+    }
+
+    pub fn get_state(&self) -> State
+    {
+        return self.state.clone();
     }
     //============================================================================================================================
 

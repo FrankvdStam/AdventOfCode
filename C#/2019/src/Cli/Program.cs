@@ -26,12 +26,13 @@ namespace Cli
             }
             
 
-            int day = 2;
+            int day = 7;
 
             var activeDay = Days.First(i => i.Day == day);
 
             activeDay.ProblemOne();
             activeDay.ProblemTwo();
+            Console.ReadKey();
         }
     }
 }

@@ -8,10 +8,12 @@ use std::time::Instant;
 
 fn main()
 {
-    let start = Instant::now();
-
+    let mut start = Instant::now();
     problem1();
-    problem2();
+    println!("First problem executed in: {:?}", start.elapsed());
 
-    println!("Ran main in: {:?}", start.elapsed());
+
+    start = Instant::now();
+    problem2();
+    println!("Second problem executed in: {:?}", start.elapsed());
 }
