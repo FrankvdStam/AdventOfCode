@@ -79,8 +79,8 @@ pub fn problem1()
             //}
         }
 
-        let from = Vector2i{ x: numbers[0], y: numbers[1] };
-        let to = Vector2i{ x: numbers[2], y: numbers[3] };
+        let from = Vector2i{ x: numbers[0] as i64, y: numbers[1] as i64 };
+        let to = Vector2i{ x: numbers[2] as i64, y: numbers[3] as i64 };
 
 
 
@@ -200,8 +200,8 @@ pub fn problem2()
             //}
         }
 
-        let from = Vector2i{ x: numbers[0], y: numbers[1] };
-        let to = Vector2i{ x: numbers[2], y: numbers[3] };
+        let from = Vector2i{ x: numbers[0] as i64, y: numbers[1] as i64 };
+        let to = Vector2i{ x: numbers[2] as i64, y: numbers[3] as i64 };
 
 
 

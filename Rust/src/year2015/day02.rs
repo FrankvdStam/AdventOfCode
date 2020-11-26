@@ -12,9 +12,9 @@ pub fn problem1()
     {
         let dimensions = b.split("x").collect::<Vec<&str>>();
 
-        length = dimensions[0].parse::<i32>().unwrap();
-        width  = dimensions[1].parse::<i32>().unwrap();
-        height = dimensions[2].parse::<i32>().unwrap();
+        length = dimensions[0].parse::<i64>().unwrap();
+        width  = dimensions[1].parse::<i64>().unwrap();
+        height = dimensions[2].parse::<i64>().unwrap();
 
         surface_area += (2*length*width) + (2*width*height) + (2*length*height);
         surface_area += min3(length*width, width*height, length*height);
