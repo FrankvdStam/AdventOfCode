@@ -1,5 +1,8 @@
 use crate::year2019::intcode_computer::computer::{Computer, State};
 use crate::utils::vector2i::Vector2i;
+use std::{thread, time};
+use std::io;
+use std::io::Write;
 
 const WIDTH: usize = 45;
 const HEIGHT: usize = 23;
@@ -77,18 +80,110 @@ pub fn problem1()
             _ => break
         }
     }
-    render(WIDTH, HEIGHT, &frame_buffer);
+    render(WIDTH, HEIGHT, &frame_buffer, 0);
     println!("blocks: {}", counter);
 }
 
 
 pub fn problem2()
 {
+
+    let mut received_input = false;
+    let mut frame_buffer: Vec<char> = vec![' '; WIDTH * HEIGHT];
+    let mut score = 0;
+
+    let mut computer = Computer::from_str(INPUT);
+    computer.print_output = false;
+    computer.print_disassembly = false;
+    computer.memory_write(0, 2);
+    //computer.input.push(1);
+
+    let mut paddle_position = Vector2i::new(0, 0);
+    let mut ball_position = Vector2i::new(0, 0);
+
+    let mut output_state = OutputState::X;
+    let mut vector = Vector2i::new(0, 0);
+
+    loop
+    {
+        match computer.step()
+        {
+            State::Running => {}
+            State::WaitingForInput =>
+            {
+                received_input = true;
+                //neutral 0.
+                //left -1.
+                //right 1.
+
+                if ball_position.x == paddle_position.x
+                {
+                    computer.input.push(0);
+                }
+
+                if ball_position.x > paddle_position.x
+                {
+                    computer.input.push(1);
+                }
+
+                if ball_position.x < paddle_position.x
+                {
+                    computer.input.push(-1);
+                }
+            }
+            State::PushedOutput =>
+            {
+                let output = computer.output[0];
+                computer.output.remove(0);
+
+                match output_state
+                {
+                    OutputState::X => vector.x = output,
+                    OutputState::Y => vector.y = output,
+                    OutputState::Type =>
+                    {
+                        if vector.x == -1 && vector.y == 0
+                        {
+                            score = output;
+                        }
+                        else {
+                            frame_buffer[(vector.x + vector.y * WIDTH as i64) as usize] = tile_char_from_num(output);
+
+                            if received_input
+                            {
+                                render(WIDTH, HEIGHT, &frame_buffer, score);
+                                //thread::sleep(time::Duration::from_millis(200));
+                            }
+
+                            if frame_buffer[(vector.x + vector.y * WIDTH as i64) as usize] == '='
+                            {
+                                paddle_position = vector;
+                            }
+
+                            if frame_buffer[(vector.x + vector.y * WIDTH as i64) as usize] == '*'
+                            {
+                                ball_position = vector;
+                            }
+                        }
+                    },
+                }
+
+                output_state =  match output_state
+                {
+                    OutputState::X => OutputState::Y,
+                    OutputState::Y => OutputState::Type,
+                    OutputState::Type => OutputState::X,
+                }
+            }
+            _ => break
+        }
+    }
+    render(WIDTH, HEIGHT, &frame_buffer, score);
 }
 
 
 
-fn render(width: usize, height: usize, frame_buffer: &Vec<char>)
+fn render(width: usize, height: usize, frame_buffer: &Vec<char>, score: i64)
 {
     println!();
     println!();
@@ -101,6 +196,10 @@ fn render(width: usize, height: usize, frame_buffer: &Vec<char>)
         }
         println!();
     }
+    println!("score: {}", score);
+
+
+    io::stdout().flush().unwrap();
 }
 
 

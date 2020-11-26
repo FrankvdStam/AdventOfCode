@@ -4,6 +4,7 @@ use crate::year2019::intcode_computer::computer::{Computer, State};
 use crate::year2019::day11::OutputState::{PaintColor, TurnDirection};
 use crate::utils::math::difference;
 
+
 #[derive(PartialEq, Eq)]
 enum OutputState
 {
@@ -305,7 +306,6 @@ pub fn render(hull: HashMap<String, bool>, min: Vector2i, max: Vector2i)
         }
         println!();
     }
-
 }
 
 
