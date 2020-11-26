@@ -2,6 +2,7 @@
 use crate::utils::math::digits;
 use std::convert::From;
 use crate::year2019::intcode_computer::opcode::Opcode;
+use crate::year2019::intcode_computer::computer::Computer;
 
 #[derive(PartialEq, Eq)]
 pub enum Mode
@@ -32,6 +33,7 @@ pub struct Instruction
     pub argument_count: u8,
     pub arguments: Vec<i64>,
     pub argument_modes: Vec<Mode>,
+    pub write_address: u64,
 }
 
 impl Instruction
@@ -45,6 +47,7 @@ impl Instruction
             argument_count: 0,
             arguments: Vec::new(),
             argument_modes: Vec::new(),
+            write_address: 0,
         }
     }
 
@@ -64,7 +67,7 @@ impl Instruction
             instruction.opcode = Opcode::Halt;
             instruction.size = 2;
         }
-        //else instruction width is always 1
+        //else instruction data is always 1 while it might take 2 digits (trailing 0)
         else
         {
             instruction.opcode = Opcode::from(digits[0]);
@@ -103,7 +106,7 @@ impl Instruction
     }
 
     #[allow(dead_code)]
-    pub fn disassemble(&self, instruction_pointer: u64, relative_base_pointer: u64, memory: &Vec<i64>) -> String
+    pub fn disassemble(&self, instruction_pointer: u64, relative_base_pointer: i64, computer: &Computer) -> String
     {
         let mut disassembly = String::new();
         disassembly.push_str(format!("{: <8}", instruction_pointer.to_string()).as_str());
@@ -121,9 +124,7 @@ impl Instruction
                     argument.push('[');
                     argument.push_str(self.arguments[i as usize].to_string().as_str());
                     argument.push(']');
-                    argument.push_str(memory[self.arguments[i as usize] as usize].to_string().as_str());
-
-
+                    argument.push_str( computer.memory_read(&Mode::Position, self.arguments[i as usize]).to_string().as_str());
                 }
                 Mode::Immediate =>
                 {
@@ -136,7 +137,7 @@ impl Instruction
                     argument.push_str(relative_base_pointer.to_string().as_str());
                     argument.push('*');
                     argument.push(' ');
-                    argument.push_str(memory[self.arguments[i as usize] as usize + relative_base_pointer as usize].to_string().as_str());
+                    argument.push_str(computer.memory_read(&Mode::Position, self.arguments[i as usize] + relative_base_pointer as i64).to_string().as_str());
                 }
             }
             disassembly.push_str(format!("{: <12}", argument).as_str());

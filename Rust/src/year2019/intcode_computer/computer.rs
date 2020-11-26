@@ -18,7 +18,7 @@ pub struct Computer
     memory: Vec<i64>,
 
     instruction_pointer: u64,
-    relative_base_pointer: u64,
+    relative_base_pointer: i64,
     state: State,
 
     //I/O
@@ -91,13 +91,33 @@ impl Computer
         match mode
         {
             Mode::Immediate => return value,
-            Mode::Position => return self.memory[value as usize],
-            _ => panic!("Memory read for this mode not implemented.")
+            Mode::Relative =>
+            {
+                let address = self.relative_base_pointer + value;
+                if address >= self.memory.len() as i64
+                {
+                    return 0;
+                }
+                return self.memory[address as usize];
+            }
+            Mode::Position => {
+                if value >= self.memory.len() as i64
+                {
+                    return 0;
+                }
+                return self.memory[value as usize]
+            },
+            //_ => panic!("Memory read for this mode not implemented.")
         }
     }
 
     pub fn memory_write(&mut self, location: i64, value: i64)
     {
+        //If memory is too small, grow it to the requested size
+        if location >= self.memory.len() as i64
+        {
+            self.memory.resize((location + 1) as usize, 0);
+        }
         self.memory[location as usize] = value;
     }
 
@@ -107,7 +127,7 @@ impl Computer
         loop
         {
             let instruction = Instruction::parse(ptr, &self.memory);
-            println!("{}", instruction.disassemble(ptr, self.relative_base_pointer, &self.memory));
+            println!("{}", instruction.disassemble(ptr, self.relative_base_pointer, &self));
             ptr += instruction.size as u64;
             if instruction.opcode == Opcode::Halt
             {
@@ -189,7 +209,7 @@ impl Computer
         let instruction = Instruction::parse(self.instruction_pointer, &self.memory);
         if self.print_disassembly
         {
-            println!("{}", instruction.disassemble(self.instruction_pointer, self.relative_base_pointer, &self.memory));
+            println!("{}", instruction.disassemble(self.instruction_pointer, self.relative_base_pointer, &self));
         }
 
         //Instead of fetching the arguments from memory at every twist and turn, we'll fetch them beforehand
@@ -203,6 +223,21 @@ impl Computer
                 numbers[i] = self.memory_read(&instruction.argument_modes[i], instruction.arguments[i]);
             }
         }
+
+        //write address - even though early on it is suggested that the write address is always in position mode, it can also be relative.
+        //We can figure out the write address beforehand, using the count of arguments.
+        let mut write_address = 0;
+        if instruction.argument_count > 0
+        {
+            //On instructions that can write, the last argument is always the write address
+            let last_argument_index = instruction.argument_count-1;
+            write_address = match instruction.argument_modes[last_argument_index]
+            {
+                Mode::Relative => self.relative_base_pointer + instruction.arguments[last_argument_index],
+                _ => instruction.arguments[last_argument_index]
+            }
+        }
+
 
         //Note: when writing to memory, the raw value from the instruction is used.
         //That is because the output location should always be seen as immediate even if it's mode is position.
@@ -226,7 +261,15 @@ impl Computer
                     let input = self.input[0];
                     //Erase the value we just used as input
                     self.input.remove(0);
-                    self.memory_write(instruction.arguments[0], input);
+
+                    //Figure out where to write
+                    let output_address = match instruction.argument_modes[0]
+                    {
+                        Mode::Relative  => self.relative_base_pointer + instruction.arguments[0],
+                        _               => instruction.arguments[0],
+                    };
+
+                    self.memory_write(address, input);
                 }
                 else
                 {
@@ -277,12 +320,16 @@ impl Computer
                 }
                 self.memory_write(instruction.arguments[2], num);
             }
+            Opcode::AdjustRelativeBase =>
+            {
+                self.relative_base_pointer += numbers[0];
+            }
 
             Opcode::Halt =>
             {
                 self.state = State::Halt;
             }
-            _ => panic!("Opcode not implemented."),
+            //_ => panic!("Opcode not implemented."),
         }
         self.instruction_pointer += instruction.size as u64;
         return self.state.clone();

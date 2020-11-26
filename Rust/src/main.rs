@@ -2,8 +2,8 @@ mod utils;
 mod year2015;
 mod year2019;
 
-use crate::year2019::day07::problem1;
-use crate::year2019::day07::problem2;
+use crate::year2019::day09::problem1;
+use crate::year2019::day09::problem2;
 use std::time::Instant;
 
 fn main()
