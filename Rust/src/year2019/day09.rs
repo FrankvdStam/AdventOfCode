@@ -14,7 +14,7 @@ pub fn problem2()
 {
     let mut computer = Computer::from_str(INPUT);
     computer.print_output = true;
-    computer.print_disassembly = true;
+    computer.print_disassembly = false;
     computer.input.push(2);
     computer.run();
     println!("{}", computer.memory_to_string());
