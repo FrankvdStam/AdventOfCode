@@ -1,6 +1,5 @@
 use crate::year2019::intcode_computer::computer::{Computer, State};
 use crate::utils::vector2i::Vector2i;
-use std::{thread, time};
 use std::io;
 use std::io::Write;
 
