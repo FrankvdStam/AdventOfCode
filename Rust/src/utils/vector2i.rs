@@ -1,8 +1,8 @@
 
 pub struct Vector2i
 {
-    pub(crate) x: i64,
-    pub(crate) y: i64,
+    pub x: i64,
+    pub y: i64,
 }
 
 impl Copy for Vector2i { }
