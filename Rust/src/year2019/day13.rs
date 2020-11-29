@@ -202,6 +202,11 @@ fn render(width: usize, height: usize, frame_buffer: &Vec<char>, score: i64)
 }
 
 
+struct ArcadeMachine
+{
+
+}
+
 
 
 
