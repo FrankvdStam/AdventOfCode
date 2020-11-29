@@ -126,7 +126,33 @@ fn print_images(layers: &Vec<Image>)
     }
 }
 
+fn render_image(width: usize, height: usize, layers: &Vec<Image>) -> Image
+{
+    let mut render = Image::new(width, height);
 
+    //Fill pixels of the render by going down the stack of layers
+
+    for y in 0..height
+    {
+        for x in 0..width
+        {
+            render.pixels[x + y * width] = 2;
+
+            'imageloop: for image in layers
+            {
+                let pixel = image.pixels[x + y * width];
+
+                //if not transparent
+                if pixel != 2
+                {
+                    render.pixels[x + y * width] = pixel;
+                    break 'imageloop;
+                }
+            }
+        }
+    }
+    return render;
+}
 
 
 
@@ -154,7 +180,16 @@ pub fn problem1()
 
 pub fn problem2()
 {
+    let images = parse_images(25, 6, INPUT);
+    print_images(&images);
 
+    let render = render_image(25, 6, &images);
+
+    println!();
+    println!();
+    println!();
+
+    render.print();
 }
 
 
