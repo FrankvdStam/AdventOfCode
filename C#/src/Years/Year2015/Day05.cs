@@ -6,18 +6,28 @@ using Years.Utils;
 
 namespace Years.Year2015
 {
-
-    class Program5
+    public class Day05 : IDay
     {
-        static void Main(string[] args)
+        public int Day => 5;
+        public int Year => 2015;
+
+        public void ProblemOne()
         {
-            ProblemTwo(input);
-            Console.ReadKey();
+            var lines = Input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+            int count = 0;
+            foreach (var line in lines)
+            {
+                if (IsNice(line))
+                {
+                    count++;
+                }
+            }
+            Console.WriteLine(count);
         }
 
-        static void ProblemTwo(string input)
+        public void ProblemTwo()
         {
-            var lines = input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+            var lines = Input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
             var count = 0;
             foreach (var line in lines)
             {
@@ -29,19 +39,6 @@ namespace Years.Year2015
             Console.WriteLine(count);
         }
 
-        static void ProblemOne(string input)
-        {
-            var lines = input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
-            int count = 0;
-            foreach (var line in lines)
-            {
-                if (IsNice(line))
-                {
-                    count++;
-                }
-            }
-            Console.WriteLine(count);
-        }
 
         static bool IsNiceTwo(string input)
         {
@@ -98,9 +95,10 @@ namespace Years.Year2015
 
 
 
-        private static char[] vowels = { 'a', 'e', 'i', 'o', 'u' };
-        private static string[] illegalStrings = { "ab", "cd", "pq", "xy" };
-        static bool IsNice(string input)
+        private char[]   vowels = { 'a', 'e', 'i', 'o', 'u' };
+        private string[] illegalStrings = { "ab", "cd", "pq", "xy" };
+
+        private bool IsNice(string input)
         {
             var chars = input.ToCharArray();
 
@@ -148,7 +146,7 @@ namespace Years.Year2015
         }
 
 
-        private static string input = @"sszojmmrrkwuftyv
+        private const string Input = @"sszojmmrrkwuftyv
 isaljhemltsdzlum
 fujcyucsrxgatisb
 qiqqlmcgnhzparyg
@@ -1148,19 +1146,5 @@ bzukgvyoqewniivj
 iduapzclhhyfladn
 fbpyzxdfmkrtfaeg
 yzsmlbnftftgwadz";
-    }
-
-    public class Day05 : IDay
-    {
-        public int Day => 5;
-        public int Year => 2015;
-
-        public void ProblemOne()
-        {
-        }
-
-        public void ProblemTwo()
-        {
-        }
     }
 }

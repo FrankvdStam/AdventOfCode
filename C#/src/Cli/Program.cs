@@ -27,7 +27,7 @@ namespace Cli
 
 
             int year = 2015;
-            int day = 1;
+            int day = 7;
 
             var activeDay = days.First(i => i.Year == year && i.Day == day);
 

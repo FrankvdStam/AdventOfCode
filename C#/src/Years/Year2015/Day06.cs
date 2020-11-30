@@ -5,18 +5,53 @@ using Years.Utils;
 
 namespace Years.Year2015
 {
-    class Program6
+    public class Day06 : IDay
     {
-        static void Main(string[] args)
+        public int Day => 6;
+        public int Year => 2015;
+
+        public void ProblemOne()
         {
-            ProblemTwo(input);
-            Console.ReadKey();
+            var lines = input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+            int x1, x2, y1, y2;
+            bool value;
+            foreach (var line in lines)
+            {
+                if (line.StartsWith("toggle"))
+                {
+                    var split = line.Split(' ');
+                    x1 = int.Parse(split[1].Split(',')[0]);
+                    y1 = int.Parse(split[1].Split(',')[1]);
+
+                    x2 = int.Parse(split[3].Split(',')[0]);
+                    y2 = int.Parse(split[3].Split(',')[1]);
+
+                    ToggleLights(x1, y1, x2, y2);
+                }
+                else
+                {
+                    var split = line.Split(' ');
+                    value = true;
+                    if (split[1] == "off")
+                    {
+                        value = false;
+                    }
+
+                    x1 = int.Parse(split[2].Split(',')[0]);
+                    y1 = int.Parse(split[2].Split(',')[1]);
+
+                    x2 = int.Parse(split[4].Split(',')[0]);
+                    y2 = int.Parse(split[4].Split(',')[1]);
+
+                    SetLights(x1, y1, x2, y2, value);
+                }
+            }
+
+            var result = CountOnLights();
+            Console.WriteLine(result);
         }
 
-
-        static int[,] lightsTwo = new int[1000, 1000];
-
-        static void ProblemTwo(string input)
+        public void ProblemTwo()
         {
             var lines = input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
             int x1, x2, y1, y2;
@@ -56,6 +91,9 @@ namespace Years.Year2015
             var result = CountLightsBrightness();
             Console.WriteLine(result);
         }
+
+
+
         static void SetLightsTwo(int x1, int y1, int x2, int y2, bool value)
         {
             for (int x = x1; x <= x2; x++)
@@ -105,46 +143,10 @@ namespace Years.Year2015
 
         // var lines = input.Split(new string[] {"\r\n"}, StringSplitOptions.None);
         static bool[,] lights = new bool[1000, 1000];
-        static void ProblemOne(string inputs)
-        {
-            var lines = input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
-            int x1, x2, y1, y2;
-            bool value;
-            foreach (var line in lines)
-            {
-                if (line.StartsWith("toggle"))
-                {
-                    var split = line.Split(' ');
-                    x1 = int.Parse(split[1].Split(',')[0]);
-                    y1 = int.Parse(split[1].Split(',')[1]);
+        static int[,] lightsTwo = new int[1000, 1000];
 
-                    x2 = int.Parse(split[3].Split(',')[0]);
-                    y2 = int.Parse(split[3].Split(',')[1]);
 
-                    ToggleLights(x1, y1, x2, y2);
-                }
-                else
-                {
-                    var split = line.Split(' ');
-                    value = true;
-                    if (split[1] == "off")
-                    {
-                        value = false;
-                    }
 
-                    x1 = int.Parse(split[2].Split(',')[0]);
-                    y1 = int.Parse(split[2].Split(',')[1]);
-
-                    x2 = int.Parse(split[4].Split(',')[0]);
-                    y2 = int.Parse(split[4].Split(',')[1]);
-
-                    SetLights(x1, y1, x2, y2, value);
-                }
-            }
-
-            var result = CountOnLights();
-            Console.WriteLine(result);
-        }
 
         static void SetLights(int x1, int y1, int x2, int y2, bool value)
         {
@@ -485,19 +487,5 @@ turn off 210,146 through 221,482
 turn off 209,780 through 572,894
 turn on 766,112 through 792,868
 turn on 222,12 through 856,241";
-    }
-
-    public class Day06 : IDay
-    {
-        public int Day => 6;
-        public int Year => 2015;
-
-        public void ProblemOne()
-        {
-        }
-
-        public void ProblemTwo()
-        {
-        }
     }
 }

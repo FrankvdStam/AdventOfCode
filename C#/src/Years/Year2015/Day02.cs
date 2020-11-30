@@ -41,37 +41,32 @@ namespace Years.Year2015
         }
 
 
-        public int Length;
-        public int Width;
-        public int Height;
-        public int RequiredRibbonLength;
-        public int RequiredWappingPaper;
+        public readonly int Length;
+        public readonly int Width;
+        public readonly int Height;
+        public readonly int RequiredRibbonLength;
+        public readonly int RequiredWappingPaper;
 
     }
 
-    class Program2
+    public class Day02 : IDay
     {
-        static void Main(string[] args)
+        public int Day => 2;
+        public int Year => 2015;
+
+        public void ProblemOne()
         {
-            //Box b = new Box(1,1,10);
-
-
-            //ProblemOne(input);
-            ProblemTwo(input);
-            Console.ReadKey();
+            var boxes = ParseInput(_input);
+            Console.WriteLine(boxes.Sum(i => i.RequiredWappingPaper));
         }
 
-        static void ProblemTwo(string input)
+        public void ProblemTwo()
         {
-            var boxes = ParseInput(input);
+            var boxes = ParseInput(_input);
             Console.WriteLine(boxes.Sum(i => i.RequiredRibbonLength));
         }
 
-        static void ProblemOne(string input)
-        {
-            var boxes = ParseInput(input);
-            Console.WriteLine(boxes.Sum(i => i.RequiredWappingPaper));
-        }
+
 
         static List<Box> ParseInput(string input)
         {
@@ -90,7 +85,7 @@ namespace Years.Year2015
             return boxes;
         }
 
-        public static string input = @"20x3x11
+        private static string _input = @"20x3x11
 15x27x5
 6x29x7
 30x15x9
@@ -1090,20 +1085,5 @@ namespace Years.Year2015
 29x4x8
 21x2x22
 14x12x8";
-    }
-
-
-    public class Day02 : IDay
-    {
-        public int Day => 2;
-        public int Year => 2015;
-
-        public void ProblemOne()
-        {
-        }
-
-        public void ProblemTwo()
-        {
-        }
     }
 }
