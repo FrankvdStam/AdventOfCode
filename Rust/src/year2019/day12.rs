@@ -5,6 +5,19 @@ struct Moon
 {
     position: Vector3i,
     velocity: Vector3i,
+
+    cycle_x: Option<i64>,
+    cycle_y: Option<i64>,
+    cycle_z: Option<i64>,
+}
+
+impl Copy for Moon {}
+
+impl Clone for Moon {
+    fn clone(&self) -> Self
+    {
+        return Moon::new(self.position.clone(), self.velocity.clone());
+    }
 }
 
 impl Moon
@@ -14,7 +27,10 @@ impl Moon
         Moon
         {
             position,
-            velocity
+            velocity,
+            cycle_x: None,
+            cycle_y: None,
+            cycle_z: None
         }
     }
 
@@ -180,9 +196,155 @@ pub fn problem1()
 pub fn problem2()
 {
 
+
+    let mut cycle_count = 0;
+    let mut moons = Vec::new();
+
+    for str in INPUT.split("\n").collect::<Vec<&str>>()
+    {
+        moons.push(Moon::new(Vector3i::from_str(str), Vector3i::new(0, 0, 0)));
+    }
+    let original_moons = moons.clone();
+
+
+
+    let mut step = 0;
+    'orbit: loop
+    {
+        //To apply gravity, consider every pair of moons. On each axis (x, y, and z),
+        //the velocity of each moon changes by exactly +1 or -1 to pull the moons together.
+        //For example, if Ganymede has an x position of 3, and Callisto has a x position
+        //of 5, then Ganymede's x velocity changes by +1 (because 5 > 3) and Callisto's x
+        //velocity changes by -1 (because 3 < 5). However, if the positions on a given axis are the same,
+        //the velocity on that axis does not change for that pair of moons.
+
+        for pair in PAIRS.iter()
+        {
+            moons[pair.0].velocity.x += calculate_velocity(moons[pair.0].position.x, moons[pair.1].position.x);
+            moons[pair.0].velocity.y += calculate_velocity(moons[pair.0].position.y, moons[pair.1].position.y);
+            moons[pair.0].velocity.z += calculate_velocity(moons[pair.0].position.z, moons[pair.1].position.z);
+
+            moons[pair.1].velocity.x += calculate_velocity(moons[pair.1].position.x, moons[pair.0].position.x);
+            moons[pair.1].velocity.y += calculate_velocity(moons[pair.1].position.y, moons[pair.0].position.y);
+            moons[pair.1].velocity.z += calculate_velocity(moons[pair.1].position.z, moons[pair.0].position.z);
+        }
+
+        //Once all gravity has been applied, apply velocity: simply add the velocity of
+        //each moon to its own position. For example, if Europa has a position of
+        //x=1, y=2, z=3 and a velocity of x=-2, y=0,z=3, then its new position
+        //would be x=-1, y=2, z=6. This process does not modify the velocity of any moon.
+        for moon in moons.iter_mut()
+        {
+            moon.apply_velocity();
+        }
+
+
+        for i in 0..moons.len()
+        {
+            if moons[i].cycle_x.is_none() && moons[i].position.x == original_moons[i].position.x
+            {
+                moons[i].cycle_x = Some(step);
+                cycle_count += 1;
+
+                if cycle_count >= 12
+                {
+                    println!("Found cyclic value of all moons.");
+                    break 'orbit;
+                }
+            }
+            if moons[i].cycle_y.is_none() && moons[i].position.y == original_moons[i].position.y
+            {
+                moons[i].cycle_y = Some(step);
+                cycle_count += 1;
+
+                if cycle_count >= 12
+                {
+                    println!("Found cyclic value of all moons.");
+                    break 'orbit;
+                }
+            }
+            if moons[i].cycle_z.is_none() && moons[i].position.z == original_moons[i].position.z
+            {
+                moons[i].cycle_z = Some(step);
+                cycle_count += 1;
+
+                if cycle_count >= 12
+                {
+                    println!("Found cyclic value of all moons.");
+                    break 'orbit;
+                }
+            }
+        }
+
+        step += 1;
+        if step % 100000 == 0
+        {
+            println!("step: {}", step);
+        }
+    }
+
+
+
+    let mut cycle_values = Vec::new();
+
+    for i in 0..moons.len()
+    {
+        cycle_values.push(moons[i].cycle_x.unwrap());
+        cycle_values.push(moons[i].cycle_y.unwrap());
+        cycle_values.push(moons[i].cycle_z.unwrap());
+    }
+
+    println!("{:?}", cycle_values);
+    println!("Res: {}", greatest_common_divisor_vec(&cycle_values));
 }
 
 
+fn greatest_common_divisor(first: usize, second: usize) -> usize {
+    let mut max = first;
+    let mut min = second;
+    if min > max {
+        let val = max;
+        max = min;
+        min = val;
+    }
+
+    loop {
+        let res = max % min;
+        if res == 0 {
+            return min;
+        }
+
+        max = min;
+        min = res;
+    }
+}
+
+
+fn greatest_common_divisor_vec(input: &Vec<i64>) -> i64
+{
+    if input.len() < 2
+    {
+        panic!("Need at least 2 inputs");
+    }
+
+
+    let mut temp = input.clone();
+
+    while temp.len() > 1
+    {
+        let first = temp[0];
+        let second = temp[1];
+
+        temp.remove(0);
+        temp.remove(0);
+
+        temp.push(greatest_common_divisor(first as usize, second as usize) as i64);
+
+    }
+
+
+    return temp[0];
+}
 
 
 //manually edited formatting of inputs so that I didn't have to change the parser

@@ -10,7 +10,7 @@ use std::time::Instant;
 fn main()
 {
     let mut start = Instant::now();
-    problem1();
+    //problem1();
     println!("First problem executed in: {:?}", start.elapsed());
 
 
