@@ -377,10 +377,12 @@ namespace Years.Year2015
 
         public void ProblemOne()
         {
+            throw new NotImplementedException();
         }
 
         public void ProblemTwo()
         {
+            throw new NotImplementedException();
         }
     }
 }

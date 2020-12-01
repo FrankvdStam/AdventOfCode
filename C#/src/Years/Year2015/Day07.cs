@@ -108,6 +108,8 @@ namespace Years.Year2015
 
         public void ProblemTwo()
         {
+            throw new NotImplementedException();
+
             var lines = input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
             //Give all constants a unique name.
             int counter = 0;

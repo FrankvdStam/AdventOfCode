@@ -5,31 +5,43 @@ using Years.Utils;
 
 namespace Years.Year2015
 {
-    class Program10
+    public class Day10 : IDay
     {
+        public int Day => 10;
+        public int Year => 2015;
 
-        static void Main(string[] args)
+
+        public void ProblemOne()
         {
-            string num = "1321131112";
-            // Part 1
-            for (int i = 0; i < 40; i++)
-            {
-                //num.Dump();
-                num = lookandsay(num);
-            }
-            // Part 2
-            for (int i = 0; i < 10; i++)
-            {
-                //num.Dump();
-                num = lookandsay(num);
-            }
-
-
-            var l = num.Length;
+            SolveAndCache();
+            Console.WriteLine(_one);
         }
 
-        // Define other methods and classes here
-        static string lookandsay(string number)
+        public void ProblemTwo()
+        {
+            Console.WriteLine(_two);
+        }
+
+
+        private int _one;
+        private int _two;
+
+        private void SolveAndCache()
+        {
+            string input = Input;
+            for (int i = 0; i < 50; i++)
+            {
+                input = lookandsay(input);
+                if (i == 39)
+                {
+                    _one = input.Length;
+                }
+            }
+            _two = input.Length;
+        }
+
+
+        string lookandsay(string number)
         {
             StringBuilder result = new StringBuilder();
 
@@ -53,22 +65,8 @@ namespace Years.Year2015
             return result.ToString();
         }
 
-        static void Main2(string[] args)
-        {
-            ProblemOne("1321131112");
-        }
 
-        static void ProblemOne(string input)
-        {
-            for (int i = 0; i < 10; i++)
-            {
-                input = NextGeneration(input);
-            }
-
-            var result = input.Length;
-        }
-
-        static string NextGeneration(string input)
+        private string NextGeneration(string input)
         {
             string result = "";
             for (int i = 0; i < input.Length; /*Don't increment i here.*/)
@@ -80,7 +78,7 @@ namespace Years.Year2015
             return result;
         }
 
-        static int DupplicateCount(char c, string input, int offset)
+        private int DupplicateCount(char c, string input, int offset)
         {
             int count = 0;
             for (int i = offset; i < input.Length; i++)
@@ -96,20 +94,7 @@ namespace Years.Year2015
             }
             return count;
         }
-    }
 
-
-    public class Day10 : IDay
-    {
-        public int Day => 10;
-        public int Year => 2015;
-
-        public void ProblemOne()
-        {
-        }
-
-        public void ProblemTwo()
-        {
-        }
+        private const string Input = "1321131112";
     }
 }
