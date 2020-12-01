@@ -13,7 +13,7 @@ namespace Cli
         {
             bool runAll = false;
             int year = 2015;
-            int day = 11;
+            int day = 13;
 
             Run(runAll, year, day);
         }
@@ -36,8 +36,6 @@ namespace Cli
                     days.Add(obj);
                 }
             }
-
-
 
 
             if (runAll)
