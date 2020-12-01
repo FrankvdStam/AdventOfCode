@@ -95,7 +95,12 @@ namespace Years.Utils
 
 
 
-
+        public static string Reverse(this string s)
+        {
+            char[] charArray = s.ToCharArray();
+            Array.Reverse(charArray);
+            return new string(charArray);
+        }
 
 
 
@@ -103,6 +108,8 @@ namespace Years.Utils
 
 
         #region IEnumerables ========================================================================================================
+
+
 
         public static IEnumerable<IEnumerable<T>> Permute<T>(this IEnumerable<T> sequence)
         {
