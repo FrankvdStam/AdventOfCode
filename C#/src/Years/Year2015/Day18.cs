@@ -6,12 +6,29 @@ using Years.Utils;
 
 namespace Years.Year2015
 {
-    class Program18
+    public class Day18 : IDay
     {
-        static void Main(string[] args)
+        public int Day => 18;
+        public int Year => 2015;
+
+        public void ProblemOne()
         {
             int width = 100, height = 100;
-            var board = ParseInput(input, width, height);
+            var board = ParseInput(Input, width, height);
+
+            for (int i = 0; i < 100; i++)
+            {
+                board = NextBoard(board, width, height);
+            }
+
+            int result = CountAlive(board, width, height);
+            Console.WriteLine(result);
+        }
+
+        public void ProblemTwo()
+        {
+            int width = 100, height = 100;
+            var board = ParseInput(Input, width, height);
 
             //int width = 6, height = 6;
             //var board = ParseInput(example, width, height);
@@ -26,9 +43,12 @@ namespace Years.Year2015
             }
 
             int result = CountAlive(board, width, height);
+            Console.WriteLine(result);
         }
 
-        static void SetCorners(ref bool[,] board, int width, int height, bool value)
+
+
+        private void SetCorners(ref bool[,] board, int width, int height, bool value)
         {
             board[0, 0] = value;
             board[0, height - 1] = value;
@@ -36,7 +56,7 @@ namespace Years.Year2015
             board[width - 1, height - 1] = value;
         }
 
-        static int CountAlive(bool[,] board, int width, int height)
+        private int CountAlive(bool[,] board, int width, int height)
         {
             int count = 0;
             for (int y = 0; y < height; y++)
@@ -52,7 +72,7 @@ namespace Years.Year2015
             return count;
         }
 
-        static bool[,] NextBoard(bool[,] board, int width, int height)
+        private bool[,] NextBoard(bool[,] board, int width, int height)
         {
             var nextBoard = new bool[width, height];
             for (int y = 0; y < height; y++)
@@ -107,7 +127,7 @@ namespace Years.Year2015
         };
 
 
-        static int CountSurrounding(bool[,] board, int width, int height, int x, int y)
+        private int CountSurrounding(bool[,] board, int width, int height, int x, int y)
         {
             int count = 0;
             for (int i = 0; i < SurroundingCoords.GetLength(0); i++)
@@ -127,7 +147,7 @@ namespace Years.Year2015
             return count;
         }
 
-        static bool[,] ParseInput(string input, int width, int height)
+        private bool[,] ParseInput(string input, int width, int height)
         {
             Debug.WriteLine("parsing.");
             var result = new bool[width, height];
@@ -143,7 +163,7 @@ namespace Years.Year2015
             return result;
         }
 
-        static void PrintBoard(bool[,] board, int width, int height)
+        private void PrintBoard(bool[,] board, int width, int height)
         {
             Debug.WriteLine("===============");
 
@@ -158,14 +178,14 @@ namespace Years.Year2015
         }
 
 
-        private static string example = @".#.#.#
+        private const string Example = @".#.#.#
 ...##.
 #....#
 ..#...
 #.#..#
 ####..";
 
-        private static string input = @"#...##......#......##.##..#...##......##.#.#.###.#.#..#..#......####..#......###.#.#....#..##..###..
+        private const string Input = @"#...##......#......##.##..#...##......##.#.#.###.#.#..#..#......####..#......###.#.#....#..##..###..
 ####..#.#...#....#.#####.##.##.#..#.......#....#.##...###.###..#.#.#........#..#.#.##...##..#.####.#
 ...#..##...#.#.###.#.###..#.##.####.###...#...........#.###..##.#.##.#.###...#.#..###....#.###.#..#.
 .#...##...####.#..#.....#..#...#.#.##...#...##..#.#.###....#..###.....##..#.###..###.....##..###...#
@@ -265,20 +285,5 @@ namespace Years.Year2015
 #..#.#..#...###.#..##.#...#...##.#......#...#..#..####..##.....#.###...#.#..#.#....#.#####.##.###...
 ###....#.#..#.#..###..#.##......#...#..#..##.#..###..##..#..#.####..#...########..##.#.##.#.#.#...#.
 .#.#.##.##.###..#...#.#....#..#.##..#.#.#.#.##.##.#####...#........####..###..####.#####..#.##.#.##.";
-    }
-
-
-    public class Day18 : IDay
-    {
-        public int Day => 18;
-        public int Year => 2015;
-
-        public void ProblemOne()
-        {
-        }
-
-        public void ProblemTwo()
-        {
-        }
     }
 }

@@ -14,7 +14,7 @@ namespace Cli
         {
             bool runAll = false;
             int year = 2015;
-            int day = 8;
+            int day = 18;
 
             Run(runAll, year, day);
         }
@@ -51,12 +51,12 @@ namespace Cli
                         stopwatch.Start();
                         day_.ProblemOne();
                         stopwatch.Stop();
-                        Console.WriteLine($"{y}-{d}-{01} in {stopwatch.ElapsedMilliseconds}ms");
+                        Console.WriteLine($"{y}-{d.ToString().PadLeft(2, '0')}-{01} in {stopwatch.ElapsedMilliseconds}ms");
 
                         stopwatch.Restart();
                         day_.ProblemTwo();
                         stopwatch.Stop();
-                        Console.WriteLine($"{y}-{d}-{02} in {stopwatch.ElapsedMilliseconds}ms");
+                        Console.WriteLine($"{y}-{d.ToString().PadLeft(2, '0')}-{02} in {stopwatch.ElapsedMilliseconds}ms");
                     }
                    
                 }
