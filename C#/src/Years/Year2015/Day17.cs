@@ -6,16 +6,14 @@ using Years.Utils;
 
 namespace Years.Year2015
 {
-    class Program17
+    public class Day17 : IDay
     {
-        static void Main(string[] args)
-        {
-            ProblemOne(Example);
-        }
+        public int Day => 17;
+        public int Year => 2015;
 
-        static void ProblemOne(string input)
+        public void ProblemOne()
         {
-            var lines = input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+            var lines = Input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
             var list = new List<int>();
 
             foreach (var line in lines)
@@ -31,13 +29,22 @@ namespace Years.Year2015
             var minCount = combinationsSatysfying.Min(comb => comb.Count());
             var minCombinations = combinationsSatysfying.Where(comb => comb.Count() == minCount);
 
-            System.Console.WriteLine($"Number of combinations(Part 1): {combinationsSatysfying.Count()}");
-            System.Console.WriteLine($"Different ways of minimal (Part 2): {minCombinations.Count()}");
+            _partTwo = minCombinations.Count();
 
-
+            Console.WriteLine(combinationsSatysfying.Count());
         }
 
-        static List<int> ParseInput(string input)
+        private int _partTwo;
+
+
+        public void ProblemTwo()
+        {
+            Console.WriteLine(_partTwo);
+        }
+
+
+
+        private List<int> ParseInput(string input)
         {
             List<int> result = new List<int>();
 
@@ -49,7 +56,8 @@ namespace Years.Year2015
             return result;
         }
 
-        private static string Example = @"50
+
+        private string Input = @"50
 44
 11
 49
@@ -69,20 +77,6 @@ namespace Years.Year2015
 24
 22
 40";
-    }
 
-
-    public class Day17 : IDay
-    {
-        public int Day => 17;
-        public int Year => 2015;
-
-        public void ProblemOne()
-        {
-        }
-
-        public void ProblemTwo()
-        {
-        }
     }
 }
