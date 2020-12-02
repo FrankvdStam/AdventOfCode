@@ -44,7 +44,7 @@ namespace Years.Year2015
 
                 if (floor == -1)
                 {
-                    Console.WriteLine(floor + " " + position);
+                    Console.WriteLine(position);
                     return;
                 }
 

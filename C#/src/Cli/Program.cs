@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,12 +14,10 @@ namespace Cli
         {
             bool runAll = false;
             int year = 2015;
-            int day = 17;
+            int day = 7;
 
             Run(runAll, year, day);
         }
-
-
 
         static void Run(bool runAll, int year, int day)
         {
@@ -38,15 +37,26 @@ namespace Cli
             }
 
 
+            Stopwatch stopwatch = new Stopwatch();
+
             if (runAll)
             {
-                for (int y = 2019; y <= 2019; y++)
+                for (int y = 2015; y <= 2019; y++)
                 {
                     for (int d = 1; d <= 25; d++)
                     {
                         var day_ = days.First(i => i.Year == y && i.Day == d);
+
+
+                        stopwatch.Start();
                         day_.ProblemOne();
+                        stopwatch.Stop();
+                        Console.WriteLine($"{y}-{d}-{01} in {stopwatch.ElapsedMilliseconds}ms");
+
+                        stopwatch.Restart();
                         day_.ProblemTwo();
+                        stopwatch.Stop();
+                        Console.WriteLine($"{y}-{d}-{02} in {stopwatch.ElapsedMilliseconds}ms");
                     }
                    
                 }
@@ -55,10 +65,18 @@ namespace Cli
             {
                 var activeDay = days.First(i => i.Year == year && i.Day == day);
 
+                stopwatch.Start();
                 activeDay.ProblemOne();
+                stopwatch.Stop();
+                Console.WriteLine($"{year}-{day}-{01} in {stopwatch.ElapsedMilliseconds}ms");
+
+                stopwatch.Restart();
                 activeDay.ProblemTwo();
-                Console.ReadKey();
+                stopwatch.Stop();
+                Console.WriteLine($"{year}-{day}-{02} in {stopwatch.ElapsedMilliseconds}ms");
             }
+
+            Console.ReadKey();
         }
     }
 }
