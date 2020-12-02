@@ -5,28 +5,43 @@ using Years.Utils;
 
 namespace Years.Year2015
 {
-    class Program16
+    public class Day16 : IDay
     {
-        private static List<string> MoreThenThings = new List<string>()
-        {
-            "cats",
-            "trees"
-        };
+        public int Day => 16;
+        public int Year => 2015;
 
-        private static List<string> FewerThenThings = new List<string>()
+        public void ProblemOne()
         {
-            "pomeranians",
-            "goldfish"
-        };
+            var sues = ParseInput(input);
+            var ticketTape = ParseTickerTape(TickerTape);
 
-
-        static void Main(string[] args)
-        {
-            ProblemOne(input, TickerTape);
-            ProblemTwo(input, TickerTape);
+            List<int> matchingSues = new List<int>();
+            foreach (var sue in sues)
+            {
+                //Determine if this sue matches
+                bool isMatch = true;
+                foreach (var thing in ticketTape)
+                {
+                    //If we remember that sue has this thing, check if the numbers match
+                    if (sue.Value.ContainsKey(thing.Key))
+                    {
+                        if (sue.Value[thing.Key] != thing.Value)
+                        {
+                            isMatch = false;
+                            break;
+                        }
+                    }
+                }
+                //End
+                if (isMatch)
+                {
+                    matchingSues.Add(sue.Key);
+                }
+            }
+            Console.WriteLine(matchingSues[0]);
         }
 
-        static void ProblemTwo(string input, string TickerTape)
+        public void ProblemTwo()
         {
             var sues = ParseInput(input);
             var ticketTape = ParseTickerTape(TickerTape);
@@ -73,40 +88,12 @@ namespace Years.Year2015
                     matchingSues.Add(sue.Key);
                 }
             }
+            Console.WriteLine(matchingSues[0]);
         }
 
 
-        static void ProblemOne(string input, string TickerTape)
-        {
-            var sues = ParseInput(input);
-            var ticketTape = ParseTickerTape(TickerTape);
 
-            List<int> matchingSues = new List<int>();
-            foreach (var sue in sues)
-            {
-                //Determine if this sue matches
-                bool isMatch = true;
-                foreach (var thing in ticketTape)
-                {
-                    //If we remember that sue has this thing, check if the numbers match
-                    if (sue.Value.ContainsKey(thing.Key))
-                    {
-                        if (sue.Value[thing.Key] != thing.Value)
-                        {
-                            isMatch = false;
-                            break;
-                        }
-                    }
-                }
-                //End
-                if (isMatch)
-                {
-                    matchingSues.Add(sue.Key);
-                }
-            }
-        }
-
-        private static Dictionary<string, int> ParseTickerTape(string tape)
+        private Dictionary<string, int> ParseTickerTape(string tape)
         {
             var result = new Dictionary<string, int>();
 
@@ -121,7 +108,7 @@ namespace Years.Year2015
         }
 
 
-        private static Dictionary<int, Dictionary<string, int>> ParseInput(string input)
+        private Dictionary<int, Dictionary<string, int>> ParseInput(string input)
         {
 
             Dictionary<int, Dictionary<string, int>> sues = new Dictionary<int, Dictionary<string, int>>();
@@ -140,7 +127,22 @@ namespace Years.Year2015
             return sues;
         }
 
-        private static string TickerTape = @"children: 3
+
+
+        private static List<string> MoreThenThings = new List<string>()
+        {
+            "cats",
+            "trees"
+        };
+
+        private static List<string> FewerThenThings = new List<string>()
+        {
+            "pomeranians",
+            "goldfish"
+        };
+
+
+        private string TickerTape = @"children: 3
 cats: 7
 samoyeds: 2
 pomeranians: 3
@@ -151,7 +153,7 @@ trees: 3
 cars: 2
 perfumes: 1";
 
-        private static string input = @"Sue 1: cars: 9, akitas: 3, goldfish: 0
+        private string input = @"Sue 1: cars: 9, akitas: 3, goldfish: 0
 Sue 2: akitas: 9, children: 3, samoyeds: 9
 Sue 3: trees: 6, cars: 6, children: 4
 Sue 4: trees: 4, vizslas: 4, goldfish: 9
@@ -651,21 +653,5 @@ Sue 497: vizslas: 10, perfumes: 10, pomeranians: 3
 Sue 498: samoyeds: 3, trees: 2, cars: 5
 Sue 499: cats: 6, children: 3, perfumes: 0
 Sue 500: pomeranians: 10, cats: 3, vizslas: 5";
-    }
-
-
-
-    public class Day16 : IDay
-    {
-        public int Day => 16;
-        public int Year => 2015;
-
-        public void ProblemOne()
-        {
-        }
-
-        public void ProblemTwo()
-        {
-        }
     }
 }
