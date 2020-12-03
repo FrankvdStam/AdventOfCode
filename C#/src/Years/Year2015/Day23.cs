@@ -38,84 +38,45 @@ namespace Years.Year2015
         }
     }
 
-    class Program23
+
+    public class Day23 : IDay
     {
-        private static string Input = @"jio a, +16
-inc a
-inc a
-tpl a
-tpl a
-tpl a
-inc a
-inc a
-tpl a
-inc a
-inc a
-tpl a
-tpl a
-tpl a
-inc a
-jmp +23
-tpl a
-inc a
-inc a
-tpl a
-inc a
-inc a
-tpl a
-tpl a
-inc a
-inc a
-tpl a
-inc a
-tpl a
-inc a
-tpl a
-inc a
-inc a
-tpl a
-inc a
-tpl a
-tpl a
-inc a
-jio a, +8
-inc b
-jie a, +4
-tpl a
-inc a
-jmp +2
-hlf a
-jmp -7";
+        public int Day => 23;
+        public int Year => 2015;
 
-
-        static void Main(string[] args)
+        public void ProblemOne()
         {
             var instructions = ParseInput(Input);
-            Stopwatch w = new Stopwatch();
-            w.Start();
+            
             while (ProgramCounter >= 0 && ProgramCounter < instructions.Count)
             {
                 RunInstruction(instructions[(int)ProgramCounter]);
-                Cycles++;
-
-                if (Cycles % 100000 == 0)
-                {
-                    Console.WriteLine(Cycles);
-                }
             }
-            w.Stop();
-            Console.WriteLine($"Finished {Cycles} in {w.Elapsed}.");
-            Console.WriteLine($"A: {RegisterA} B: {RegisterB}");
-            Console.ReadKey();
+            Console.WriteLine($"{RegisterB}");
+        }
+
+        public void ProblemTwo()
+        {
+            var instructions = ParseInput(Input);
+
+            RegisterA = 1;
+            RegisterB = 0;
+            ProgramCounter = 0;
+
+
+            while (ProgramCounter >= 0 && ProgramCounter < instructions.Count)
+            {
+                RunInstruction(instructions[(int)ProgramCounter]);
+            }
+            Console.WriteLine($"{RegisterB}");
         }
 
 
-        public static long RegisterA = 1;
-        public static long RegisterB;
-        public static long Cycles;
-        public static long ProgramCounter;
+        public long RegisterA;
+        public long RegisterB;
+        public long ProgramCounter;
 
-        private static long GetRegisterValue(Register register)
+        private long GetRegisterValue(Register register)
         {
             if (register == Register.a)
             {
@@ -127,7 +88,7 @@ jmp -7";
             }
         }
 
-        private static void SetRegisterValue(Register register, long value)
+        private void SetRegisterValue(Register register, long value)
         {
             if (register == Register.a)
             {
@@ -139,7 +100,7 @@ jmp -7";
             }
         }
 
-        private static void RunInstruction(Instruction instruction)
+        private void RunInstruction(Instruction instruction)
         {
             long value;
             switch (instruction.Type)
@@ -185,7 +146,7 @@ jmp -7";
             }
         }
 
-        private static List<Instruction> ParseInput(string input)
+        private List<Instruction> ParseInput(string input)
         {
             var instructions = new List<Instruction>();
             var lines = input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
@@ -246,20 +207,54 @@ jmp -7";
 
             return instructions;
         }
-    }
+
+        private const string Input = @"jio a, +16
+inc a
+inc a
+tpl a
+tpl a
+tpl a
+inc a
+inc a
+tpl a
+inc a
+inc a
+tpl a
+tpl a
+tpl a
+inc a
+jmp +23
+tpl a
+inc a
+inc a
+tpl a
+inc a
+inc a
+tpl a
+tpl a
+inc a
+inc a
+tpl a
+inc a
+tpl a
+inc a
+tpl a
+inc a
+inc a
+tpl a
+inc a
+tpl a
+tpl a
+inc a
+jio a, +8
+inc b
+jie a, +4
+tpl a
+inc a
+jmp +2
+hlf a
+jmp -7";
 
 
-    public class Day23 : IDay
-    {
-        public int Day => 23;
-        public int Year => 2015;
-
-        public void ProblemOne()
-        {
-        }
-
-        public void ProblemTwo()
-        {
-        }
     }
 }
