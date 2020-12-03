@@ -18,21 +18,6 @@ namespace Years.Year2015
         public int Points = 0;
     }
 
-
-    class Program14
-    {
-        static void Main(string[] args)
-        {
-            
-
-        }
-
-        
-
-       
-    }
-
-
     public class Day14 : IDay
     {
         public int Day => 14;
