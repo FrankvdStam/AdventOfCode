@@ -11,6 +11,53 @@ namespace Years.Year2015
 
         static void Main(string[] args)
         {
+           
+        }
+
+        //Prob 1
+        static void Main2(string[] args)
+        {
+            
+        }
+    }
+
+
+    public class Day20 : IDay
+    {
+        public int Day => 20;
+        public int Year => 2015;
+
+        public void ProblemOne()
+        {
+            const int input = 29000000;
+            int[] houses = new int[input];
+
+            int elf = 1;
+            while (elf < input)
+            {
+                int position = elf;
+                int presents = elf * 10;
+                while (position < input)
+                {
+                    houses[position] += presents;
+                    position += elf;
+                }
+                elf++;
+            }
+
+
+            for (int i = 0; i < houses.Length; i++)
+            {
+                if (houses[i] >= input)
+                {
+                    Console.WriteLine(i);
+                    return;
+                }
+            }
+        }
+
+        public void ProblemTwo()
+        {
             const int input = 29000000;
             int[] houses = new int[input];
 
@@ -36,53 +83,10 @@ namespace Years.Year2015
             {
                 if (houses[i] >= input)
                 {
-
+                    Console.WriteLine(i);
+                    return;
                 }
             }
-        }
-
-        //Prob 1
-        static void Main2(string[] args)
-        {
-            const int input = 29000000;
-            int[] houses = new int[input];
-
-            int elf = 1;
-            while (elf < input)
-            {
-                int position = elf;
-                int presents = elf * 10;
-                while (position < input)
-                {
-                    houses[position] += presents;
-                    position += elf;
-                }
-                elf++;
-            }
-
-
-            for (int i = 0; i < houses.Length; i++)
-            {
-                if (houses[i] >= input)
-                {
-
-                }
-            }
-        }
-    }
-
-
-    public class Day20 : IDay
-    {
-        public int Day => 20;
-        public int Year => 2015;
-
-        public void ProblemOne()
-        {
-        }
-
-        public void ProblemTwo()
-        {
         }
     }
 }
