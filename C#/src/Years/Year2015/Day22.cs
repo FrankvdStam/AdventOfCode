@@ -5,40 +5,46 @@ using Years.Utils;
 
 namespace Years.Year2015
 {
-    class Program22
-    {
 
-        static void Main()
+    public class Day22 : IDay
+    {
+        public int Day => 22;
+        public int Year => 2015;
+
+        public void ProblemOne()
         {
-            Program22 p = new Program22();
-            p.Run();
+            Run();
         }
 
-        static int bossH = 55;
-        static int bossAt = 8;
+        public void ProblemTwo()
+        {
+        }
 
-        static int costMissile = 53;
-        static int costDrain = 73;
-        static int costPoison = 173;
-        static int costShield = 113;
-        static int costRecharge = 229;
+        int bossH = 55;
+        int bossAt = 8;
 
-        static int heroH = 50;
-        static int heroMana = 500;
-        static int heroAr = 0;
-        static int cost = 0;
+        int costMissile = 53;
+        int costDrain = 73;
+        int costPoison = 173;
+        int costShield = 113;
+        int costRecharge = 229;
 
-        static int poison = 0;
-        static int recharge = 0;
-        static int shield = 0;
+        int heroH = 50;
+        int heroMana = 500;
+        int heroAr = 0;
+        int cost = 0;
 
-        static int boss;
-        static int hero;
-        static int mana;
+        int poison = 0;
+        int recharge = 0;
+        int shield = 0;
+
+        int boss;
+        int hero;
+        int mana;
 
         Random rand = new Random();
 
-        public void Run()
+        private void Run()
         {
             int answer = 9999999;
 
@@ -47,11 +53,11 @@ namespace Years.Year2015
                 if (Fight())
                 {
                     answer = Math.Min(answer, cost);
-                    Console.Out.WriteLine(answer);
+                    //Console.WriteLine(answer);
                 }
             }
 
-            Console.Out.WriteLine("answer: " + answer);
+            Console.WriteLine("answer: " + answer);
         }
 
         enum ActionType
@@ -199,21 +205,6 @@ namespace Years.Year2015
 
                 turn = !turn;
             }
-        }
-    }
-
-
-    public class Day22 : IDay
-    {
-        public int Day => 22;
-        public int Year => 2015;
-
-        public void ProblemOne()
-        {
-        }
-
-        public void ProblemTwo()
-        {
         }
     }
 }
