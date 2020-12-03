@@ -1,4 +1,3 @@
-use std::ops::Index;
 
 pub fn problem1()
 {
@@ -8,7 +7,6 @@ pub fn problem1()
     {
         let dash_index = line.find("-").unwrap();
         let space_index = line.find(" ").unwrap();
-        let colon_index = line.find(":").unwrap();
 
         let min = line[0..dash_index].parse::<usize>().unwrap();
         let max = line[dash_index+1..space_index].parse::<usize>().unwrap();
