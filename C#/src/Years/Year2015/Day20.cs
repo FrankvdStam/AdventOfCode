@@ -6,22 +6,6 @@ using Years.Utils;
 namespace Years.Year2015
 {
 
-    class Program20
-    {
-
-        static void Main(string[] args)
-        {
-           
-        }
-
-        //Prob 1
-        static void Main2(string[] args)
-        {
-            
-        }
-    }
-
-
     public class Day20 : IDay
     {
         public int Day => 20;
