@@ -3,8 +3,8 @@ mod year2015;
 mod year2019;
 mod year2020;
 
-use crate::year2020::day05::problem1;
-use crate::year2020::day05::problem2;
+use crate::year2020::day06::problem1;
+use crate::year2020::day06::problem2;
 use std::time::Instant;
 
 
