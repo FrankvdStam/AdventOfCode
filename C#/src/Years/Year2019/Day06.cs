@@ -14,134 +14,125 @@ namespace Years.Year2019
 
         public int Day => 6;
         public int Year => 2019;
-        public Day06()
-        {
-            //Test();
-        }
-
-        private const int StartRange = 272091;
-        private const int EndRange = 815432;
 
         public void ProblemOne()
         {
-            var parent = ParseInput(Input);
-            var result = CountOrbits(parent);
+            var com = ParseInput(Input);
+
+            var orbits = 0;
+            var list = com.Flatten().ToList();
+
+            for(int i = 0; i < list.Count; i++)
+            {
+                var node = list[i];
+
+                while (node.Parent != null)
+                {
+                    orbits++;
+                    node = node.Parent;
+                }
+            }
+            Console.WriteLine(orbits);
         }
 
         public void ProblemTwo()
         {
-            var parent = ParseInput(Example2);
-            parent.TryFindNode("YOU", out TreeNode<string> you);
-            parent.TryFindNode("SAN", out TreeNode<string> santa);
-            var result = TryCalculateMoveToNode(you, santa, out int transfers);
-        }
+            var com = ParseInput(Input);
 
+            //Step1: find mutual parent.
+            string mutualParent = "";
 
-        public bool TryCalculateMoveToNode(TreeNode<string> you, TreeNode<string> santa, out int transfers)
-        {
-            transfers = 0;
-            var stack = new Stack<TreeNode<string>>();
-            List<TreeNode<string>> visited = new List<TreeNode<string>>();
-            visited.Add(you);
-            visited.Add(santa);
+            com.TryFindNode("YOU", out TreeNode<string> youNode);
+            com.TryFindNode("SAN", out TreeNode<string> sanNode);
 
+            List<string> parents = new List<string>();
 
-            stack.Push(you.Parent);
-
-            while (stack.Any())
+            var node = youNode;
+            while (node.Parent != null)
             {
-
-                var currentNode = stack.Pop();
-                visited.Add(currentNode);
-
-                if (currentNode == santa.Parent)
-                {
-                    //Solution found!
-                    return true;
-
-                }
-
-                var connections = new List<TreeNode<string>>();
-                foreach (var child in currentNode.Children.Append(currentNode.Parent))
-                {
-                    if (!visited.Contains(child))
-                    {
-                        connections.Add(child);
-                    }
-                }
-
-
-                foreach (var c in connections)
-                {
-                    stack.Push(c);
-                }
-                transfers++;
+                node = node.Parent;
+                parents.Add(node.Value);
             }
-            return false;
-        }
 
-
-        public int CountOrbits(TreeNode<string> node)
-        {
-            int count = 0;
-            Stack<TreeNode<string>> stack = new Stack<TreeNode<string>>();
-            stack.Push(node);
-
-            while (stack.Any())
+            node = sanNode;
+            while (node.Parent != null)
             {
-                var currentNode = stack.Pop();
-                foreach (var c in currentNode.Children)
+                node = node.Parent;
+                if (parents.Contains(node.Value))
                 {
-                    stack.Push(c);
+                    mutualParent = node.Value;
+                    break;
                 }
-
-                int parent = 0;
-                while (currentNode.Parent != null)
-                {
-                    parent++;
-                    currentNode = currentNode.Parent;
-                }
-
-                count += parent;
             }
-            return count;
+
+            //Now count up to the mutual parent from both sides
+            var result = 0;
+            node = youNode.Parent;
+            while (node.Parent != null && node.Value != mutualParent)
+            {
+                node = node.Parent;
+                result++;
+            }
+
+            node = sanNode.Parent;
+            while (node.Parent != null && node.Value != mutualParent)
+            {
+                node = node.Parent;
+                result++;
+            }
+
+            Console.WriteLine(result);
         }
 
+        
         public TreeNode<string> ParseInput(string input)
         {
-            Dictionary<string, TreeNode<string>> nodes = new Dictionary<string, TreeNode<string>>();
+            var split = input.SplitNewLine();
+            Dictionary<string, TreeNode<string>> nodeLookup = new Dictionary<string, TreeNode<string>>();
 
-            foreach (var line in input.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries))
+
+            foreach (var line in split)
             {
-                var split = line.Split(')');
-                var stringOrbitted = split[0];
-                var stringOrbitter = split[1];
+                var bits = line.Split(')');
+                var planet = bits[0];
+                var orbitter = bits[1];
 
-
-                //Make sure both the orbitted and orbitted object are initialized, added to the dictionary, or retrieved from the dictionary.
-                TreeNode<string> orbitted;
-                TreeNode<string> orbitter;
-
-                if (!nodes.TryGetValue(stringOrbitted, out orbitted))
+                //Get or create nodes for both the planet/orbitter
+                if(!nodeLookup.TryGetValue(planet, out TreeNode<string> planetNode))
                 {
-                    orbitted = new TreeNode<string>(stringOrbitted);
-                    nodes.Add(stringOrbitted, orbitted);
+                    planetNode = new TreeNode<string>(planet);
+                    nodeLookup[planet] = planetNode;
                 }
 
-                if (!nodes.TryGetValue(stringOrbitter, out orbitter))
+                if (!nodeLookup.TryGetValue(orbitter, out TreeNode<string> orbitterNode))
                 {
-                    orbitter = new TreeNode<string>(stringOrbitter);
-                    nodes.Add(stringOrbitter, orbitter);
+                    orbitterNode = new TreeNode<string>(orbitter);
+                    nodeLookup[orbitter] = orbitterNode;
                 }
 
-                orbitted.Children.Add(orbitter);
-                orbitter.Parent = orbitted;
+                //Setup relations
+                planetNode.Children.Add(orbitterNode);
+                orbitterNode.Parent = planetNode;
             }
 
-            var parent = nodes.Values.Where(i => i.Parent == null).First();
-            return parent;
+            return nodeLookup["COM"];
         }
 
+
+
+
+
+        private const string Example1 = @"COM)B
+B)C
+C)D
+D)E
+E)F
+B)G
+G)H
+D)I
+E)J
+J)K
+K)L";
 
         private const string Example2 = @"COM)B
 B)C
@@ -156,18 +147,6 @@ J)K
 K)L
 K)YOU
 I)SAN";
-
-        private const string Example = @"COM)B
-B)C
-C)D
-D)E
-E)F
-B)G
-G)H
-D)I
-E)J
-J)K
-K)L";
 
         private const string Input = @"6TJ)DQ7
 Q64)6PD

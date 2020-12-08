@@ -8,23 +8,23 @@ namespace Years.Utils
         public TreeNode(){}
         public TreeNode(T t)
         { 
-            Node = t; 
+            Value = t; 
         }
 
 
-        public T Node;
+        public T Value;
         public TreeNode<T> Parent;
         public List<TreeNode<T>> Children = new List<TreeNode<T>>();
         public object Object;//Use with hard casts, to store some addition info with each generic node.
 
         public override string ToString()
         {
-            return $"{Node.ToString()} Children: {Children.Count}";
+            return $"{Value.ToString()} Children: {Children.Count}";
         }
 
         public bool TryFindNode(T t, out TreeNode<T> node)
         {
-            if(Node.Equals(t))
+            if(Value.Equals(t))
             {
                 node = this;
                 return true;
@@ -34,7 +34,7 @@ namespace Years.Utils
             while(stack.Any())
             {
                 var currentNode = stack.Pop();
-                if(currentNode.Node.Equals(t))
+                if(currentNode.Value.Equals(t))
                 {
                     node = currentNode;
                     return true;
@@ -48,6 +48,24 @@ namespace Years.Utils
 
             node = null;
             return false;
+        }
+
+
+        public IEnumerable<TreeNode<T>> Flatten()
+        {
+            Stack<TreeNode<T>> stack = new Stack<TreeNode<T>>();
+            stack.Push(this);
+
+            while (stack.Any())
+            {
+                var node = stack.Pop();
+                yield return node;
+
+                foreach (var child in node.Children)
+                {
+                    stack.Push(child);
+                }
+            }
         }
     }
 }
