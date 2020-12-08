@@ -6,6 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using Years.Utils;
+using Years.Year2019.IntCodeComputer;
 
 namespace Years.Year2019
 {
@@ -16,30 +17,29 @@ namespace Years.Year2019
 
         public void ProblemOne()
         {
-            IntCodeComputer computer = new IntCodeComputer(Input);
-            computer.Program[1] = 12;
-            computer.Program[2] = 2;
-            computer.PrintDecompiledInstructions = false;
+            Computer computer = new Computer(Input);
+            computer.Memory[1] = 12;
+            computer.Memory[2] = 2;
+            computer.PrintDisassembly = true;
             computer.Run();
-            long value = computer.Program[0];
+            long value = computer.Memory[0];
             Console.WriteLine(value);
         }
 
         public void ProblemTwo()
         {
-            IntCodeComputer computer = new IntCodeComputer();
-            List<long> program = IntCodeComputer.ParseProgram(Input);
+            Computer computer = new Computer(Input);
 
             for (int x = 0; x <= 99; x++)
             {
                 for (int y = 0; y <= 99; y++)
                 {
-                    computer.Program = program.Clone();
-                    computer.Program[1] = x;
-                    computer.Program[2] = y;
-                    computer.PrintDecompiledInstructions = false;
+                    computer.Reset(Input);
+                    computer.Memory[1] = x;
+                    computer.Memory[2] = y;
+                    computer.PrintDisassembly = false;
                     computer.Run();
-                    long value = computer.Program[0];
+                    long value = computer.Memory[0];
 
                     if (value == 19690720)
                     {

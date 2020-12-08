@@ -6,7 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Years.Utils
 {
-    public static class Extensions
+    public static partial class Extensions
     {
         public static List<T> Clone<T>(this List<T> oldList)
         {
@@ -103,9 +103,18 @@ namespace Years.Utils
         }
 
 
+        public static List<long> SplitDigits(this long num)
+        {
+            List<long> digits = new List<long>();
+            while (num > 0)
+            {
+                digits.Add(num % 10);
+                num = num / 10;
+            }
 
-
-
+            digits.Reverse();
+            return digits;
+        }
 
         #region IEnumerables ========================================================================================================
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Years.Utils;
+using Years.Year2019.IntCodeComputer;
 
 namespace Years.Year2019
 {
@@ -21,9 +22,8 @@ namespace Years.Year2019
         public void ProblemOne()
         {
             //IntCodeComputer computer = new IntCodeComputer(Input);
-            IntCodeComputer computer = new IntCodeComputer(Input);
-            computer.SimulatedInput.Add(1);
-            computer.UseSimulatedInput = true;
+            Computer computer = new Computer(Input);
+            computer.Input.Add(1);
             computer.Run();
             var result = computer.ToString();
             Console.ReadKey();
@@ -31,10 +31,9 @@ namespace Years.Year2019
 
         public void ProblemTwo()
         {
-            IntCodeComputer computer = new IntCodeComputer(Input);
-            computer.SimulatedInput.Add(5);
-            computer.UseSimulatedInput = true;
-            computer.PrintDecompiledInstructions = true;
+            Computer computer = new Computer(Input);
+            computer.Input.Add(5);
+            computer.PrintDisassembly = true;
             //computer.WaitAfterDecompiling = true;
             computer.Run();
             var result = computer.ToString();

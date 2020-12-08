@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text;
 using Years.Utils;
+using Years.Year2019.IntCodeComputer;
 
 namespace Years.Year2019
 {
@@ -12,7 +13,7 @@ namespace Years.Year2019
         public int Year => 2019;
         public void ProblemOne()
         {
-            IntCodeComputer computer = new IntCodeComputer(Program);
+            Computer computer = new Computer(Program);
             //IntCodeComputer computer = new IntCodeComputer("104,1125899906842624,99");
             computer.Run();
             var result = computer.ToString();

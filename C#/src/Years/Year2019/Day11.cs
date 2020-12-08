@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Years.Utils;
+using Years.Year2019.IntCodeComputer;
 
 namespace Years.Year2019
 {
@@ -50,24 +51,26 @@ namespace Years.Year2019
             Vector2i position = new Vector2i();
             Direction direction = Direction.Up;
 
-            IntCodeComputer computer = new IntCodeComputer(Program);
-            computer.PrintDecompiledInstructions = false;
+            Computer computer = new Computer(Program);
+            computer.PrintDisassembly = false;
             computer.PrintOutput = false;
-            computer.PrintInput = false;
-            computer.UseSimulatedInput = true;
             int cycle = 0;
-            while (!computer.Halted)
+            while (computer.State != State.Halt)
             {
                 try
                 {
 
-                    computer.RunUntilInput();
+                    computer.Run();
 
                     int currentColor = GeColor(position);
-                    computer.SimulatedInput.Add(currentColor);
+                    computer.Input.Add(currentColor);
 
-                    int newColor = (int) computer.RunTillAfterOutput(true);
-                    int rotate = (int) computer.RunTillAfterOutput(true);
+                    int newColor = 0;
+                    int rotate = 0;
+
+                    throw new Exception("fix");
+                    //int newColor = (int) computer.Run();
+                    //int rotate = (int) computer.Run();
 
                     color[position] = newColor;
                     IncrementCount(position);
@@ -88,7 +91,7 @@ namespace Years.Year2019
                 }
                 catch (Exception e)
                 {
-                    if (computer.Halted)
+                    if (computer.State == State.Halt)
                     {
                         break;
                     }
@@ -130,23 +133,24 @@ namespace Years.Year2019
             Vector2i position = new Vector2i();
             Direction direction = Direction.Up;
 
-            IntCodeComputer computer = new IntCodeComputer(Program);
-            computer.PrintDecompiledInstructions = false;
+            Computer computer = new Computer(Program);
+            computer.PrintDisassembly = false;
             computer.PrintOutput = false;
-            computer.PrintInput = false;
-            computer.UseSimulatedInput = true;
             int cycle = 0;
-            while (!computer.Halted)
+            while (computer.State != State.Halt)
             {
                 try
                 {
-                    computer.RunUntilInput();
+                    computer.Run();
 
                     int currentColor = GeColor(position);
-                    computer.SimulatedInput.Add(currentColor);
+                    computer.Input.Add(currentColor);
 
-                    int newColor = (int)computer.RunTillAfterOutput(true);
-                    int rotate = (int)computer.RunTillAfterOutput(true);
+                    int newColor = 0;
+                        int rotate = 0;
+                    throw new Exception("fix");
+                    //int newColor = (int)computer.Run();
+                    //int rotate = (int)computer.Run();
 
                     color[position] = newColor;
                     IncrementCount(position);
@@ -167,7 +171,7 @@ namespace Years.Year2019
                 }
                 catch
                 {
-                    if (computer.Halted)
+                    if (computer.State == State.Halt)
                     {
                         break;
                     }

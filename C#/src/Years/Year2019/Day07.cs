@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Years.Utils;
+using Years.Year2019.IntCodeComputer;
 
 namespace Years.Year2019
 {
@@ -51,11 +52,10 @@ namespace Years.Year2019
             {
                 Console.WriteLine("\r\n=== Spinning up intcomputer ===\r\n");
 
-                IntCodeComputer c = new IntCodeComputer(program);
-                c.UseSimulatedInput = true;
-                c.SimulatedInput.Add(phaseSeq);
-                c.SimulatedInput.Add(output);
-                c.PrintDecompiledInstructions = true;
+                Computer c = new Computer(program);
+                c.Input.Add(phaseSeq);
+                c.Input.Add(output);
+                c.PrintDisassembly = true;
                 c.Run();
 
                 output = c.Output.First();
@@ -70,13 +70,13 @@ namespace Years.Year2019
         public long CalculateThrusterSignalWithFeedbackLoop(List<long> phaseSequence, string program)
         {
             bool printDecompiledInstructions = true;
-            List < IntCodeComputer > computers = new List<IntCodeComputer>()
+            List<Computer> computers = new List<Computer>()
             {
-                new IntCodeComputer(program) {UseSimulatedInput = true, PrintDecompiledInstructions = printDecompiledInstructions, SimulatedInput = new List<long>(){phaseSequence[0], 0}},
-                new IntCodeComputer(program) {UseSimulatedInput = true, PrintDecompiledInstructions = printDecompiledInstructions, SimulatedInput = new List<long>(){phaseSequence[1]}},
-                new IntCodeComputer(program) {UseSimulatedInput = true, PrintDecompiledInstructions = printDecompiledInstructions, SimulatedInput = new List<long>(){phaseSequence[2]}},
-                new IntCodeComputer(program) {UseSimulatedInput = true, PrintDecompiledInstructions = printDecompiledInstructions, SimulatedInput = new List<long>(){phaseSequence[3]}},
-                new IntCodeComputer(program) {UseSimulatedInput = true, PrintDecompiledInstructions = printDecompiledInstructions, SimulatedInput = new List<long>(){phaseSequence[4]}},
+                new Computer(program) {PrintDisassembly = printDecompiledInstructions, Input = new List<long>(){phaseSequence[0], 0}},
+                new Computer(program) {PrintDisassembly = printDecompiledInstructions, Input = new List<long>(){phaseSequence[1]}},
+                new Computer(program) {PrintDisassembly = printDecompiledInstructions, Input = new List<long>(){phaseSequence[2]}},
+                new Computer(program) {PrintDisassembly = printDecompiledInstructions, Input = new List<long>(){phaseSequence[3]}},
+                new Computer(program) {PrintDisassembly = printDecompiledInstructions, Input = new List<long>(){phaseSequence[4]}},
             };
 
             long output = 0;
@@ -87,15 +87,15 @@ namespace Years.Year2019
                     Console.WriteLine($"Running on {i}");
                     int first = i;
                     int second = i + 1 < computers.Count ? i + 1 : 0;//wrap around to first computer
-                    computers[first].RunTillAfterOutput();
-                    if (computers[first].Halted)
+                    computers[first].Run();
+                    if (computers[first].State == State.Halt)
                     {
                         return output;
                         //Done!
                     }
                     output = computers[first].Output.First();
                     computers[first].Output.Clear();
-                    computers[second].SimulatedInput.Add(output);
+                    computers[second].Input.Add(output);
                 }
             }
         }
