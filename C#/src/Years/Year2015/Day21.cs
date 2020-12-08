@@ -58,7 +58,6 @@ namespace Years.Year2015
                 bossDamage = 1;
             }
 
-            bool playerWin = false;
             while (true)
             {
                 
