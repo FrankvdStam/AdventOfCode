@@ -149,7 +149,7 @@ namespace Years.Year2015
 
         private bool[,] ParseInput(string input, int width, int height)
         {
-            Debug.WriteLine("parsing.");
+            //Debug.WriteLine("parsing.");
             var result = new bool[width, height];
             var lines = input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
             for (int y = 0; y < height; y++)

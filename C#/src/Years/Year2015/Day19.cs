@@ -27,7 +27,6 @@ namespace Years.Year2015
 
         public void ProblemOne()
         {
-
             var split = Input.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList();
             
             //Step 1: separate the replacements and input chemical
@@ -57,7 +56,6 @@ namespace Years.Year2015
 
         public void ProblemTwo()
         {
-
             int cnt = 0;
             while (!_molecule.Equals("e"))
             {
