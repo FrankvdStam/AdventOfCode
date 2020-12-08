@@ -10,12 +10,6 @@ namespace Years.Year2019
         public int Day => 1;
         public int Year => 2019;
 
-        public Day01()
-        {
-
-        }
-
-
         public void ProblemOne()
         {
             List<int> result = new List<int>();
@@ -29,7 +23,7 @@ namespace Years.Year2019
             }
 
             var total = result.Sum();
-            Console.WriteLine("Total: " + total);
+            Console.WriteLine(total);
         }
 
         public void ProblemTwo()
@@ -59,8 +53,7 @@ namespace Years.Year2019
             }
 
             var total = result.Sum();
-            Console.WriteLine("Total: " + total);
-            Console.ReadKey();
+            Console.WriteLine(total);
         }
 
         private int CalculateFuelFromMass(decimal mass)

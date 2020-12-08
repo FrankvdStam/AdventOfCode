@@ -19,11 +19,10 @@ namespace Years.Year2019
             IntCodeComputer computer = new IntCodeComputer(Input);
             computer.Program[1] = 12;
             computer.Program[2] = 2;
-            computer.PrintDecompiledInstructions = true;
+            computer.PrintDecompiledInstructions = false;
             computer.Run();
             long value = computer.Program[0];
-            Console.WriteLine($"Halted with position 0: {value}");
-            Console.ReadKey();
+            Console.WriteLine(value);
         }
 
         public void ProblemTwo()
@@ -38,16 +37,15 @@ namespace Years.Year2019
                     computer.Program = program.Clone();
                     computer.Program[1] = x;
                     computer.Program[2] = y;
+                    computer.PrintDecompiledInstructions = false;
                     computer.Run();
-                    Console.WriteLine($"({x}, {y})");
                     long value = computer.Program[0];
 
                     if (value == 19690720)
                     {
-                        //516000
-
+                        Console.WriteLine(100 * x + y);
+                        return;
                     }
-
                 }
             }
         }
