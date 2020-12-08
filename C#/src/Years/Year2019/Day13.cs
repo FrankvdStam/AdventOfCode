@@ -23,27 +23,36 @@ namespace Years.Year2019
         public int Year => 2019;
         public void ProblemOne()
         {
-            return;
             Computer computer = new Computer(Program);
             computer.PrintDisassembly = false;
-            
-            Dictionary<Vector2i, Tile> screen = new Dictionary<Vector2i, Tile>();
 
+            int count = 0;
             while (computer.State != State.Halt)
             {
-                try
+                RunComputerTillInputOrOutput(computer);
+                if (computer.State == State.Halt)
                 {
-                    throw new Exception("Fix");
-                //int x = (int)computer.RunTillAfterOutput(true);
-                //int y = (int)computer.RunTillAfterOutput(true);
-                //Tile t = (Tile)computer.RunTillAfterOutput(true);
-                //screen[new Vector2i(x, y)] = t;
+                    break;
                 }
-                catch { }
-            }
+                RunComputerTillInputOrOutput(computer);
+                RunComputerTillInputOrOutput(computer);
 
-            int blocks = screen.Count(i => i.Value == Tile.Block);
+                //int x = (int)computer.Output[0];
+                //int y = (int)computer.Output[1];
+                Tile t = (Tile)computer.Output[2];
+
+                if (t == Tile.Block)
+                {
+                    count++;
+                }
+
+                computer.Output.Clear();
+            }
+            Console.WriteLine(count);
         }
+
+        
+
         public void ProblemTwo()
         {
             Computer computer = new Computer(Program);
@@ -61,66 +70,80 @@ namespace Years.Year2019
             int cycle = 0;
             while (computer.State != State.Halt)
             {
-                throw new Exception("Fix");
-                //BreakReason r = computer.RunTillInputOrOutput();
-                //switch (r)
-                //{
-                //    case BreakReason.Output:
-                //        //Parse x,y,tile
-                //        int x = (int)computer.Output.First();
-                //        computer.Output.Clear();
-                //        int y = (int)computer.RunTillAfterOutput(true);
-                //        long z = computer.RunTillAfterOutput(true);
-                //
-                //        if (x == -1 && y == 0)
-                //        {
-                //            score = z;
-                //        }
-                //        else
-                //        {
-                //            Tile t = (Tile) z;
-                //            screen[new Vector2i(x, y)] = t;
-                //
-                //            if (t == Tile.Ball)
-                //            {
-                //                ballPosition = new Vector2i(x, y);
-                //            }
-                //
-                //            if (t == Tile.HorizontalPaddle)
-                //            {
-                //                paddlePosition = new Vector2i(x, y);
-                //            }
-                //        }
-                //
-                //        break;
-                //
-                //    case BreakReason.Input:
-                //        //Game is requesting input
-                //        long input = 0;
-                //        if (ballPosition.X == paddlePosition.X)
-                //        {
-                //            input = 0;
-                //        }
-                //
-                //        if (ballPosition.X < paddlePosition.X)
-                //        {
-                //            input = -1;
-                //        }
-                //
-                //        if (ballPosition.X > paddlePosition.X)
-                //        {
-                //            input = 1;
-                //        }
-                //
-                //        computer.SimulatedInput.Add(input);
-                //        computer.Step();//step over the input instruction so that we can run again via RunTillInputOrOutput
-                //        Render(screen);
-                //        Console.WriteLine(cycle++);
-                //        break;
-                //    case BreakReason.Halt:
-                //        Console.WriteLine($"Score: {score}");
-                //        return;
-                //}
+               RunComputerTillInputOrOutput(computer);
+               switch (computer.State)
+                {
+                   case State.PushedOutput:
+                       RunComputerTillInputOrOutput(computer);
+                       RunComputerTillInputOrOutput(computer);
+
+                       int  x = (int) computer.Output[0];
+                       int  y = (int) computer.Output[1];
+                       long z =       computer.Output[2];
+                       computer.Output.Clear();
+               
+                       if (x == -1 && y == 0)
+                       {
+                           score = z;
+                       }
+                       else
+                       {
+                           Tile t = (Tile) z;
+                           screen[new Vector2i(x, y)] = t;
+               
+                           if (t == Tile.Ball)
+                           {
+                               ballPosition = new Vector2i(x, y);
+                           }
+               
+                           if (t == Tile.HorizontalPaddle)
+                           {
+                               paddlePosition = new Vector2i(x, y);
+                           }
+                       }
+               
+                       break;
+               
+                   case State.WaitingForInput:
+                       //Game is requesting input
+                       long input = 0;
+                       if (ballPosition.X == paddlePosition.X)
+                       {
+                           input = 0;
+                       }
+               
+                       if (ballPosition.X < paddlePosition.X)
+                       {
+                           input = -1;
+                       }
+               
+                       if (ballPosition.X > paddlePosition.X)
+                       {
+                           input = 1;
+                       }
+               
+                       computer.Input.Add(input);
+                       computer.Step();//step over the input instruction so that we can run again via RunTillInputOrOutput
+                       //Render(screen);
+                       //Console.WriteLine(cycle++);
+                       break;
+                   case State.Halt:
+                       Console.WriteLine(score);
+                       return;
+               }
+            }
+        }
+
+        private void RunComputerTillInputOrOutput(Computer c)
+        {
+            var state = c.Step();
+            while (true)
+            {
+                if (state == State.Halt || state == State.WaitingForInput || state == State.PushedOutput)
+                {
+                    return;
+                }
+                state = c.Step();
             }
         }
 
