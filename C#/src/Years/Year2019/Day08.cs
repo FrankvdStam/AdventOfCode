@@ -51,11 +51,6 @@ namespace Years.Year2019
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    if (image.Pixels[x + y * Width] == 2)
-                    {
-
-                    }
-
                     Console.Write(image.Pixels[x + y * Width] == 1 ? '#' : ' ');
                 }
                 Console.WriteLine();

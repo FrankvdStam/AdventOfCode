@@ -14,13 +14,23 @@ namespace Years.Year2019
         public void ProblemOne()
         {
             Computer computer = new Computer(Program);
-            //IntCodeComputer computer = new IntCodeComputer("104,1125899906842624,99");
+            computer.PrintDisassembly = false;
+            computer.PrintOutput = false;
+            computer.Input.Add(1);
             computer.Run();
-            var result = computer.ToString();
-
+           
+            Console.WriteLine(computer.Output[0]);
         }
+
         public void ProblemTwo()
         {
+            Computer computer = new Computer(Program);
+            computer.PrintDisassembly = false;
+            computer.PrintOutput = false;
+            computer.Input.Add(2);
+            computer.Run();
+
+            Console.WriteLine(computer.Output[0]);
         }
 
 
