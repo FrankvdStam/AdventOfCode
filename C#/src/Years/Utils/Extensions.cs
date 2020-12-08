@@ -8,6 +8,11 @@ namespace Years.Utils
 {
     public static partial class Extensions
     {
+        public static string[] SplitNewLine(this string input)
+        {
+            return input.Split(new string[] {"\r\n"}, StringSplitOptions.None);
+        }
+
         public static List<T> Clone<T>(this List<T> oldList)
         {
             BinaryFormatter formatter = new BinaryFormatter();

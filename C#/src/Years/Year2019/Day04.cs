@@ -16,13 +16,17 @@ namespace Years.Year2019
             //Test();
         }
 
-        private const int StartRange = 272091;
-        private const int EndRange = 815432;
+        private int _startRange = 0;
+        private int _endRange = 0;
 
         public void ProblemOne()
-        {  
+        {
+            var split = Input.Split('-');
+            _startRange = int.Parse(split[0]);
+            _endRange = int.Parse(split[1]);
+
             List<int> passwords = new List<int>();
-            for (int i = StartRange; i <= EndRange; i++)
+            for (int i = _startRange; i <= _endRange; i++)
             {
                 if (IsValidPassword(i.ToString()))
                 {
@@ -31,12 +35,13 @@ namespace Years.Year2019
             }
 
             var result = passwords.Count();
+            Console.WriteLine(result);
         }
 
         public void ProblemTwo()
         {
             List<int> passwords = new List<int>();
-            for (int i = StartRange; i <= EndRange; i++)
+            for (int i = _startRange; i <= _endRange; i++)
             {
                 if (AdvancedIsValidPassword(i.ToString()))
                 {
@@ -45,6 +50,7 @@ namespace Years.Year2019
             }
 
             var result = passwords.Count();
+            Console.WriteLine(result);
         }
 
 
@@ -186,5 +192,8 @@ namespace Years.Year2019
             return false;
         }
         #endregion
+
+
+        private const string Input = @"272091-815432";
     }
 }
