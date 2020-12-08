@@ -20,7 +20,7 @@ namespace Years.Year2019
             Computer computer = new Computer(Input);
             computer.Memory[1] = 12;
             computer.Memory[2] = 2;
-            computer.PrintDisassembly = true;
+            computer.PrintDisassembly = false;
             computer.Run();
             long value = computer.Memory[0];
             Console.WriteLine(value);
