@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using NUnit.Framework.Constraints;
 using Years.Utils;
 using Years.Year2019.IntCodeComputer;
 
@@ -20,9 +21,23 @@ namespace Years.Year2019
             {Direction.Right, new Vector2i(1, 0)},
         };
 
+
+        private void RunComputerToInputHalt(Computer c)
+        {
+            var state = c.Step();
+            while (true)
+            {
+                if (state == State.Halt || state == State.WaitingForInput)
+                {
+                    return;
+                }
+                state = c.Step();
+            }
+        }
+
+
         public void ProblemOne()
         {
-            return;//remove this return to run part1
             Dictionary<Vector2i, int> count = new Dictionary<Vector2i, int>();
             Dictionary<Vector2i, int> color = new Dictionary<Vector2i, int>();
 
@@ -60,19 +75,20 @@ namespace Years.Year2019
                 try
                 {
 
-                    computer.Run();
+                    RunComputerToInputHalt(computer);
 
                     int currentColor = GeColor(position);
-                    computer.Input.Add(currentColor);
+                    computer.Input.Add(currentColor); ;
 
-                    int newColor = 0;
-                    int rotate = 0;
+                    RunComputerToInputHalt(computer);
+                    long newColor = computer.Output[0];
+                    computer.Output.RemoveAt(0);
 
-                    throw new Exception("fix");
-                    //int newColor = (int) computer.Run();
-                    //int rotate = (int) computer.Run();
+                    RunComputerToInputHalt(computer);
+                    long rotate = computer.Output[0];
+                    computer.Output.RemoveAt(0);
 
-                    color[position] = newColor;
+                    color[position] = (int)newColor;
                     IncrementCount(position);
 
                     //Move
@@ -87,7 +103,7 @@ namespace Years.Year2019
 
                     position = position.Add(Moves[direction]);
                     cycle++;
-                    Console.WriteLine(cycle);
+                    //Console.WriteLine(cycle);
                 }
                 catch (Exception e)
                 {
@@ -99,7 +115,7 @@ namespace Years.Year2019
             }
 
             var panelsPaintedOnce = count.Count(i => i.Value > 0);
-            //computer.Run();
+            Console.WriteLine(panelsPaintedOnce);
         }
 
         public void ProblemTwo()
@@ -141,18 +157,20 @@ namespace Years.Year2019
             {
                 try
                 {
-                    computer.Run();
+                    RunComputerToInputHalt(computer);
 
                     int currentColor = GeColor(position);
                     computer.Input.Add(currentColor);
 
-                    int newColor = 0;
-                        int rotate = 0;
-                    throw new Exception("fix");
-                    //int newColor = (int)computer.Run();
-                    //int rotate = (int)computer.Run();
+                    RunComputerToInputHalt(computer);
+                    long newColor = computer.Output[0];
+                    computer.Output.RemoveAt(0);
 
-                    color[position] = newColor;
+                    RunComputerToInputHalt(computer);
+                    long rotate = computer.Output[0];
+                    computer.Output.RemoveAt(0);
+
+                    color[position] = (int)newColor;
                     IncrementCount(position);
 
                     //Move
@@ -167,7 +185,7 @@ namespace Years.Year2019
 
                     position = position.Add(Moves[direction]);
                     cycle++;
-                    Console.WriteLine(cycle);
+                    //Console.WriteLine(cycle);
                 }
                 catch
                 {
@@ -188,13 +206,18 @@ namespace Years.Year2019
 
         private void Render(Dictionary<Vector2i, int> colors)
         {
-            Console.Clear();
+            var x = Console.CursorLeft;
+            var y = Console.CursorTop;
+
+            //Console.Clear();
             foreach (var c in colors)
             {
-                Console.SetCursorPosition(c.Key.X, c.Key.Y);
+                Console.SetCursorPosition(c.Key.X + x, c.Key.Y + y);
                 Console.BackgroundColor = c.Value == 0 ? ConsoleColor.Black : ConsoleColor.White;
-                Console.Write("#");
+                Console.Write(' ');
             }
+            Console.WriteLine();
+            Console.WriteLine();
         }
 
 
