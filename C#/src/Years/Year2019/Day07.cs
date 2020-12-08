@@ -15,104 +15,113 @@ namespace Years.Year2019
 
         public void ProblemOne()
         {
-            var permutations = GetPermutations(new List<long> {0, 1, 2, 3, 4}, 5).ToList();
-            Dictionary<List<long>, long> results = new Dictionary<List<long>, long>();
+            var permutations = new List<long> {0, 1, 2, 3, 4}.Permute();
+            long max = 0;
             foreach (var permutation in permutations)
             {
-                long thrusterSignal = CalculateThrusterSignal(permutation, ActualProgram);
-                results.Add(permutation.ToList(), thrusterSignal);
+                long thrusterSignal = CalculateThrusterSignal(permutation, Input);
+                if (max < thrusterSignal)
+                {
+                    max = thrusterSignal;
+                }
             }
-
-            long maxThrusterSignal = results.Values.Max();
+            Console.WriteLine(max);
         }
-
-
-
-
 
 
         public void ProblemTwo()
         {
-            Console.Clear();
-            
-            var permutations = GetPermutations(new List<long> { 5, 6, 7, 8, 9 }, 5).ToList();
-            Dictionary<List<long>, long> results = new Dictionary<List<long>, long>();
+            var permutations = new List<long> {5, 6, 7, 8, 9}.Permute();
+            long max = 0;
             foreach (var permutation in permutations)
             {
-                long thrusterSignal = CalculateThrusterSignalWithFeedbackLoop(permutation.ToList(), ActualProgram);
-                results.Add(permutation.ToList(), thrusterSignal);
+                long thrusterSignal = CalculateThrusterSignalWithFeedbackLoop(permutation.ToList(), Input);
+                if (max < thrusterSignal)
+                {
+                    max = thrusterSignal;
+                }
             }
-            long maxThrusterSignal = results.Values.Max();
+            Console.WriteLine(max);
         }
 
-        public long CalculateThrusterSignal(IEnumerable<long> phaseSequence, string program)
+
+
+
+
+        private long CalculateThrusterSignal(IEnumerable<long> phaseSequence, string program)
         {
+            //we can abuse the fact that computers will halt after giving their first input, we can just discard the computer after getting the ouput.
+
             long output = 0;
-            foreach (int phaseSeq in phaseSequence)
+            foreach (var phaseSeq in phaseSequence)
             {
-                Console.WriteLine("\r\n=== Spinning up intcomputer ===\r\n");
-
-                Computer c = new Computer(program);
-                c.Input.Add(phaseSeq);
-                c.Input.Add(output);
-                c.PrintDisassembly = true;
-                c.Run();
-
-                output = c.Output.First();
+                Computer computer = new Computer(program);
+                computer.Input.Add(phaseSeq);
+                computer.Input.Add(output);
+                computer.PrintDisassembly = false;
+                computer.PrintOutput = false;
+                computer.Run();
+                output = computer.Output.First();
             }
-
-            Console.WriteLine("\r\n=== Done! ===\r\n");
-            Console.WriteLine("Result: " + output);
             return output;
         }
 
 
-        public long CalculateThrusterSignalWithFeedbackLoop(List<long> phaseSequence, string program)
+        private long CalculateThrusterSignalWithFeedbackLoop(List<long> phaseSequence, string program)
         {
-            bool printDecompiledInstructions = true;
             List<Computer> computers = new List<Computer>()
             {
-                new Computer(program) {PrintDisassembly = printDecompiledInstructions, Input = new List<long>(){phaseSequence[0], 0}},
-                new Computer(program) {PrintDisassembly = printDecompiledInstructions, Input = new List<long>(){phaseSequence[1]}},
-                new Computer(program) {PrintDisassembly = printDecompiledInstructions, Input = new List<long>(){phaseSequence[2]}},
-                new Computer(program) {PrintDisassembly = printDecompiledInstructions, Input = new List<long>(){phaseSequence[3]}},
-                new Computer(program) {PrintDisassembly = printDecompiledInstructions, Input = new List<long>(){phaseSequence[4]}},
+                new Computer(program) {PrintDisassembly = false, PrintOutput = false, Input = new List<long>(){phaseSequence[0]}},
+                new Computer(program) {PrintDisassembly = false, PrintOutput = false, Input = new List<long>(){phaseSequence[1]}},
+                new Computer(program) {PrintDisassembly = false, PrintOutput = false, Input = new List<long>(){phaseSequence[2]}},
+                new Computer(program) {PrintDisassembly = false, PrintOutput = false, Input = new List<long>(){phaseSequence[3]}},
+                new Computer(program) {PrintDisassembly = false, PrintOutput = false, Input = new List<long>(){phaseSequence[4]}},
             };
 
             long output = 0;
+
+
             while (true)
             {
                 for (int i = 0; i < computers.Count; i++)
                 {
-                    Console.WriteLine($"Running on {i}");
-                    int first = i;
-                    int second = i + 1 < computers.Count ? i + 1 : 0;//wrap around to first computer
-                    computers[first].Run();
-                    if (computers[first].State == State.Halt)
+                    computers[i].Input.Add(output);
+                    RunTillInputOutput(computers[i]);
+                    if (computers[i].State == State.Halt)
                     {
                         return output;
-                        //Done!
                     }
-                    output = computers[first].Output.First();
-                    computers[first].Output.Clear();
-                    computers[second].Input.Add(output);
+
+                    output = computers[i].Output[0];
+                    computers[i].Output.RemoveAt(0);
                 }
             }
         }
 
-        //https://stackoverflow.com/questions/756055/listing-all-permutations-of-a-string-integer
-        private static IEnumerable<IEnumerable<T>> GetPermutations<T>(IEnumerable<T> list, int length)
-        {
-            if (length == 1) return list.Select(t => new T[] {t});
 
-            return GetPermutations(list, length - 1)
-                .SelectMany(t => list.Where(e => !t.Contains(e)),
-                    (t1, t2) => t1.Concat(new T[] {t2}));
+        private void RunTillInputOutput(Computer c)
+        {
+            var state = c.Step();
+            while (true)
+            {
+                if (state == State.WaitingForInput || state == State.PushedOutput || state == State.Halt)
+                {
+                    return;
+                }
+                state = c.Step();
+            }
         }
 
-        private const string ActualProgram =
-            @"3,8,1001,8,10,8,105,1,0,0,21,46,55,68,89,110,191,272,353,434,99999,3,9,1002,9,3,9,1001,9,3,9,102,4,9,9,101,4,9,9,1002,9,5,9,4,9,99,3,9,102,3,9,9,4,9,99,3,9,1001,9,5,9,102,4,9,9,4,9,99,3,9,1001,9,5,9,1002,9,2,9,1001,9,5,9,1002,9,3,9,4,9,99,3,9,101,3,9,9,102,3,9,9,101,3,9,9,1002,9,4,9,4,9,99,3,9,1001,9,1,9,4,9,3,9,1001,9,1,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,1,9,4,9,3,9,1001,9,2,9,4,9,99,3,9,102,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,102,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,101,2,9,9,4,9,3,9,101,2,9,9,4,9,99,3,9,101,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,101,2,9,9,4,9,99,3,9,102,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,1,9,4,9,99,3,9,1002,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,101,1,9,9,4,9,3,9,101,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,1,9,4,9,3,9,102,2,9,9,4,9,99";
 
+
+
+
+
+
+
+
+
+        private const string Input = @"3,8,1001,8,10,8,105,1,0,0,21,46,55,68,89,110,191,272,353,434,99999,3,9,1002,9,3,9,1001,9,3,9,102,4,9,9,101,4,9,9,1002,9,5,9,4,9,99,3,9,102,3,9,9,4,9,99,3,9,1001,9,5,9,102,4,9,9,4,9,99,3,9,1001,9,5,9,1002,9,2,9,1001,9,5,9,1002,9,3,9,4,9,99,3,9,101,3,9,9,102,3,9,9,101,3,9,9,1002,9,4,9,4,9,99,3,9,1001,9,1,9,4,9,3,9,1001,9,1,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,1,9,4,9,3,9,1001,9,2,9,4,9,99,3,9,102,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,102,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,101,2,9,9,4,9,3,9,101,2,9,9,4,9,99,3,9,101,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,101,2,9,9,4,9,99,3,9,102,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,1,9,4,9,99,3,9,1002,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,101,1,9,9,4,9,3,9,101,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,1,9,4,9,3,9,102,2,9,9,4,9,99";
         //part 1
         private const string ExampleProgram1 = "3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0"; //43210
 

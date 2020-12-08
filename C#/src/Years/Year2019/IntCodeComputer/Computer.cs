@@ -308,7 +308,7 @@ namespace Years.Year2019.IntCodeComputer
 
                 case Opcode.Halt:
                     State = State.Halt;
-                    break;
+                    return State;
             }
 
            
