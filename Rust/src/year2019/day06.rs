@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 
 pub fn problem1()
 {
@@ -82,7 +81,7 @@ impl Planet{
         {
             leave = String::new();
             let mut index = 0;
-            let mut total = 4 * level;
+            let total = 4 * level;
             let mut leave_index = 0;
 
             'outer: while index < total
