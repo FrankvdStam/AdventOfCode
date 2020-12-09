@@ -10,7 +10,7 @@ namespace Day17
     class Program
     {
         static void Main(string[] args)
-        { 
+        {
             ProblemOne("hhhxzeay");
             //ProblemTwo();
         }
@@ -41,7 +41,7 @@ namespace Day17
 
                         foreach (var move in nextMoves)
                         {
-                            GetCoords(path+move, out int x, out int y);
+                            GetCoords(path + move, out int x, out int y);
                             if (x == 3 && y == 3)
                             {
                                 //Reached the exit.
@@ -51,7 +51,7 @@ namespace Day17
                             else
                             {
                                 //only enqueue if we didn't finish
-                                queue.Enqueue(path+move);
+                                queue.Enqueue(path + move);
                             }
                         }
                     }
@@ -108,7 +108,7 @@ namespace Day17
             }
             return result;
         }
-        
+
 
         static void GetCoords(string input, out int x, out int y)
         {
@@ -126,7 +126,7 @@ namespace Day17
             GetCoords(input, out int x, out int y);
             return x >= 0 && x < 4 && y >= 0 && y < 4;
         }
-        
+
         static List<char> OpenChars = new List<char>()
         {
             'b',

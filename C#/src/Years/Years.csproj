@@ -6,15 +6,12 @@
 
   <ItemGroup>
     <Compile Remove="Year2015Day23_WPF\**" />
-    <Compile Remove="Year2016\**" />
     <Compile Remove="Year2017\**" />
     <Compile Remove="Year2018\**" />
     <EmbeddedResource Remove="Year2015Day23_WPF\**" />
-    <EmbeddedResource Remove="Year2016\**" />
     <EmbeddedResource Remove="Year2017\**" />
     <EmbeddedResource Remove="Year2018\**" />
     <None Remove="Year2015Day23_WPF\**" />
-    <None Remove="Year2016\**" />
     <None Remove="Year2017\**" />
     <None Remove="Year2018\**" />
   </ItemGroup>

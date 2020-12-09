@@ -41,7 +41,7 @@ namespace Day14
         static void ProblemOne(string input)
         {
             List<HashKey> hashes = new List<HashKey>();
-            
+
 
             int nexthashIndex = 0;
             int hashIndex = 0;
@@ -134,7 +134,7 @@ namespace Day14
                             i.FiveChars.Contains(potentialKey.Triplet)))
                         {
                             //Found a key!
-                            potentialKey.IsKey = true; 
+                            potentialKey.IsKey = true;
                             potentialKey.KeyIndex = keyIndex;
                             keyIndex++;
 
@@ -163,7 +163,7 @@ namespace Day14
             {
                 throw new ArgumentException();
             }
-            
+
             int charCounter = 0;
             char c = '\0';
 
@@ -181,7 +181,7 @@ namespace Day14
                     {
                         //Check char AFTER the current x-let, it could be the same and then this set doesn't count.
                         //BUT! only do it if there still are chars left in the string
-                        
+
                         if (i + 1 < input.Length && input[i + 1] != c)
                         {
                             xLets.Add(c);

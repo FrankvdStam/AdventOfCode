@@ -12,7 +12,7 @@ namespace Day16
         {
             ProblemOne(ParseInput("00101000101111010"), 35651584);
         }
-        
+
         static void ProblemOne(int[] input, int inputLength)
         {
             while (input.Length < inputLength)
@@ -24,7 +24,7 @@ namespace Day16
             input = input.Take(inputLength).ToArray();
 
             var checksum = CalcChecksum(input);
-            
+
             StringBuilder builder = new StringBuilder();
             foreach (int i in checksum)
             {
@@ -35,7 +35,7 @@ namespace Day16
 
         static int[] GenerateData(int[] input)
         {
-            int[] result = new int[input.Length*2 + 1];
+            int[] result = new int[input.Length * 2 + 1];
 
             //Copy input into result.
             for (int i = 0; i < input.Length; i++)
@@ -48,9 +48,9 @@ namespace Day16
 
             //Reverse input
             int index = input.Length + 1;
-            for (int i = input.Length-1; i >= 0; i--)
+            for (int i = input.Length - 1; i >= 0; i--)
             {
-			    //Replace 0 -> 1 and 1-> 0
+                //Replace 0 -> 1 and 1-> 0
                 result[index] = input[i] == 0 ? 1 : 0;
                 index++;
             }
@@ -60,10 +60,10 @@ namespace Day16
         static int[] CalcChecksum(int[] input)
         {
             List<int> result = new List<int>();
-            
+
             while (true)
             {
-                for (int i = 0; i+1 < input.Length; i+=2)
+                for (int i = 0; i + 1 < input.Length; i += 2)
                 {
                     if (input[i] == input[i + 1])
                     {
@@ -88,7 +88,7 @@ namespace Day16
             }
         }
 
-        
+
         static int[] ParseInput(string input)
         {
             int[] result = new int[input.Length];

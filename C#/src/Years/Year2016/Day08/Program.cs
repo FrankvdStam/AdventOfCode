@@ -89,7 +89,7 @@ namespace Day08
 
             return newPixels;
         }
-        
+
 
         static bool[,] RotateY(bool[,] pixels, int row, int amount)
         {
@@ -124,14 +124,14 @@ namespace Day08
 
             return newPixels;
         }
-        
 
-        
+
+
 
         static void ProblemOne(string input, int width, int height)
         {
-            bool[,] pixels = new bool[height,width];
-            
+            bool[,] pixels = new bool[height, width];
+
             var lines = input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
             foreach (var line in lines)
             {
@@ -186,7 +186,7 @@ namespace Day08
                 var bits = line.Split(' ');
             }
         }
-        
+
 
         private static string Input = @"rect 1x1
 rotate row y=0 by 7

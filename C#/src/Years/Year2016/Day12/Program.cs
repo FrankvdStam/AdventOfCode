@@ -16,7 +16,7 @@ namespace Day12
             //ProblemTwo();
         }
 
-        static List<string> Registers = new List<string>(){"a", "b", "c", "d", };
+        static List<string> Registers = new List<string>() { "a", "b", "c", "d", };
 
         private static Dictionary<string, int> RegisterValues = new Dictionary<string, int>()
         {

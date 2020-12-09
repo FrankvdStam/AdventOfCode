@@ -70,7 +70,7 @@ namespace Day24
     {
         static void Main(string[] args)
         {
-            Maze m = new Maze(Input);
+            Maze2 m = new Maze2(Input);
 
 
             //ParseInput(Input, out List<Vector2i> walls, out List<Vector2i> points, out Vector2i startPosition);
