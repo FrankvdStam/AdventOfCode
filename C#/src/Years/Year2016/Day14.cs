@@ -32,20 +32,10 @@ namespace Years.Year2016
                     if (tripplet != null /* && quanTupplet == null*/)
                     {
                         trippletHashLookup.Add((tripplet.Value, i, hash.ToHexString()));
-                       // Console.WriteLine($"tripplet: {i}, {tripplet.Value}, {hash.ToHexString()}" );
                     }
                     
                     if (quanTupplet != null)
                     {
-                        //Run up to 10 mil hashes without finding more then 1 
-                        //var rev = ContainsQuantupple(hash.ToHexString().Reverse().ToHexByteArray());
-                        //if (quanTupplet != rev)
-                        //{
-                        //    throw new Exception($"Hash {hash.ToHexString()} at {i} contains multiple quantupplets. Solution does not account for this.");
-                        //}
-
-                        //Console.WriteLine($"quanTupplet: {i}, {quanTupplet.Value}, {hash.ToHexString()}");
-
                         keys.AddRange(trippletHashLookup.Where(j => j.Item1 == quanTupplet.Value && j.Item2 >= i - 1000 && j.Item3 != hash.ToHexString()));
                         if (keys.Count >= 64)
                         {
@@ -69,11 +59,6 @@ namespace Years.Year2016
                 long i = 0;
                 while (true)
                 {
-                    //if (i % 1000 == 0)
-                    //{
-                    //    Console.WriteLine(i);
-                    //}
-
 
                     byte[] hash = md5.ComputeHash(Encoding.ASCII.GetBytes(Input + i));
                     for (int j = 0; j < 2016; j++)
@@ -87,23 +72,13 @@ namespace Years.Year2016
 
 
 
-                    if (tripplet != null /* && quanTupplet == null*/)
+                    if (tripplet != null)
                     {
                         trippletHashLookup.Add((tripplet.Value, i, hash.ToHexString()));
-                        // Console.WriteLine($"tripplet: {i}, {tripplet.Value}, {hash.ToHexString()}" );
                     }
 
                     if (quanTupplet != null)
                     {
-                        //Run up to 10 mil hashes without finding more then 1 
-                        //var rev = ContainsQuantupple(hash.ToHexString().Reverse().ToHexByteArray());
-                        //if (quanTupplet != rev)
-                        //{
-                        //    throw new Exception($"Hash {hash.ToHexString()} at {i} contains multiple quantupplets. Solution does not account for this.");
-                        //}
-
-                        //Console.WriteLine($"quanTupplet: {i}, {quanTupplet.Value}, {hash.ToHexString()}");
-
                         keys.AddRange(trippletHashLookup.Where(j => j.Item1 == quanTupplet.Value && j.Item2 >= i - 1000 && j.Item3 != hash.ToHexString()));
                         if (keys.Count >= 64)
                         {
