@@ -144,22 +144,17 @@ pub fn problem2()
 
     for i in 0..jolts.len()
     {
-        //let jolt = jolts[i];
-        print!("jolt {}:", jolts[i]);
         //Consider the next 3 jolts
         let mut count = 0;
         for j in i+1..i+4
         {
             if j < jolts.len() && jolts[j] <= jolts[i] + 3
             {
-                print!(" {}", jolts[j]);
                 count += 1;
             }
         }
         possible_jumps.push(count);
-        println!();
     }
-    println!("{:?}", possible_jumps);
 
     let mut index = 0;
     let mut count: u64 = 1;
