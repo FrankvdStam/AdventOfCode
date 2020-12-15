@@ -1,5 +1,5 @@
 use crate::year2019::intcode_computer::computer::{Computer, State};
-use crate::utils::vector2i::Vector2i;
+use crate::utils::vector2_i64::Vector2_i64;
 use std::io;
 use std::io::Write;
 
@@ -39,7 +39,7 @@ pub fn problem1()
     //computer.input.push(1);
 
     let mut output_state = OutputState::X;
-    let mut vector = Vector2i::new(0, 0);
+    let mut vector = Vector2_i64::new(0, 0);
 
     loop
     {
@@ -97,11 +97,11 @@ pub fn problem2()
     computer.memory_write(0, 2);
     //computer.input.push(1);
 
-    let mut paddle_position = Vector2i::new(0, 0);
-    let mut ball_position = Vector2i::new(0, 0);
+    let mut paddle_position = Vector2_i64::new(0, 0);
+    let mut ball_position = Vector2_i64::new(0, 0);
 
     let mut output_state = OutputState::X;
-    let mut vector = Vector2i::new(0, 0);
+    let mut vector = Vector2_i64::new(0, 0);
 
     loop
     {

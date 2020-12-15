@@ -1,7 +1,7 @@
-use crate::utils::vector2i::Vector2i;
+use crate::utils::vector2_i64::Vector2_i64;
 
 
-pub fn toggle(lights: &mut Vec<bool>, from: Vector2i, to: Vector2i)
+pub fn toggle(lights: &mut Vec<bool>, from: Vector2_i64, to: Vector2_i64)
 {
     for i in from.x..to.x+1
     {
@@ -14,7 +14,7 @@ pub fn toggle(lights: &mut Vec<bool>, from: Vector2i, to: Vector2i)
 }
 
 
-pub fn turn(lights: &mut Vec<bool>, from: Vector2i, to: Vector2i, on: bool)
+pub fn turn(lights: &mut Vec<bool>, from: Vector2_i64, to: Vector2_i64, on: bool)
 {
     for i in from.x..to.x+1
     {
@@ -79,8 +79,8 @@ pub fn problem1()
             //}
         }
 
-        let from = Vector2i{ x: numbers[0] as i64, y: numbers[1] as i64 };
-        let to = Vector2i{ x: numbers[2] as i64, y: numbers[3] as i64 };
+        let from = Vector2_i64 { x: numbers[0] as i64, y: numbers[1] as i64 };
+        let to = Vector2_i64 { x: numbers[2] as i64, y: numbers[3] as i64 };
 
 
 
@@ -122,7 +122,7 @@ pub fn problem1()
 
 
 
-fn increase_brightness_by_n(lights: &mut Vec<i32>, from: Vector2i, to: Vector2i, n: i32)
+fn increase_brightness_by_n(lights: &mut Vec<i32>, from: Vector2_i64, to: Vector2_i64, n: i32)
 {
     for i in from.x..to.x+1
     {
@@ -200,8 +200,8 @@ pub fn problem2()
             //}
         }
 
-        let from = Vector2i{ x: numbers[0] as i64, y: numbers[1] as i64 };
-        let to = Vector2i{ x: numbers[2] as i64, y: numbers[3] as i64 };
+        let from = Vector2_i64 { x: numbers[0] as i64, y: numbers[1] as i64 };
+        let to = Vector2_i64 { x: numbers[2] as i64, y: numbers[3] as i64 };
 
 
 
