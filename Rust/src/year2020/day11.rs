@@ -34,21 +34,37 @@ pub fn problem2()
     let mut width = 0;
     let mut height = 0;
 
-    let mut seats = parse_seats(EXAMPLE, &mut width, &mut height);
-    draw_grid(&seats, width, height);
+    let mut seats = parse_seats(INPUT, &mut width, &mut height);
+    //draw_grid(&seats, width, height);
 
     let mut change = true;
     while change
     {
+        //let count_grid = count_grid(&seats, width, height);
+        //draw_count_grid(&count_grid(&seats, width, height), width, height);
+
         seats = occupy_seats_directional(&seats, width, height, &mut change);
-        println!();
-        draw_grid(&seats, width, height);
+        //println!();
+        //draw_grid(&seats, width, height);
     }
 
     let count = seats.iter().filter(|s| **s == Seat::SeatOccupied).count();
     println!("{}", count);
 }
 
+
+fn draw_count_grid(count_grid: &Vec<usize>, width: usize, height: usize)
+{
+    for y in 0..height
+    {
+        for x in 0..width
+        {
+            //Only process seats
+            print!("{}", count_grid[x + y * width]);
+        }
+        println!();
+    }
+}
 
 
 //Lookup table to ease looking around specific seats
@@ -65,6 +81,181 @@ const VECTOR_LOOKUP: [Vector2_i64; 8] = [
     Vector2_i64 { x:  0, y:  1, }, //up
     Vector2_i64 { x:  0, y: -1, }, //down
 ];
+//println!("increment count for seat {},{} - searching at {}, {}", x,y,_x,_y);
+fn count_grid(grid: &Vec<Seat>, width: usize, height: usize) -> Vec<usize>
+{
+    let mut grid_count = vec![0; width * height];
+
+    for y in 0..height
+    {
+        for x in 0..width
+        {
+            //Only process seats
+            if grid[x + y * width] != Seat::None
+            {
+                //Count the occupied seats around it
+                let mut count = 0;
+
+                for v in VECTOR_LOOKUP.iter()
+                {
+                    let mut direction = v.clone();
+                    'directional_search: loop
+                    {
+                        let _x = direction.x + (x as i64);
+                        let _y = direction.y + (y as i64);
+                        //println!("{},{} bounds? {},{}", x, y, _x, _y);
+
+                        //Check if this coord is within bounds
+                        if _x >= 0 && _x < width as i64 && _y >= 0 && _y < height as i64
+                        {
+                            match grid[(_x + _y * width as i64) as usize]
+                            {
+                                Seat::SeatOccupied =>
+                                {
+                                    println!("increment count for seat {},{} - searching at {}, {}", x,y,_x,_y);
+                                    count += 1;
+                                    //println!("          {}", count);
+                                    break 'directional_search;
+                                }
+                                Seat::SeatEmpty =>
+                                {
+                                    break 'directional_search;//Small detail I overlooked the first time - stop looking in a direction as soon as you see an empty seat.
+                                }
+                                _ => {}
+                            }
+
+
+                            ////println!("      {},{} checking {},{}", x, y, _x, _y);
+                            //if grid[(_x + _y * width as i64) as usize] == Seat::SeatOccupied
+                            //{
+                            //    println!("increment count for seat {},{} - searching at {}, {}", x,y,_x,_y);
+                            //    count += 1;
+                            //    //println!("          {}", count);
+                            //    break 'directional_search;
+                            //}
+                        } else {
+                            break 'directional_search;
+                        }
+
+
+                        direction = direction.add(v);
+                    }
+
+                }
+                grid_count[x + y * width] = count;
+            }
+        }
+    }
+    return grid_count;
+}
+
+
+
+
+
+
+
+fn occupy_seats_directional(grid: &Vec<Seat>, width: usize, height: usize, change: &mut bool) -> Vec<Seat>
+{
+    *change = false;
+    let mut new_grid = vec![Seat::None; width * height];
+    for y in 0..height
+    {
+        for x in 0..width
+        {
+            //Only process seats
+            if grid[x + y * width] != Seat::None
+            {
+                //Count the occupied seats around it
+                let mut count = 0;
+
+                for v in VECTOR_LOOKUP.iter()
+                {
+                    let mut direction = v.clone();
+                    'directional_search: loop
+                    {
+                        let _x = direction.x + (x as i64);
+                        let _y = direction.y + (y as i64);
+                        //println!("{},{} bounds? {},{}", x, y, _x, _y);
+
+                        //Check if this coord is within bounds
+                        if _x >= 0 && _x < width as i64 && _y >= 0 && _y < height as i64
+                        {
+                            match grid[(_x + _y * width as i64) as usize]
+                            {
+                                Seat::SeatOccupied =>
+                                    {
+                                       //println!("increment count for seat {},{} - searching at {}, {}", x,y,_x,_y);
+                                        count += 1;
+                                        //println!("          {}", count);
+                                        break 'directional_search;
+                                    }
+                                Seat::SeatEmpty =>
+                                    {
+                                        break 'directional_search;//Small detail I overlooked the first time - stop looking in a direction as soon as you see an empty seat.
+                                    }
+                                _ => {}
+                            }
+                        }
+                        else
+                        {
+                            break 'directional_search;
+                        }
+
+                        direction = direction.add(v);
+                    }
+                }
+
+                //Otherwise, the seat's state does not change.
+                new_grid[x + y * width] = grid[x + y * width];
+
+                //If a seat is empty (L) and there are no occupied seats adjacent to it, the seat becomes occupied.
+                if grid[x + y * width] == Seat::SeatEmpty && count == 0
+                {
+                    new_grid[x + y * width] = Seat::SeatOccupied;
+                    *change = true;
+                }
+
+                //If a seat is occupied (#) and four or more seats adjacent to it are also occupied, the seat becomes empty.
+                //Also, people seem to be more tolerant than you expected: it now takes five or more visible occupied seats for an occupied seat to become empty (rather than four or more from the previous rules).
+                if grid[x + y * width] == Seat::SeatOccupied && count >= 5
+                {
+                    new_grid[x + y * width] = Seat::SeatEmpty;
+                    *change = true;
+                }
+            }
+        }
+    }
+    return new_grid;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 fn occupy_seats(grid: &Vec<Seat>, width: usize, height: usize, change: &mut bool) -> Vec<Seat>
@@ -125,78 +316,6 @@ fn occupy_seats(grid: &Vec<Seat>, width: usize, height: usize, change: &mut bool
 
 
 
-fn occupy_seats_directional(grid: &Vec<Seat>, width: usize, height: usize, change: &mut bool) -> Vec<Seat>
-{
-    *change = false;
-    let mut new_grid = vec![Seat::None; width * height];
-    for y in 0..height
-    {
-        for x in 0..width
-        {
-            //Only process seats
-            if grid[x + y * width] != Seat::None
-            {
-                //Count the occupied seats around it
-                let mut count = 0;
-
-                for v in VECTOR_LOOKUP.iter()
-                {
-                    let mut direction = v.clone();
-                    'directional_search: loop
-                    {
-                        let _x = direction.x + (x as i64);
-                        let _y = direction.y + (y as i64);
-                        //println!("{},{} bounds? {},{}", x, y, _x, _y);
-
-                        //Check if this coord is within bounds
-                        if _x >= 0 && _x < width as i64 && _y >= 0 && _y < height as i64
-                        {
-                            //println!("      {},{} checking {},{}", x, y, _x, _y);
-                            if grid[(_x + _y * width as i64) as usize] == Seat::SeatOccupied
-                            {
-                                count += 1;
-                                //println!("          {}", count);
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            break 'directional_search;
-                        }
-
-                        direction = direction.add(v);
-                    }
-                }
-
-                //Otherwise, the seat's state does not change.
-                new_grid[x + y * width] = grid[x + y * width];
-
-                //If a seat is empty (L) and there are no occupied seats adjacent to it, the seat becomes occupied.
-                if grid[x + y * width] == Seat::SeatEmpty && count == 0
-                {
-                    new_grid[x + y * width] = Seat::SeatOccupied;
-                    *change = true;
-                }
-
-                //If a seat is occupied (#) and four or more seats adjacent to it are also occupied, the seat becomes empty.
-                //Also, people seem to be more tolerant than you expected: it now takes five or more visible occupied seats for an occupied seat to become empty (rather than four or more from the previous rules).
-                if grid[x + y * width] == Seat::SeatOccupied && count >= 5
-                {
-                    new_grid[x + y * width] = Seat::SeatEmpty;
-                    *change = true;
-                }
-
-
-            }
-        }
-    }
-    return new_grid;
-}
-
-
-
-
-
 
 fn draw_grid(grid: &Vec<Seat>, width: usize, height: usize)
 {
@@ -206,7 +325,7 @@ fn draw_grid(grid: &Vec<Seat>, width: usize, height: usize)
         {
             match grid[x + y * width]
             {
-                Seat::None          => print!(" "),
+                Seat::None          => print!("."),
                 Seat::SeatEmpty     => print!("L"),
                 Seat::SeatOccupied  => print!("#"),
             }
