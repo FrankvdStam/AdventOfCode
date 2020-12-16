@@ -1,4 +1,9 @@
 #![allow(non_camel_case_types)]
+
+use std::fmt::Display;
+use core::fmt;
+use crate::utils::math::difference;
+
 pub struct Vector2_i64
 {
     pub x: i64,
@@ -27,7 +32,12 @@ impl PartialEq for Vector2_i64
     }
 }
 
-
+impl fmt::Display for Vector2_i64
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.to_string())
+    }
+}
 
 impl Vector2_i64
 {
@@ -70,6 +80,20 @@ impl Vector2_i64
         temp2.remove(temp2.len() - 1);
         let y = temp2.parse::<i64>().unwrap();
 
+        return Vector2_i64::new(x, y);
+    }
+
+
+    ///Rotates the other vector around this one, returning the results in a new vector.
+    pub fn rotate_right(&self, other: &Vector2_i64) -> Vector2_i64
+    {
+        let diff_x = difference(self.x, other.x);
+        let diff_y = difference(self.y, other.y);
+
+        
+
+        let x = self.x - (self.y - other.y);
+        let y = self.y - (self.x - other.x);
         return Vector2_i64::new(x, y);
     }
 }
