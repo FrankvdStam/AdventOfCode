@@ -1,4 +1,5 @@
 #![allow(non_camel_case_types)]
+#![allow(unused_imports)]
 
 use std::fmt::Display;
 use core::fmt;
@@ -83,17 +84,13 @@ impl Vector2_i64
         return Vector2_i64::new(x, y);
     }
 
-
-    ///Rotates the other vector around this one, returning the results in a new vector.
-    pub fn rotate_right(&self, other: &Vector2_i64) -> Vector2_i64
+    pub fn rotate_right(&self) -> Vector2_i64
     {
-        let diff_x = difference(self.x, other.x);
-        let diff_y = difference(self.y, other.y);
+        return Vector2_i64::new(self.y, -self.x);
+    }
 
-        
-
-        let x = self.x - (self.y - other.y);
-        let y = self.y - (self.x - other.x);
-        return Vector2_i64::new(x, y);
+    pub fn rotate_left(&self) -> Vector2_i64
+    {
+        return Vector2_i64::new(-self.y, self.x);
     }
 }

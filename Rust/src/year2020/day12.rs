@@ -43,7 +43,6 @@ pub fn problem1()
 pub fn problem2()
 {
     let directions = parse_directions(INPUT);
-    let mut ship_direction = Direction::East;
     let mut ship_position = Vector2_i64::new(0,0);
     let mut waypoint = Vector2_i64::new(10, -1);
 
@@ -53,30 +52,62 @@ pub fn problem2()
 
         match action
         {
-            //
+
             Action::Forward =>
             {
-                ship_position = ship_position.add(&get_direction_vector(ship_direction, *amount as i64));
+                let mut temp = amount.clone();
+                while temp > 0
+                {
+                    ship_position = ship_position.add(&waypoint);
+                    temp -= 1;
+                }
             }
 
-            Action::Left  |
+            Action::Left =>
+            {
+                let mut temp = amount.clone();
+                while temp > 0
+                {
+                    //Somewhere along the way, the y axis got inverted
+                    waypoint = waypoint.rotate_right();
+                    temp -= 90;
+                }
+            }
             Action::Right =>
             {
-                ship_direction = change_direction(ship_direction, *action, *amount);
-
+                let mut temp = amount.clone();
+                while temp > 0
+                {
+                    //Somewhere along the way, the y axis got inverted
+                    waypoint = waypoint.rotate_left();
+                    temp -= 90;
+                }
             }
 
             //If we simply move in any known direction, we can just add the amount in the correct direction to the current position
-            Action::North  => ship_position = ship_position.add(&get_direction_vector(Direction::North, *amount as i64)),
-            Action::East   => ship_position = ship_position.add(&get_direction_vector(Direction::East , *amount as i64)),
-            Action::South  => ship_position = ship_position.add(&get_direction_vector(Direction::South, *amount as i64)),
-            Action::West   => ship_position = ship_position.add(&get_direction_vector(Direction::West , *amount as i64)),
+            Action::North  => waypoint = waypoint.add(&get_direction_vector(Direction::North, *amount as i64)),
+            Action::East   => waypoint = waypoint.add(&get_direction_vector(Direction::East , *amount as i64)),
+            Action::South  => waypoint = waypoint.add(&get_direction_vector(Direction::South, *amount as i64)),
+            Action::West   => waypoint = waypoint.add(&get_direction_vector(Direction::West , *amount as i64)),
         }
-    }
 
+        //println!("{:?} {} {} {}", action, amount, waypoint, ship_position);
+    }
     println!("{}", ship_position.x.abs() + ship_position.y.abs());
 }
 
+/////Rotates the other vector around this one, returning the results in a new vector.
+//pub fn rotate_right(&self, other: &Vector2_i64) -> Vector2_i64
+//{
+//    let diff_x = difference(self.x, other.x);
+//    let diff_y = difference(self.y, other.y);
+//
+//
+//
+//    let x = self.x - (self.y - other.y);
+//    let y = self.y - (self.x - other.x);
+//    return Vector2_i64::new(x, y);
+//}
 
 
 fn parse_directions(input: &str) -> Vec<(Action, usize)>
