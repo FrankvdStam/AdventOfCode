@@ -1,4 +1,5 @@
-fn problem1()
+
+pub fn problem1()
 {
 
 }
