@@ -136,8 +136,6 @@ fn apply_mask_part2(mask: &Vec<char>, value: usize) -> Vec<char>
 {
     let mut new_mask = mask.clone();
 
-    let bitmask: usize = 0xfffffffffffffff0;
-
     let mut i: i64 = 35;
     while i >= 0
     {
