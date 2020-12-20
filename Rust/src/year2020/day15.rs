@@ -37,7 +37,7 @@ pub fn problem1()
 
 pub fn problem2()
 {
-    let mut numbers = parse_numbers(INPUT);
+    let numbers = parse_numbers(INPUT);
     //Use a hashmap with a number as key and the last seen index as value
 
     let mut map = HashMap::new();
