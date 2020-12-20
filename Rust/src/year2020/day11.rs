@@ -68,6 +68,7 @@ fn draw_count_grid(count_grid: &Vec<usize>, width: usize, height: usize)
 
 
 //Lookup table to ease looking around specific seats
+//Lookup table to ease looking around specific seats
 const VECTOR_LOOKUP: [Vector2_i64; 8] = [
     //Right
     Vector2_i64 { x:  1, y:  1, }, //up

@@ -1,10 +1,10 @@
-use crate::utils::vector3i::Vector3i;
+use crate::utils::vector3_i64::Vector3_i64;
 
 
 struct Moon
 {
-    position: Vector3i,
-    velocity: Vector3i,
+    position: Vector3_i64,
+    velocity: Vector3_i64,
 
     cycle_x: Option<i64>,
     cycle_y: Option<i64>,
@@ -22,7 +22,7 @@ impl Clone for Moon {
 
 impl Moon
 {
-    fn new(position: Vector3i, velocity: Vector3i) -> Self
+    fn new(position: Vector3_i64, velocity: Vector3_i64) -> Self
     {
         Moon
         {
@@ -145,7 +145,7 @@ pub fn problem1()
 
     for str in INPUT.split("\n").collect::<Vec<&str>>()
     {
-        moons.push(Moon::new(Vector3i::from_str(str), Vector3i::new(0, 0, 0)));
+        moons.push(Moon::new(Vector3_i64::from_str(str), Vector3_i64::new(0, 0, 0)));
         println!("{}", moons[moons.len()-1].to_string());
     }
 
@@ -202,7 +202,7 @@ pub fn problem2()
 
     for str in INPUT.split("\n").collect::<Vec<&str>>()
     {
-        moons.push(Moon::new(Vector3i::from_str(str), Vector3i::new(0, 0, 0)));
+        moons.push(Moon::new(Vector3_i64::from_str(str), Vector3_i64::new(0, 0, 0)));
     }
     let original_moons = moons.clone();
 
