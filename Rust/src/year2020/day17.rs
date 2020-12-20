@@ -5,9 +5,8 @@ pub fn problem1()
 {
     let cubes = parse_cubes(EXAMPLE);
 
-    let (min, max) = get_min_max(&cubes);
+    let (_min, _max) = get_min_max(&cubes);
 
-    print_cubes(&cubes);
     cycle(&cubes);
     println!("{:?}", cubes);
 }
@@ -21,14 +20,14 @@ pub fn problem2()
 
 fn cycle(cubes: &HashMap<Vector3_i64, bool>) -> HashMap<Vector3_i64, bool>
 {
-    let mut new_cubes:  HashMap<Vector3_i64, bool> = HashMap::new();
+    let new_cubes:  HashMap<Vector3_i64, bool> = HashMap::new();
 
     for (vector, _) in cubes.into_iter()
     {
         let mut count = 0;
         for i in 0..VECTOR3_I64_NEIGHBOR_LOOKUP.len()
         {
-            let mut neighbor = vector.add(&VECTOR3_I64_NEIGHBOR_LOOKUP[i]);
+            let neighbor = vector.add(&VECTOR3_I64_NEIGHBOR_LOOKUP[i]);
             if cubes.contains_key(&neighbor)
             {
                 if *cubes.get(&neighbor).unwrap()
@@ -61,21 +60,6 @@ fn get_min_max(cubes: &HashMap<Vector3_i64, bool>) -> (Vector3_i64, Vector3_i64)
 
 
 
-fn print_cubes(cubes: &HashMap<Vector3_i64, bool>)
-{
-    let mut max = Vector3_i64::new(i64::MIN,i64::MIN,i64::MIN);
-    let mut min = Vector3_i64::new(i64::MAX,i64::MAX,i64::MAX);
-
-    //Find the dimensions
-    for (vector, _) in cubes.into_iter()
-    {
-        max = max.max(vector);
-        min = min.min(vector);
-    }
-
-
-    println!("{} {}", min.to_string(), max.to_string());
-}
 
 
 
