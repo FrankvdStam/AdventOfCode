@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 pub fn min2(a: i64, b: i64) -> i64
 {
     return if a < b { a } else { b };
@@ -44,5 +46,36 @@ pub fn difference(a: i64, b: i64) -> i64
     let negated_min = min2(negated_a, negated_b);
     let negated_max = max2(negated_a, negated_b);
     return negated_max - negated_min;
+}
+
+
+pub fn greatest_common_divisor(mut a: usize, mut b: usize) -> usize
+{
+    let mut temp;
+    while b > 0
+    {
+        temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+pub fn greatest_common_divisor_vec(mut list: Vec<usize>) -> usize
+{
+    if list.len() < 2
+    {
+        panic!("List must have at least 2 elements.");
+    }
+
+    while list.len() > 1
+    {
+        let temp = greatest_common_divisor(list[0], list[1]);
+        list.remove(0);
+        list.remove(0);
+        list.insert(0, temp);
+    }
+
+    return list[0];
 }
 

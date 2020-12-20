@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use crate::utils::vector2i::Vector2i;
+use crate::utils::vector2_i64::Vector2_i64;
 use crate::year2019::intcode_computer::computer::{Computer, State};
 use crate::year2019::day11::OutputState::{PaintColor, TurnDirection};
 use crate::utils::math::difference;
@@ -21,12 +21,12 @@ enum Direction
     Left = 3,
 }
 
-const DIRECTION_VECTORS: [Vector2i; 4] =
+const DIRECTION_VECTORS: [Vector2_i64; 4] =
 [
-    Vector2i { x:  0, y:  1 },
-    Vector2i { x:  1, y:  0 },
-    Vector2i { x:  0, y: -1 },
-    Vector2i { x: -1, y:  0 },
+    Vector2_i64 { x:  0, y:  1 },
+    Vector2_i64 { x:  1, y:  0 },
+    Vector2_i64 { x:  0, y: -1 },
+    Vector2_i64 { x: -1, y:  0 },
 ];
 
 
@@ -71,7 +71,7 @@ fn turn(direction: Direction, mut number: i64) -> Direction
 pub fn problem1()
 {
     let mut hull: HashMap<String, bool> = HashMap::new();
-    let mut position = Vector2i::new(0, 0);
+    let mut position = Vector2_i64::new(0, 0);
 
     let mut computer = Computer::from_str(INPUT);
     computer.print_output = false;
@@ -169,10 +169,10 @@ pub fn problem2()
     //set 0,0 to white.
     hull.insert(String::from("(0,0)"), false);
 
-    let mut min = Vector2i::new(0, 0);
-    let mut max = Vector2i::new(0, 0);
+    let mut min = Vector2_i64::new(0, 0);
+    let mut max = Vector2_i64::new(0, 0);
 
-    let mut position = Vector2i::new(0, 0);
+    let mut position = Vector2_i64::new(0, 0);
 
     let mut computer = Computer::from_str(INPUT);
     computer.print_output = false;
@@ -274,7 +274,7 @@ pub fn problem2()
 }
 
 //Y axis is flipped
-pub fn render(hull: HashMap<String, bool>, min: Vector2i, max: Vector2i)
+pub fn render(hull: HashMap<String, bool>, min: Vector2_i64, max: Vector2_i64)
 {
     let width = difference(min.x, max.x) + 10;
     let height = difference(min.y, max.y) + 10;
@@ -290,7 +290,7 @@ pub fn render(hull: HashMap<String, bool>, min: Vector2i, max: Vector2i)
     {
         if !i.1
         {
-            let mut vector = Vector2i::from_str(i.0.as_str());
+            let mut vector = Vector2_i64::from_str(i.0.as_str());
             vector.x += min.x.abs();
             vector.y += min.y.abs();
             frame_buffer[(vector.x + vector.y  * width) as usize] = '#';

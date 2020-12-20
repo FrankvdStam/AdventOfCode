@@ -1,17 +1,18 @@
-
-pub struct Vector2i
+#![allow(dead_code)]
+#![allow(non_camel_case_types)]
+pub struct Vector2_usize
 {
-    pub x: i64,
-    pub y: i64,
+    pub x: usize,
+    pub y: usize,
 }
 
-impl Copy for Vector2i { }
+impl Copy for Vector2_usize { }
 
-impl Clone for Vector2i
+impl Clone for Vector2_usize
 {
     fn clone(&self) -> Self
     {
-        return Vector2i
+        return Vector2_usize
         {
             x: self.x,
             y: self.y,
@@ -19,7 +20,7 @@ impl Clone for Vector2i
     }
 }
 
-impl PartialEq for Vector2i
+impl PartialEq for Vector2_usize
 {
     fn eq(&self, vec: &Self) -> bool
     {
@@ -29,20 +30,20 @@ impl PartialEq for Vector2i
 
 
 
-impl Vector2i
+impl Vector2_usize
 {
-    pub fn new(x: i64, y: i64) -> Self
+    pub fn new(x: usize, y: usize) -> Self
     {
-        Vector2i
+        Vector2_usize
         {
             x,
             y
         }
     }
 
-    pub fn add(&self, vec: &Vector2i) -> Vector2i
+    pub fn add(&self, vec: &Vector2_usize) -> Vector2_usize
     {
-        return Vector2i
+        return Vector2_usize
         {
             x: self.x + vec.x,
             y: self.y + vec.y,
@@ -65,11 +66,11 @@ impl Vector2i
         let mut temp = String::from(str);
         temp.remove(0);
         let parts = temp.split(',').collect::<Vec<&str>>();
-        let x = parts[0].parse::<i64>().unwrap();
+        let x = parts[0].parse::<usize>().unwrap();
         let mut temp2 = String::from(parts[1]);
         temp2.remove(temp2.len() - 1);
-        let y = temp2.parse::<i64>().unwrap();
+        let y = temp2.parse::<usize>().unwrap();
 
-        return Vector2i::new(x, y);
+        return Vector2_usize::new(x, y);
     }
 }

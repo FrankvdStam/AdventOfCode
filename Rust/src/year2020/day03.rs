@@ -1,11 +1,11 @@
-use crate::utils::vector2i::Vector2i;
+use crate::utils::vector2_i64::Vector2_i64;
 
 pub fn problem1()
 {
     let mut width = 0;
     let mut height = 0;
     let grid = parse_grid(INPUT, &mut width, &mut height);
-    println!("result: {}", count_trees_with_slope(&grid, width, height, Vector2i::new(3, 1)));
+    println!("result: {}", count_trees_with_slope(&grid, width, height, Vector2_i64::new(3, 1)));
 }
 
 pub fn problem2()
@@ -14,18 +14,18 @@ pub fn problem2()
     let mut height = 0;
     let grid = parse_grid(INPUT, &mut width, &mut height);
 
-    let mut result = count_trees_with_slope(&grid, width, height, Vector2i::new(1, 1));// Right 1, down 1.
-    result *= count_trees_with_slope(&grid, width, height, Vector2i::new(3, 1));// Right 3, down 1. (This is the slope you already checked.)
-    result *= count_trees_with_slope(&grid, width, height, Vector2i::new(5, 1));// Right 5, down 1.
-    result *= count_trees_with_slope(&grid, width, height, Vector2i::new(7, 1));// Right 7, down 1.
-    result *= count_trees_with_slope(&grid, width, height, Vector2i::new(1, 2));// Right 1, down 2.
+    let mut result = count_trees_with_slope(&grid, width, height, Vector2_i64::new(1, 1));// Right 1, down 1.
+    result *= count_trees_with_slope(&grid, width, height, Vector2_i64::new(3, 1));// Right 3, down 1. (This is the slope you already checked.)
+    result *= count_trees_with_slope(&grid, width, height, Vector2_i64::new(5, 1));// Right 5, down 1.
+    result *= count_trees_with_slope(&grid, width, height, Vector2_i64::new(7, 1));// Right 7, down 1.
+    result *= count_trees_with_slope(&grid, width, height, Vector2_i64::new(1, 2));// Right 1, down 2.
 
     println!("result: {}", result);
 }
 
-fn count_trees_with_slope(grid: &Vec<bool>, width: usize, height: usize, slope: Vector2i) -> usize
+fn count_trees_with_slope(grid: &Vec<bool>, width: usize, height: usize, slope: Vector2_i64) -> usize
 {
-    let mut position = Vector2i::new(0, 0);
+    let mut position = Vector2_i64::new(0, 0);
 
     let mut count = 0;
     loop
