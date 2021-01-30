@@ -14,7 +14,7 @@ namespace Cli
         {
             bool runAll = false;
             int year = 2016;
-            int day = 13;
+            int day = 14;
 
             Run(runAll, year, day);
         }
@@ -47,7 +47,6 @@ namespace Cli
                     {
                         var day_ = days.First(i => i.Year == y && i.Day == d);
 
-
                         stopwatch.Start();
                         day_.ProblemOne();
                         stopwatch.Stop();
@@ -58,7 +57,6 @@ namespace Cli
                         stopwatch.Stop();
                         Console.WriteLine($"{y}-{d.ToString().PadLeft(2, '0')}-{02} in {stopwatch.ElapsedMilliseconds}ms");
                     }
-                   
                 }
             }
             else
