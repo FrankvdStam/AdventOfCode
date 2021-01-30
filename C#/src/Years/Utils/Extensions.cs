@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Years.Utils
@@ -205,6 +206,34 @@ namespace Years.Utils
                 yield return item;
             }
         }
+
+        #endregion
+
+
+        #region static md5 instance for entire application ========================================================================================================
+
+        private static MD5 _md5;
+
+        public static byte[] ComputeHash(byte[] buffer)
+        {
+            if (_md5 == null)
+            {
+                _md5 = MD5.Create();
+            }
+
+            return _md5.ComputeHash(buffer);
+        }
+
+        public static byte[] ComputeHashFromUtf8String(string str)
+        {
+            if (_md5 == null)
+            {
+                _md5 = MD5.Create();
+            }
+
+            return _md5.ComputeHash(Encoding.UTF8.GetBytes(str));
+        }
+
 
         #endregion
     }
