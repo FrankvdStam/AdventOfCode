@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Years.Utils;
 
 namespace Day19
 {
@@ -113,46 +114,4 @@ namespace Day19
         }
     }
 
-    public static class LinkedListExt
-    {
-        public static int IndexOf<T>(this LinkedList<T> list, T item)
-        {
-            var count = 0;
-            for (var node = list.First; node != null; node = node.Next, count++)
-            {
-                if (item.Equals(node.Value))
-                    return count;
-            }
-            return -1;
-        }
-
-        public static LinkedListNode<T> NodeAt<T>(this LinkedList<T> list, int index)
-        {
-            int half = list.Count / 2;
-
-            if (index <= half)
-            {
-                LinkedListNode<T> current = list.First;
-                while (index > 0)
-                {
-                    current = current.Next;
-                    index--;
-                }
-                return current;
-            }
-            else
-            {
-                index = list.Count - index;
-                LinkedListNode<T> current = list.Last;
-                while (index > 0)
-                {
-                    current = current.Previous;
-                    index--;
-                }
-                return current;
-            }
-
-            
-        }
-    }
 }

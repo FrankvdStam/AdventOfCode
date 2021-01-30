@@ -239,5 +239,47 @@ namespace Years.Utils
 
 
         #endregion
+
+
+        #region linked list ext ========================================================================================================
+
+        public static int IndexOf<T>(this LinkedList<T> list, T item)
+        {
+            var count = 0;
+            for (var node = list.First; node != null; node = node.Next, count++)
+            {
+                if (item.Equals(node.Value))
+                    return count;
+            }
+            return -1;
+        }
+
+        public static LinkedListNode<T> NodeAt<T>(this LinkedList<T> list, int index)
+        {
+            int half = list.Count / 2;
+
+            if (index <= half)
+            {
+                LinkedListNode<T> current = list.First;
+                while (index > 0)
+                {
+                    current = current.Next;
+                    index--;
+                }
+                return current;
+            }
+            else
+            {
+                index = list.Count - index;
+                LinkedListNode<T> current = list.Last;
+                while (index > 0)
+                {
+                    current = current.Previous;
+                    index--;
+                }
+                return current;
+            }
+        }
+        #endregion
     }
 }
