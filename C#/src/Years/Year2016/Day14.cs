@@ -17,34 +17,32 @@ namespace Years.Year2016
             var trippletHashLookup = new List<(byte, long, string)>();
             var keys = new List<(byte, long, string)>();
 
-            using (MD5 md5 = MD5.Create())
+            
+            long i = 0;
+            while (true)
             {
-                long i = 0;
-                while (true)
+                var hash = Extensions.ComputeHashFromUtf8String(Input + i);
+
+                var tripplet = ContainsTripplet(hash);
+                var quanTupplet = ContainsQuantupple(hash);
+
+
+
+                if (tripplet != null /* && quanTupplet == null*/)
                 {
-                    var hash = md5.ComputeHash(Encoding.ASCII.GetBytes(Input + i));
-
-                    var tripplet = ContainsTripplet(hash);
-                    var quanTupplet = ContainsQuantupple(hash);
-
-
-
-                    if (tripplet != null /* && quanTupplet == null*/)
-                    {
-                        trippletHashLookup.Add((tripplet.Value, i, hash.ToHexString()));
-                    }
-                    
-                    if (quanTupplet != null)
-                    {
-                        keys.AddRange(trippletHashLookup.Where(j => j.Item1 == quanTupplet.Value && j.Item2 >= i - 1000 && j.Item3 != hash.ToHexString()));
-                        if (keys.Count >= 64)
-                        {
-                            Console.WriteLine(keys[63].Item2);
-                            return;
-                        }
-                    }
-                    i++;
+                    trippletHashLookup.Add((tripplet.Value, i, hash.ToHexString()));
                 }
+                
+                if (quanTupplet != null)
+                {
+                    keys.AddRange(trippletHashLookup.Where(j => j.Item1 == quanTupplet.Value && j.Item2 >= i - 1000 && j.Item3 != hash.ToHexString()));
+                    if (keys.Count >= 64)
+                    {
+                        Console.WriteLine(keys[63].Item2);
+                        return;
+                    }
+                }
+                i++;
             }
         }
 
@@ -54,40 +52,38 @@ namespace Years.Year2016
             var trippletHashLookup = new List<(byte, long, string)>();
             var keys = new List<(byte, long, string)>();
 
-            using (MD5 md5 = MD5.Create())
+            long i = 0;
+            while (true)
             {
-                long i = 0;
-                while (true)
+
+                byte[] hash = Extensions.ComputeHashFromUtf8String(Input + i);
+                for (int j = 0; j < 2016; j++)
                 {
-
-                    byte[] hash = md5.ComputeHash(Encoding.ASCII.GetBytes(Input + i));
-                    for (int j = 0; j < 2016; j++)
-                    {
-                        hash = md5.ComputeHash(Encoding.ASCII.GetBytes(hash.ToHexString()));
-                    }
-
-
-                    var tripplet = ContainsTripplet(hash);
-                    var quanTupplet = ContainsQuantupple(hash);
-
-
-
-                    if (tripplet != null)
-                    {
-                        trippletHashLookup.Add((tripplet.Value, i, hash.ToHexString()));
-                    }
-
-                    if (quanTupplet != null)
-                    {
-                        keys.AddRange(trippletHashLookup.Where(j => j.Item1 == quanTupplet.Value && j.Item2 >= i - 1000 && j.Item3 != hash.ToHexString()));
-                        if (keys.Count >= 64)
-                        {
-                            Console.WriteLine(keys[63].Item2);
-                            return;
-                        }
-                    }
-                    i++;
+                    hash = Extensions.ComputeHashFromUtf8String(hash.ToHexString());
                 }
+
+
+                var tripplet = ContainsTripplet(hash);
+                var quanTupplet = ContainsQuantupple(hash);
+
+
+
+                if (tripplet != null)
+                {
+                    trippletHashLookup.Add((tripplet.Value, i, hash.ToHexString()));
+                }
+
+                if (quanTupplet != null)
+                {
+                    keys.AddRange(trippletHashLookup.Where(j => j.Item1 == quanTupplet.Value && j.Item2 >= i - 1000 && j.Item3 != hash.ToHexString()));
+                    if (keys.Count >= 64)
+                    {
+                        Console.WriteLine(keys[63].Item2);
+                        return;
+                    }
+                }
+                i++;
+                
             }
         }
 

@@ -214,22 +214,25 @@ namespace Years.Utils
 
         private static MD5 _md5;
 
-        public static byte[] ComputeHash(byte[] buffer)
+        private static void InitMd5()
         {
             if (_md5 == null)
             {
                 _md5 = MD5.Create();
             }
+        }
+
+
+        public static byte[] ComputeHash(byte[] buffer)
+        {
+            InitMd5();
 
             return _md5.ComputeHash(buffer);
         }
 
         public static byte[] ComputeHashFromUtf8String(string str)
         {
-            if (_md5 == null)
-            {
-                _md5 = MD5.Create();
-            }
+            InitMd5();
 
             return _md5.ComputeHash(Encoding.UTF8.GetBytes(str));
         }
