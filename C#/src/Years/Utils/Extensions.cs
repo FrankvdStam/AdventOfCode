@@ -10,6 +10,13 @@ namespace Years.Utils
 {
     public static partial class Extensions
     {
+        public static int Factorial(this int i)
+        { 
+            return Enumerable.Range(1, i).Aggregate(1, (p, item) => p * item);
+        }
+
+
+
         //https://stackoverflow.com/questions/311165/how-do-you-convert-a-byte-array-to-a-hexadecimal-string-and-vice-versa
         public static string ToHexString(this byte[] ba)
         {

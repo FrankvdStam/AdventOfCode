@@ -21,6 +21,7 @@ namespace Years.Year2016.Assembunny
         {
             while (_programCounter >= 0 && _programCounter < _instructions.Count)
             {
+                //Console.WriteLine($"{_programCounter} a:{RegisterValues['a']} b:{RegisterValues['b']} c:{RegisterValues['c']} d:{RegisterValues['d']}");
                 Step();
             }
         }
@@ -35,17 +36,34 @@ namespace Years.Year2016.Assembunny
 
             var instruction = _instructions[_programCounter];
 
+            //Decode values
+            int? firstValue = null;
+            int? secondValue = null;
+
+            if (instruction.FirstRegister != null)
+            {
+                firstValue = RegisterValues[instruction.FirstRegister.Value];
+            }
+            else
+            {
+                firstValue = instruction.FirstNumber.Value;
+            }
+
+            if (instruction.SecondRegister != null)
+            {
+                secondValue = RegisterValues[instruction.SecondRegister.Value];
+            }
+
+            if (instruction.SecondNumber != null)
+            {
+                secondValue = instruction.SecondNumber.Value;
+            }
+
+
             switch (instruction.Opcode)
             {
                 case Opcode.Cpy:
-                    if (instruction.FirstRegister != null)
-                    {
-                        RegisterValues[instruction.SecondRegister.Value] = RegisterValues[instruction.FirstRegister.Value];
-                    }
-                    else
-                    {
-                        RegisterValues[instruction.SecondRegister.Value] = instruction.FirstNumber.Value;
-                    }
+                    RegisterValues[instruction.SecondRegister.Value] = firstValue.Value;
                     _programCounter++;
                     break;
 
@@ -60,22 +78,10 @@ namespace Years.Year2016.Assembunny
                     break;
 
                 case Opcode.Jnz:
-
-                    //Get the value
-                    int value;
-                    if (instruction.FirstRegister != null)
-                    {
-                        value = RegisterValues[instruction.FirstRegister.Value];
-                    }
-                    else
-                    {
-                        value = instruction.FirstNumber.Value;
-                    }
-
                     //Jump if not zero
-                    if (value != 0)
+                    if (firstValue != 0)
                     {
-                        _programCounter += instruction.SecondNumber.Value;
+                        _programCounter += secondValue.Value;
                     }
                     else
                     {
@@ -85,7 +91,40 @@ namespace Years.Year2016.Assembunny
                     break;
 
                 case Opcode.Tgl:
-                    throw new Exception();
+                    var address = _programCounter + RegisterValues[instruction.FirstRegister.Value];
+                    if (address >= 0 && address < _instructions.Count)
+                    {
+                        var toggle = _instructions[address];
+
+                        switch (toggle.Opcode)
+                        {
+                            //For one-argument instructions, inc becomes dec
+                            case Opcode.Inc:
+                                toggle.Opcode = Opcode.Dec;
+                                break;
+
+                            //and all other one-argument instructions become inc.
+                            case Opcode.Dec:
+                            case Opcode.Tgl:
+                                toggle.Opcode = Opcode.Inc;
+                                break;
+
+
+                            //For two-argument instructions, jnz becomes cpy    
+                            case Opcode.Jnz:
+                                toggle.Opcode = Opcode.Cpy;
+                                break;
+
+                            //and all other two-instructions become jnz.
+                            case Opcode.Cpy:
+                                toggle.Opcode = Opcode.Jnz;
+                                break;
+                            
+                        }
+
+                    }
+                    _programCounter++;
+                    break;
             }
         }
 
