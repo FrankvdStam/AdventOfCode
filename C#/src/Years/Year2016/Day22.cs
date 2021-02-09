@@ -17,7 +17,7 @@ namespace Years.Year2016
 
         public void ProblemOne()
         {
-            _nodes = ParseInput(Example);
+            _nodes = ParseInput(Input);
 
             var count = 0;
             for (int i = 0; i < _nodes.Count; i++)
@@ -49,7 +49,7 @@ namespace Years.Year2016
         public void ProblemTwo()
         {
             PrintMaze(_nodes);
-            
+
             //No need to fully automate solving the sliding puzzle with pathfinding and the whole shabang.
             //Steps are simple:
             //Get in the same Y layer as the goal but not on the goal itself (considering moving diagonally is as fast as moving up/down and then right/left because we can only go to adjecent nodes)
@@ -58,6 +58,9 @@ namespace Years.Year2016
             //We are nog in position to the right of the goal. Moving the goal left takes 5 steps every time
             //just add 5 to the count for each movable in between the end position and the goal.
 
+
+            //Not 232
+            //Its 233.. apparently I was off by 1 :(
         }
 
 
