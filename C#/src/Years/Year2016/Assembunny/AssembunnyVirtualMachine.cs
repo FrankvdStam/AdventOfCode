@@ -19,7 +19,7 @@ namespace Years.Year2016.Assembunny
 
         public void Run()
         {
-            while (_programCounter > 0 && _programCounter < _instructions.Count)
+            while (_programCounter >= 0 && _programCounter < _instructions.Count)
             {
                 Step();
             }
@@ -40,22 +40,22 @@ namespace Years.Year2016.Assembunny
                 case Opcode.Cpy:
                     if (instruction.FirstRegister != null)
                     {
-                        _registerValues[instruction.SecondRegister.Value] = _registerValues[instruction.FirstRegister.Value];
+                        RegisterValues[instruction.SecondRegister.Value] = RegisterValues[instruction.FirstRegister.Value];
                     }
                     else
                     {
-                        _registerValues[instruction.SecondRegister.Value] = instruction.FirstNumber.Value;
+                        RegisterValues[instruction.SecondRegister.Value] = instruction.FirstNumber.Value;
                     }
                     _programCounter++;
                     break;
 
                 case Opcode.Inc:
-                    _registerValues[instruction.FirstRegister.Value]++;
+                    RegisterValues[instruction.FirstRegister.Value]++;
                     _programCounter++;
                     break;
 
                 case Opcode.Dec:
-                    _registerValues[instruction.FirstRegister.Value]--;
+                    RegisterValues[instruction.FirstRegister.Value]--;
                     _programCounter++;
                     break;
 
@@ -65,7 +65,7 @@ namespace Years.Year2016.Assembunny
                     int value;
                     if (instruction.FirstRegister != null)
                     {
-                        value = _registerValues[instruction.FirstRegister.Value];
+                        value = RegisterValues[instruction.FirstRegister.Value];
                     }
                     else
                     {
@@ -111,7 +111,7 @@ namespace Years.Year2016.Assembunny
         private List<Instruction> _instructions;
 
 
-        private Dictionary<char, int> _registerValues = new Dictionary<char, int>()
+        public Dictionary<char, int> RegisterValues = new Dictionary<char, int>()
         {
             {'a', 0},
             {'b', 0},
