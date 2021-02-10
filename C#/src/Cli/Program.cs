@@ -14,7 +14,7 @@ namespace Cli
         {
             bool runAll = false;
             int year = 2016;
-            int day = 23;
+            int day = 24;
 
             Run(runAll, year, day);
         }
@@ -35,7 +35,6 @@ namespace Cli
                     days.Add(obj);
                 }
             }
-
 
             Stopwatch stopwatch = new Stopwatch();
 

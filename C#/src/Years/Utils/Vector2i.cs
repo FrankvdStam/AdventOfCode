@@ -56,6 +56,12 @@ namespace Years.Utils
             return Math.Abs(vector1.X - vector2.X) + Math.Abs(vector1.Y - vector2.Y);
         }
 
+        public int ManhattanDistance(Vector2i other)
+        {
+            return ManhattanDistance(this, other);
+        }
+
+
         public override string ToString()
         {
             return $"({X}, {Y})";

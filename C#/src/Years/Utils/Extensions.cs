@@ -185,6 +185,23 @@ namespace Years.Utils
         }
 
 
+        public static IEnumerable<(T, T)> PermutePairs<T>(this List<T> sequence)
+        {
+            if (sequence == null || sequence.Count() < 2)
+            {
+                yield break;
+            }
+
+            for (int x = 0; x < sequence.Count(); x++)
+            {
+                for (int y = x + 1; y < sequence.Count(); y++)
+                {
+                    yield return (sequence[x], sequence[y]);
+                }
+            }
+        }
+
+
         private static IEnumerable<T> Concat<T>(this T firstElement, IEnumerable<T> secondSequence)
         {
             yield return firstElement;

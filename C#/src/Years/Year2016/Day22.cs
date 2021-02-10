@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Years.Utils;
-using Vector2i = Day22.Vector2i;
 
 namespace Years.Year2016
 {
@@ -69,7 +68,7 @@ namespace Years.Year2016
             Console.Clear();
             foreach (var n in nodes)
             {
-                Console.SetCursorPosition(n.X, n.Y);
+                Console.SetCursorPosition(n.Position.X, n.Position.Y);
                 char c = ' ';
 
                 switch (n.MazeState)
@@ -107,8 +106,8 @@ namespace Years.Year2016
 
                 var positions = bits[0].Substring(15).Split('-');
 
-                n.X = int.Parse(positions[0].Substring(1));
-                n.Y = int.Parse(positions[1].Substring(1));
+                n.Position.X = int.Parse(positions[0].Substring(1));
+                n.Position.Y = int.Parse(positions[1].Substring(1));
 
                 n.Size      = int.Parse(bits[1].Trim('T'));
                 n.Used      = int.Parse(bits[2].Trim('T'));
@@ -117,8 +116,8 @@ namespace Years.Year2016
                 nodes.Add(n);
             }
 
-            int maxX = nodes.Max(i => i.X);
-            var goal = nodes.First(i => i.Y == 0 && i.X == maxX);
+            int maxX = nodes.Max(i => i.Position.X);
+            var goal = nodes.First(i => i.Position.Y == 0 && i.Position.X == maxX);
             goal.MazeState = MazeState.Goal;
 
             var empty = nodes.First(i => i.Used == 0);
@@ -138,8 +137,9 @@ namespace Years.Year2016
 
 
 
-        class Node : Vector2i
+        class Node
         {
+            public Vector2i Position;
             public int Size;
             public int Used;
             public int Available;
