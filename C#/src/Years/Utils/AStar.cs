@@ -11,19 +11,17 @@ namespace Years.Utils
     {
         public Vector2i Position;
 
-        public int DistanceFromStart;//G
-        public int ManhattanDistanceToDestination;//H
+        public int DistanceFromStart;
+        //Used as heuristic optimization
+        public int ManhattanDistanceToDestination;
         public int F => DistanceFromStart + ManhattanDistanceToDestination;
 
         public AStarNode Parent;
     }
 
 
-
-    public class AStar
+    public abstract class AStar
     {
-        public delegate AStarNode AStarProgressDelegate();
-
         public static int CalculateAStar(List<AStarNode> nodes, AStarNode start, AStarNode target, Action<AStarNode> currentProgressReport = null, Action<AStarNode> parentProgressReport = null)
         {
             AStarNode current = null;
@@ -53,6 +51,7 @@ namespace Years.Utils
                     break;
 
                 var adjacentSquares = GetWalkableAdjacentSquares(current, nodes);
+                //TODO: fix for graphs
                 distanceFromStart++;
 
                 foreach (var adjacentSquare in adjacentSquares)
@@ -68,6 +67,7 @@ namespace Years.Utils
                     {
                         // compute its score, set the parent
                         adjacentSquare.DistanceFromStart = distanceFromStart;
+                        //TODO: fix for graphs? It is a heuristic, maybe this is just how it is
                         adjacentSquare.ManhattanDistanceToDestination = adjacentSquare.Position.ManhattanDistance(target.Position);
                         adjacentSquare.Parent = current;
 
