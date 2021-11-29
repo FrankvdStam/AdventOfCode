@@ -328,7 +328,7 @@ cmake-build-debug
 .idea
 
 
-/target
+Rust/target
 .idea
 
 /out
