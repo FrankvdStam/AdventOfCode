@@ -1,7 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
+using NUnit.Framework;
 using Years.Utils;
 
 namespace Years.Year2016
@@ -13,6 +16,10 @@ namespace Years.Year2016
 
         public void ProblemOne()
         {
+            var maze = new Maze(Example);
+
+
+
             Console.WriteLine("Example");
             Console.SetCursorPosition(0, 0);
             Console.BackgroundColor = ConsoleColor.Red;
@@ -63,12 +70,6 @@ namespace Years.Year2016
         {
         }
 
-        private void Parse(string input)
-        {
-
-        }
-
-
 
         private void Parse(string input, out List<AStarNode> walkableTiles, out List<(char, AStarNode)> pointsOfInterest)
         {
@@ -101,11 +102,158 @@ namespace Years.Year2016
 
 
 
+        private void ParseNodeGraph(Maze maze)
+        {
+            var points = maze.Points;
+            foreach (var p in points)
+            {
+
+            }
+        }
+
+
+        private void FindNodes(Maze maze, Vector2i point)
+        {
+            var result = new List<(int distance, Vector2i position)>();
+
+            //Starting at point, find all paths that connect to another node
+            var stack = new Stack<Vector2i>();
+            var visited = new List<Vector2i>();
+
+            //Setup initial set of moves
+            var moves = maze.GetMoves(point);
+            moves.ForEach(stack.Push);
+            int distance = 0;
+            while (moves.Any())
+            {
+                var p = stack.Pop();
+
+                if (!visited.Contains(p))
+                {
+                    visited.Add(p);
+
+                    switch (maze.GetMazePart(p.X, p.Y))
+                    {
+                        //Completed a path. Create a node
+                        case MazePart.Digit:
+                            result.Add((distance, p));
+                            break;
+
+                        //Empty space - check for moves
+                        case MazePart.Empty:
+                            maze.GetMoves(p).ForEach(stack.Push);
+                            break;
+
+                        //Wall - dead end. Do nothing
+                        case MazePart.Wall:
+                            break;
+                    }
+                    distance++;
+                }
+            }
+        }
+
+        private enum MazePart
+        {
+            Empty,
+            Wall,
+            Digit,
+        }
+
+        private class Maze
+        {
+            public Maze(string input)
+            {
+                var lines = input.SplitNewLine();
+                _mazeWidth = lines[0].Length;
+                _mazeHeight = lines.Length;
+
+                _maze = new MazePart[_mazeWidth, _mazeHeight];
+
+                for (int y = 0; y < lines.Length; y++)
+                {
+                    for (int x = 0; x < lines[y].Length; x++)
+                    {
+                        char c = lines[y][x];
+                        if (char.IsDigit(c))
+                        {
+                            Points.Add(new Vector2i(x, y));
+                            _maze[x, y] = MazePart.Digit;
+                        }
+                        else if (c == '#')
+                        {
+                            _maze[x, y] = MazePart.Wall;
+                        }
+                        else
+                        {
+                            _maze[x, y] = MazePart.Empty;
+                        }
+                    }
+                }
+            }
+
+            public List<Vector2i> Points = new List<Vector2i>();
+            private MazePart[,] _maze;
+            private int _mazeWidth;
+            private int _mazeHeight;
+
+            public MazePart GetMazePart(int x, int y)
+            {
+                return _maze[x, y];
+            }
+
+            /// <summary>
+            /// Find all possible moves from a given position
+            /// </summary>
+            public List<Vector2i> GetMoves(Vector2i position)
+            {
+                if (_maze[position.X, position.Y] == MazePart.Wall)
+                {
+                    return new List<Vector2i>(0);
+                }
+
+                var result = new List<Vector2i>();
+
+                if (position.X + 1 < _mazeWidth && _maze[position.X+1, position.Y] != MazePart.Wall)
+                {
+                    result.Add(new Vector2i(position.X + 1, position.Y));
+                }
+
+                if (position.X - 1 >= 0 && _maze[position.X + 1, position.Y] != MazePart.Wall)
+                {
+                    result.Add(new Vector2i(position.X - 1, position.Y));
+                }
+
+                if (position.Y + 1 < _mazeWidth && _maze[position.X, position.Y + 1] != MazePart.Wall)
+                {
+                    result.Add(new Vector2i(position.X, position.Y + 1));
+                }
+
+                if (position.Y - 1 >= 0 && _maze[position.X, position.Y - 1] != MazePart.Wall)
+                {
+                    result.Add(new Vector2i(position.X, position.Y - 1));
+                }
+                return result;
+            }
+        }
+
+
+
         private string Example = @"###########
 #0.1.....2#
 #.#######.#
 #4.......3#
 ###########";
+
+        private string Example2 = @"###########
+#0.1.....2#
+#.#######.#
+#4.......3#
+#######.###
+#5........#
+###########";
+
+
 
         private string Input = @"#######################################################################################################################################################################################
 #...........#.....#...........#.#.......#.....#.#...............#.....#.....#.......#.......#.......#.....................#.........#.....#...#3......#...#.#.............#.......#...#
