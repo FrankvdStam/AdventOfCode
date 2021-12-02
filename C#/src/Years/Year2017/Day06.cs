@@ -46,7 +46,7 @@ namespace Years.Year2017
         {
             Console.WriteLine(_cashedResult);
         }
-
+        
 
         //Redist a given index
         static void Redist(List<int> memory)
