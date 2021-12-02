@@ -9,235 +9,268 @@ using Years.Utils;
 
 namespace Years.Year2016
 {
-    public class Day24 : IDay
+    public enum MazePart
     {
-        public int Day => 24;
-        public int Year => 2016;
+        Empty,
+        Wall,
+        Digit,
+    }
 
-        public void ProblemOne()
+    public class Maze
+    {
+        public Maze(string input)
         {
-            var maze = new Maze(Example);
-
-
-
-            Console.WriteLine("Example");
-            Console.SetCursorPosition(0, 0);
-            Console.BackgroundColor = ConsoleColor.Red;
-
-
-            
-            Parse(Example, out List<AStarNode> walkableTiles, out List<(char, AStarNode)> pointsOfInterest);
-
-
-            var zero = pointsOfInterest.First(i => i.Item1 == '0').Item2;
-            var one = pointsOfInterest.First(i => i.Item1 == '1').Item2;
-
-
-            var pairs = pointsOfInterest.PermutePairs();
-
-            Dictionary<string, int> distances = new Dictionary<string, int>();
-            foreach (var pair in pairs)
-            {
-                int distance = AStar.CalculateAStar(walkableTiles, pair.Item1.Item2, pair.Item2.Item2, 
-                    node =>
-                    {
-                        // show current square on the map
-                        Console.SetCursorPosition(node.Position.X, node.Position.Y);
-                        Console.Write('.');
-                        Console.SetCursorPosition(node.Position.X, node.Position.Y);
-                        System.Threading.Thread.Sleep(500);
-                    },
-                    parent =>
-                    {
-                        Console.SetCursorPosition(parent.Position.X, parent.Position.Y);
-                        Console.Write('_');
-                        Console.SetCursorPosition(parent.Position.X, parent.Position.Y);
-                        System.Threading.Thread.Sleep(1000);
-                    }
-                );
-                distances[$"{pair.Item1.Item1} {pair.Item2.Item1}"] = distance;
-            }
-        }
-
-        private void Draw(List<AStarNode> tiles)
-        {
-            
-        }
-
-
-
-        public void ProblemTwo()
-        {
-        }
-
-
-        private void Parse(string input, out List<AStarNode> walkableTiles, out List<(char, AStarNode)> pointsOfInterest)
-        {
-            walkableTiles = new List<AStarNode>();
-            pointsOfInterest = new List<(char, AStarNode)>();
-
             var lines = input.SplitNewLine();
+            _mazeWidth = lines[0].Length;
+            _mazeHeight = lines.Length;
+
+            _maze = new MazePart[_mazeWidth, _mazeHeight];
 
             for (int y = 0; y < lines.Length; y++)
             {
                 for (int x = 0; x < lines[y].Length; x++)
                 {
                     char c = lines[y][x];
-
-                    //If not wall
-                    if (c != '#')
+                    if (char.IsDigit(c))
                     {
-                        AStarNode n = new AStarNode();
-                        n.Position = new Vector2i(x, y);
-                        walkableTiles.Add(n);
-
-                        if (c != '.')
-                        {
-                            pointsOfInterest.Add((c, n));
-                        }
+                        Points.Add((new Vector2i(x, y), int.Parse(c.ToString())));
+                        _maze[x, y] = MazePart.Digit;
+                    }
+                    else if (c == '#')
+                    {
+                        _maze[x, y] = MazePart.Wall;
+                    }
+                    else
+                    {
+                        _maze[x, y] = MazePart.Empty;
                     }
                 }
             }
         }
 
+        public List<(Vector2i Position, int Digit)> Points = new List<(Vector2i, int)>();
+        private MazePart[,] _maze;
+        private int _mazeWidth;
+        private int _mazeHeight;
 
-
-        private void ParseNodeGraph(Maze maze)
+        public MazePart GetMazePart(int x, int y)
         {
-            var points = maze.Points;
-            foreach (var p in points)
-            {
+            return _maze[x, y];
+        }
 
+        /// <summary>
+        /// Find all possible moves from a given position
+        /// </summary>
+        public List<Vector2i> GetMoves(Vector2i position)
+        {
+            if (_maze[position.X, position.Y] == MazePart.Wall)
+            {
+                return new List<Vector2i>(0);
             }
+
+            var result = new List<Vector2i>();
+
+            if (position.X + 1 < _mazeWidth && _maze[position.X + 1, position.Y] != MazePart.Wall)
+            {
+                result.Add(new Vector2i(position.X + 1, position.Y));
+            }
+
+            if (position.X - 1 >= 0 && _maze[position.X - 1, position.Y] != MazePart.Wall)
+            {
+                result.Add(new Vector2i(position.X - 1, position.Y));
+            }
+
+            if (position.Y + 1 < _mazeWidth && _maze[position.X, position.Y + 1] != MazePart.Wall)
+            {
+                result.Add(new Vector2i(position.X, position.Y + 1));
+            }
+
+            if (position.Y - 1 >= 0 && _maze[position.X, position.Y - 1] != MazePart.Wall)
+            {
+                result.Add(new Vector2i(position.X, position.Y - 1));
+            }
+            return result;
+        }
+    }
+
+
+
+
+    public class Day24 : IDay
+    {
+        public int Day => 24;
+        public int Year => 2016;
+
+        
+        public void ProblemOne()
+        {
+            var maze = new Maze(Input);
+            var graph = ParseGraph(maze);
+
+            int min = int.MaxValue;
+            var route = new List<Graph<int>>();
+            //1 7 0 6 3 2 4 5
+            var permutedGraph = graph.Permute();
+            foreach (var permutation in permutedGraph)
+            {
+                try
+                {
+                    //Start position has to be 0
+                    var list = permutation.ToList();
+                    if (list[0].Object != 0)
+                    {
+                        continue;
+                    }
+
+
+
+                    int distance = 0;
+                    for (int i = 0; i < graph.Count - 1; i++)
+                    {
+                        //Find the distance between the 2 current nodes, add it to current total
+                        var firstNode = list[i];
+                        var secondNode = list[i + 1];
+                        //Can throw an exception when the order of nodes is invalid. Instead of going through all possible permutations, should optimize to only relevant permutations
+                        distance += firstNode.Nodes.Single(i => i.Node == secondNode).Distance;
+                    }
+
+                    if (distance < min)
+                    {
+                        min = distance;
+                        route = list;
+                    }
+                }
+                catch { }
+            }
+            Console.WriteLine(min);
+        }
+
+        public void ProblemTwo()
+        {
+            var maze = new Maze(Input);
+            var graph = ParseGraph(maze);
+
+            int min = int.MaxValue;
+            var route = new List<Graph<int>>();
+            //1 7 0 6 3 2 4 5
+            var permutedGraph = graph.Permute();
+            foreach (var permutation in permutedGraph)
+            {
+                try
+                {
+                    //Start position has to be 0
+                    var list = permutation.ToList();
+                    if (list[0].Object != 0)
+                    {
+                        continue;
+                    }
+
+
+
+                    int distance = 0;
+                    for (int i = 0; i < graph.Count - 1; i++)
+                    {
+                        //Find the distance between the 2 current nodes, add it to current total
+                        var firstNode = list[i];
+                        var secondNode = list[i + 1];
+                        //Can throw an exception when the order of nodes is invalid. Instead of going through all possible permutations, should optimize to only relevant permutations
+                        distance += firstNode.Nodes.Single(i => i.Node == secondNode).Distance;
+                    }
+
+                    //Final step: move back to zero
+                    var lastNode = list[graph.Count - 1];
+                    var zeroNode = list.Single(i => i.Object == 0);
+
+                    distance += lastNode.Nodes.Single(i => i.Node == zeroNode).Distance;
+                    
+                    if (distance < min)
+                    {
+                        min = distance;
+                        route = list;
+                    }
+                }
+                catch { }
+            }
+
+
+
+
+            Console.WriteLine(min);
         }
 
 
-        private void FindNodes(Maze maze, Vector2i point)
-        {
-            var result = new List<(int distance, Vector2i position)>();
 
+        private List<Graph<int>> ParseGraph(Maze maze)
+        {
+            //Initialize all nodes of the graph
+            var graph = new List<Graph<int>>();
+            maze.Points.ForEach(i => graph.Add(new Graph<int>(i.Digit)));
+
+            //Visit each point of interest and map it out on the graph
+            foreach (var node in graph)
+            {
+                FindNodesFloodFill(maze, node, graph);
+            }
+
+            return graph;
+        }
+
+        /// <summary>
+        /// Finds and builds node connections by doing breadth first search/flood fill
+        /// </summary>
+        private void FindNodesFloodFill(Maze maze, Graph<int> currentNode, List<Graph<int>> graphNodes)
+        {
             //Starting at point, find all paths that connect to another node
-            var stack = new Stack<Vector2i>();
+            var stack = new List<Vector2i>();
             var visited = new List<Vector2i>();
-
+            
             //Setup initial set of moves
-            var moves = maze.GetMoves(point);
-            moves.ForEach(stack.Push);
-            int distance = 0;
-            while (moves.Any())
+            var startPoint = maze.Points.Single(i => i.Digit == currentNode.Object);
+            visited.Add(startPoint.Position);
+
+            var moves = maze.GetMoves(startPoint.Position);
+            stack.AddRange(moves);
+
+            int distance = 1;
+            while (stack.Any())
             {
-                var p = stack.Pop();
-
-                if (!visited.Contains(p))
+                var newMoves = new List<Vector2i>();
+                foreach (var p in stack)
                 {
-                    visited.Add(p);
-
-                    switch (maze.GetMazePart(p.X, p.Y))
+                    //Don't go in circles
+                    if (!visited.Contains(p))
                     {
-                        //Completed a path. Create a node
-                        case MazePart.Digit:
-                            result.Add((distance, p));
-                            break;
+                        visited.Add(p);
 
-                        //Empty space - check for moves
-                        case MazePart.Empty:
-                            maze.GetMoves(p).ForEach(stack.Push);
-                            break;
-
-                        //Wall - dead end. Do nothing
-                        case MazePart.Wall:
-                            break;
-                    }
-                    distance++;
-                }
-            }
-        }
-
-        private enum MazePart
-        {
-            Empty,
-            Wall,
-            Digit,
-        }
-
-        private class Maze
-        {
-            public Maze(string input)
-            {
-                var lines = input.SplitNewLine();
-                _mazeWidth = lines[0].Length;
-                _mazeHeight = lines.Length;
-
-                _maze = new MazePart[_mazeWidth, _mazeHeight];
-
-                for (int y = 0; y < lines.Length; y++)
-                {
-                    for (int x = 0; x < lines[y].Length; x++)
-                    {
-                        char c = lines[y][x];
-                        if (char.IsDigit(c))
+                        switch (maze.GetMazePart(p.X, p.Y))
                         {
-                            Points.Add(new Vector2i(x, y));
-                            _maze[x, y] = MazePart.Digit;
-                        }
-                        else if (c == '#')
-                        {
-                            _maze[x, y] = MazePart.Wall;
-                        }
-                        else
-                        {
-                            _maze[x, y] = MazePart.Empty;
+                            //Completed a path.
+                            case MazePart.Digit:
+                                var foundDigit = maze.Points.Single(i => i.Position.X == p.X && i.Position.Y == p.Y).Digit;
+
+                                //Create connection one-way, the other way will automatically be create later, when the other node is processed as starting point
+                                var node = graphNodes.Single(i => i.Object == foundDigit);
+                                currentNode.Nodes.Add((distance, node));
+                                break;
+
+                            //Empty space - check for moves
+                            case MazePart.Empty:
+                                newMoves.AddRange(maze.GetMoves(p).Except(visited));
+                                break;
+
+                            //Wall - dead end. Do nothing
+                            case MazePart.Wall:
+                                break;
                         }
                     }
                 }
-            }
-
-            public List<Vector2i> Points = new List<Vector2i>();
-            private MazePart[,] _maze;
-            private int _mazeWidth;
-            private int _mazeHeight;
-
-            public MazePart GetMazePart(int x, int y)
-            {
-                return _maze[x, y];
-            }
-
-            /// <summary>
-            /// Find all possible moves from a given position
-            /// </summary>
-            public List<Vector2i> GetMoves(Vector2i position)
-            {
-                if (_maze[position.X, position.Y] == MazePart.Wall)
-                {
-                    return new List<Vector2i>(0);
-                }
-
-                var result = new List<Vector2i>();
-
-                if (position.X + 1 < _mazeWidth && _maze[position.X+1, position.Y] != MazePart.Wall)
-                {
-                    result.Add(new Vector2i(position.X + 1, position.Y));
-                }
-
-                if (position.X - 1 >= 0 && _maze[position.X + 1, position.Y] != MazePart.Wall)
-                {
-                    result.Add(new Vector2i(position.X - 1, position.Y));
-                }
-
-                if (position.Y + 1 < _mazeWidth && _maze[position.X, position.Y + 1] != MazePart.Wall)
-                {
-                    result.Add(new Vector2i(position.X, position.Y + 1));
-                }
-
-                if (position.Y - 1 >= 0 && _maze[position.X, position.Y - 1] != MazePart.Wall)
-                {
-                    result.Add(new Vector2i(position.X, position.Y - 1));
-                }
-                return result;
+                stack.Clear();
+                stack.AddRange(newMoves);
+                distance++;
             }
         }
 
-
+        
 
         private string Example = @"###########
 #0.1.....2#
