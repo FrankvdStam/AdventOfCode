@@ -6,7 +6,7 @@ using Years.Utils;
 
 namespace Years.Year2016.Assembunny
 {
-
+    public delegate void OnOutputDelegate(int output);
 
 
     public class AssembunnyVirtualMachine
@@ -16,6 +16,8 @@ namespace Years.Year2016.Assembunny
             _instructions = Parse(program);
         }
 
+        public OnOutputDelegate OnOutput;
+        public List<int> Output = new List<int>();
 
         public void Run()
         {
@@ -125,6 +127,15 @@ namespace Years.Year2016.Assembunny
                     }
                     _programCounter++;
                     break;
+
+                case Opcode.Out:
+                    Output.Add(firstValue.Value);
+                    OnOutput?.Invoke(firstValue.Value);
+                    _programCounter++;
+                    break;
+
+                default:
+                    throw new Exception();
             }
         }
 
@@ -136,6 +147,7 @@ namespace Years.Year2016.Assembunny
             Dec,
             Jnz,
             Tgl,
+            Out,
         }
 
         private class Instruction
@@ -214,6 +226,9 @@ namespace Years.Year2016.Assembunny
                         break;
                     case "tgl":
                         instruction.Opcode = Opcode.Tgl;
+                        break;
+                    case "out":
+                        instruction.Opcode = Opcode.Out;
                         break;
                 }
 
