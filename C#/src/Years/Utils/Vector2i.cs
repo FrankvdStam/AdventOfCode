@@ -74,7 +74,10 @@ namespace Years.Utils
 
         public static readonly Vector2i Zero = new Vector2i(0, 0);
 
-
+        public Vector2i Clone()
+        {
+            return new Vector2i(X, Y);
+        }
 
 
         #region Plot line ========================================================================================================

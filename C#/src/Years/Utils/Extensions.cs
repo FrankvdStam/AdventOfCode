@@ -96,6 +96,7 @@ namespace Years.Utils
             throw new Exception($"Unsupported ");
         }
 
+
         public static void Draw(this List<Vector2i> vectors, char c)
         {
             int minx = vectors.Min(i => i.X);

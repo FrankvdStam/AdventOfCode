@@ -256,11 +256,6 @@ namespace Years.Year2017
                 stepCountA = program1.StepCount;
                 stepCountB = program2.StepCount;
             }
-
-
-
-
-
         }
 
         private readonly Dictionary<string, Opcode> _opcodesLookup = new Dictionary<string, Opcode>()
