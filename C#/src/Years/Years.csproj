@@ -5,8 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Year2017_backup\Day16\Program.cs" />
-    <Compile Remove="Year2017_backup\Day18\Program.cs" />
     <Compile Remove="Year2018\Day01\Program.cs" />
     <Compile Remove="Year2018\Day02\Program.cs" />
     <Compile Remove="Year2018\Day03\Program.cs" />
@@ -30,8 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Year2017_backup\Day16\Program.cs" />
-    <None Include="Year2017_backup\Day18\Program.cs" />
     <None Include="Year2018\Day01\Program.cs" />
     <None Include="Year2018\Day02\Program.cs" />
     <None Include="Year2018\Day03\Program.cs" />
