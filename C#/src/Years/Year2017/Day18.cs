@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Linq;
 using System.Text;
 using Years.Utils;
 
@@ -38,13 +39,23 @@ namespace Years.Year2017
 
             public long RunTillRecovery()
             {
+                if (_recoveryFlag)
+                {
+                    _recoveryFlag = false;
+                }
+
                 while (!_recoveryFlag)
                 {
                     Step();
+
+                    if (_haltFlag)
+                    { 
+                        return 0;
+                    }
                 }
                 return _recoveryFrequency;
             }
-
+            
 
             public void Run()
             {
@@ -57,7 +68,16 @@ namespace Years.Year2017
             public void Step()
             {
                 _recoveryFlag = false;
-                var instruction = _program[(int)_instructionPointer];
+                _sendFlag = false;
+                _haltFlag = false;
+
+                if (InstructionPointer < 0 || InstructionPointer >= _program.Count)
+                {
+                    _haltFlag = true;
+                    return;
+                }
+
+                var instruction = _program[(int)InstructionPointer];
 
                 long valueA = 0;
                 if (instruction.ValueA.HasValue)
@@ -82,19 +102,17 @@ namespace Years.Year2017
                     valueB = GetRegister(instruction.RegisterB.Value);
                 }
 
-                Console.WriteLine(_instructionPointer + " : " + Input.SplitNewLine()[_instructionPointer] + " - " + valueB);
+                //Console.WriteLine(InstructionPointer + " : " + Input.SplitNewLine()[InstructionPointer] + " - " + valueB);
                 
-                if (_step == 99)
-                {
-
-                }
-
 
                 switch (instruction.Opcode)
                 {
                     case Opcode.Snd:
-                        _recoveryFrequency = GetRegister(instruction.RegisterA.Value);
-                        Console.WriteLine($"sound: {_recoveryFrequency}");
+                        SendCount++;
+                        _recoveryFrequency = valueA;
+                        _sendFlag = true;
+                        Send.Add(_recoveryFrequency);
+                        //Console.WriteLine($"sound: {_recoveryFrequency}");
                         break;
 
                     case Opcode.Set:
@@ -124,22 +142,33 @@ namespace Years.Year2017
                         {
                             if (_recoveryFrequency > 0)
                             {
-                                _recoveryFlag = true;
-                                Console.WriteLine(_recoveryFrequency);
+                                _recoveryFlag = true;//part 1
                             }
-                            
-                            //"recover" last played sound, whatever that means
+                        }
+
+                        if (Received.Any())
+                        {
+                            _recoveryFlag = false;
+                            var received = Received.First();
+                            Received.RemoveAt(0);
+                            SetRegister(instruction.RegisterA.Value, received);
+                        }
+                        else//If 
+                        {
+                            //Return, skipping increment of instruction ptr
+                            _recoveryFlag = true;
+                            return;
                         }
                         break;
 
                     case Opcode.Jgz:
                         if (valueA > 0)
                         {
-                            _instructionPointer += valueB;
+                            InstructionPointer += valueB;
                         }
                         else
                         {
-                            _instructionPointer++;
+                            InstructionPointer++;
                         }
                         break;
 
@@ -149,13 +178,13 @@ namespace Years.Year2017
 
                 if (instruction.Opcode != Opcode.Jgz)
                 {
-                    _instructionPointer++;
+                    InstructionPointer++;
                 }
-                _step++;
+                StepCount++;
             }
 
 
-            private void SetRegister(char c, long value)
+            public void SetRegister(char c, long value)
             {
                 _registers[c] = value;
             }
@@ -170,12 +199,19 @@ namespace Years.Year2017
                 return _registers[c];
             }
 
+
+            
+            public List<long> Received = new List<long>();
+            public List<long> Send = new List<long>();
+            private bool _haltFlag = false;
+            private bool _sendFlag = false;
             private bool _recoveryFlag = false;
-            private long _instructionPointer = 0;
+            public long InstructionPointer = 0;
             private long _recoveryFrequency = 0;
             private Dictionary<char, long> _registers = new Dictionary<char, long>();
             private List<Instruction> _program;
-            private long _step = 0;
+            public long StepCount = 0;
+            public long SendCount = 0;
         }
 
 
@@ -187,14 +223,44 @@ namespace Years.Year2017
         {
             var vm = new SoundVirtualMachine(ParseInput(Input));
             var firstRecovery = vm.RunTillRecovery();
-
-            //not -91
-            //501 too low
             Console.WriteLine(firstRecovery);
         }
 
         public void ProblemTwo()
         {
+            var program1 = new SoundVirtualMachine(ParseInput(Input));
+            program1.SetRegister('p', 0);
+            var program2 = new SoundVirtualMachine(ParseInput(Input));
+            program2.SetRegister('p', 1);
+
+            var stepCountA = program1.StepCount;
+            var stepCountB = program2.StepCount;
+
+            while (true)
+            {
+                program1.Received.AddRange(program2.Send.Clone());
+                program2.Send.Clear();
+                program1.RunTillRecovery();
+
+                program2.Received.AddRange(program1.Send.Clone());
+                program1.Send.Clear();
+                program2.RunTillRecovery();
+
+                //Both halted
+                if (stepCountA == program1.StepCount && stepCountB == program2.StepCount)
+                {
+                    Console.WriteLine(program2.SendCount);
+                    return;
+                }
+
+                stepCountA = program1.StepCount;
+                stepCountB = program2.StepCount;
+            }
+
+
+
+
+
         }
 
         private readonly Dictionary<string, Opcode> _opcodesLookup = new Dictionary<string, Opcode>()
@@ -259,6 +325,14 @@ rcv a
 jgz a -1
 set a 1
 jgz a -2";
+
+        private const string Example2 = @"snd 1
+snd 2
+snd p
+rcv a
+rcv b
+rcv c
+rcv d";
 
         private const string Input = @"set i 31
 set a 1
