@@ -6,27 +6,29 @@ using Years.Utils;
 
 namespace Years.Year2017
 {
-    public class Node
-    {
-        public string Name;
-        public int Weight;
-        public List<Node> SubNodes = new List<Node>();
-        public Node Parent;
-
-        public int GetTowerWeight()
-        {
-            int weight = Weight;
-            foreach (var node in SubNodes)
-            {
-                weight += node.GetTowerWeight();
-            }
-            return weight;
-        }
-
-    }
+    
 
     public class Day07 : IDay
     {
+        private class Node
+        {
+            public string Name;
+            public int Weight;
+            public List<Node> SubNodes = new List<Node>();
+            public Node Parent;
+
+            public int GetTowerWeight()
+            {
+                int weight = Weight;
+                foreach (var node in SubNodes)
+                {
+                    weight += node.GetTowerWeight();
+                }
+                return weight;
+            }
+
+        }
+
         public int Day => 7;
         public int Year => 2017;
 
