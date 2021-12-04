@@ -6,21 +6,21 @@ using Years.Utils;
 
 namespace Years.Year2017
 {
-    public class Instruction
-    {
-        public string MutRegister;
-        public bool DoIncrement;
-        public int Increment;
-
-        public string TestRegister;
-        public string Operator;
-        public int Number;
-
-    }
-
-
     public class Day08 : IDay
     {
+        private class Instruction
+        {
+            public string MutRegister;
+            public bool DoIncrement;
+            public int Increment;
+
+            public string TestRegister;
+            public string Operator;
+            public int Number;
+
+        }
+
+
         public int Day => 8;
         public int Year => 2017;
 

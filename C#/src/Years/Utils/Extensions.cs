@@ -10,11 +10,41 @@ namespace Years.Utils
 {
     public static partial class Extensions
     {
+
         public static int Factorial(this int i)
         { 
             return Enumerable.Range(1, i).Aggregate(1, (p, item) => p * item);
         }
 
+        public static bool IsPrime(this long number)
+        {
+            if (number <= 1) return false;
+            if (number == 2) return true;
+            if (number % 2 == 0) return false;
+
+            var boundary = (long)Math.Floor(Math.Sqrt(number));
+
+            for (long i = 3; i <= boundary; i += 2)
+                if (number % i == 0)
+                    return false;
+
+            return true;
+        }
+
+        public static bool IsPrime(this int number)
+        {
+            if (number <= 1) return false;
+            if (number == 2) return true;
+            if (number % 2 == 0) return false;
+
+            var boundary = (int)Math.Floor(Math.Sqrt(number));
+
+            for (int i = 3; i <= boundary; i += 2)
+                if (number % i == 0)
+                    return false;
+
+            return true;
+        }
 
 
         //https://stackoverflow.com/questions/311165/how-do-you-convert-a-byte-array-to-a-hexadecimal-string-and-vice-versa
