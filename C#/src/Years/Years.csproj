@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -52,11 +52,6 @@
     <None Include="Year2018\Day16\Program.cs" />
     <None Include="Year2018\Day16\Register.cs" />
     <None Include="Year2018\Day16\VirtualMachine.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="NUnit" Version="3.12.0" />
   </ItemGroup>
 
 </Project>
