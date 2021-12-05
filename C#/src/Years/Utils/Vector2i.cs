@@ -61,6 +61,10 @@ namespace Years.Utils
             return ManhattanDistance(this, other);
         }
 
+        public int Distance(Vector2i other)
+        {
+            return (int)Math.Sqrt(Math.Pow((other.X - X), 2) + Math.Pow((other.Y - Y), 2));
+        }
 
         public override string ToString()
         {
