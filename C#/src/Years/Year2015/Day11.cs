@@ -227,7 +227,8 @@ namespace Years.Year2015
 
                 if (!hasStraightOfThree && i < 8 - 2)
                 {
-                    if (first - 1 == second && second - 1 == third)
+
+                    if (first > 0 && first - 1 == second && second > 0 && second - 1 == third)
                     {
                         hasStraightOfThree = true;
                     }

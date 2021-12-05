@@ -114,40 +114,43 @@ namespace Years.Year2015
 
         static void CalculateValue(Signal signal)
         {
-            if (signal.Operation == "AND")
+            unchecked
             {
-                signal.Value = (ushort)(signal.Inputs[0].Value & signal.Inputs[1].Value);
-                return;
-            }
+                if (signal.Operation == "AND")
+                {
+                    signal.Value = (ushort)(signal.Inputs[0].Value & signal.Inputs[1].Value);
+                    return;
+                }
 
-            if (signal.Operation == "OR")
-            {
-                signal.Value = (ushort)(signal.Inputs[0].Value | signal.Inputs[1].Value);
-                return;
-            }
+                if (signal.Operation == "OR")
+                {
+                    signal.Value = (ushort)(signal.Inputs[0].Value | signal.Inputs[1].Value);
+                    return;
+                }
 
-            if (signal.Operation == "LSHIFT")
-            {
-                signal.Value = (ushort)(signal.Inputs[0].Value << signal.ShiftNum);
-                return;
-            }
+                if (signal.Operation == "LSHIFT")
+                {
+                    signal.Value = (ushort)(signal.Inputs[0].Value << signal.ShiftNum);
+                    return;
+                }
 
-            if (signal.Operation == "RSHIFT")
-            {
-                signal.Value = (ushort)(signal.Inputs[0].Value >> signal.ShiftNum);
-                return;
-            }
+                if (signal.Operation == "RSHIFT")
+                {
+                    signal.Value = (ushort)(signal.Inputs[0].Value >> signal.ShiftNum);
+                    return;
+                }
 
-            if (signal.Operation == "NOT")
-            {
-                signal.Value = (ushort)(~signal.Inputs[0].Value);
-                return;
-            }
+                if (signal.Operation == "NOT")
+                {
+                    signal.Value = (ushort)(~signal.Inputs[0].Value);
+                    return;
+                }
 
-            if (signal.Operation == "EQUALS")
-            {
-                signal.Value = signal.Inputs[0].Value;
-                return;
+                if (signal.Operation == "EQUALS")
+                {
+                    signal.Value = signal.Inputs[0].Value;
+                    return;
+                }
             }
 
             throw new Exception("Huh?");

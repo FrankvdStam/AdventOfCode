@@ -12,7 +12,7 @@ namespace Cli
     {
         static void Main(string[] args)
         {
-            bool runAll = false;
+            bool runAll = true;
             int year = 2017;
             int day = 25;
 
