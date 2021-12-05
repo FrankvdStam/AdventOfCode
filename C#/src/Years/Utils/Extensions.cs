@@ -336,5 +336,85 @@ namespace Years.Utils
             }
         }
         #endregion
+
+        #region Array ========================================================================================================
+        public static T[,] RotateRight<T>(this T[,] array)
+        {
+            int width = array.GetLength(0);
+            int height = array.GetLength(1);
+            var result = new T[height, width];
+
+            for (var row = 0; row < height; row++)
+            {
+                for (var col = 0; col < width; col++)
+                {
+                    var x = height - (row + 1);
+                    var y = col;
+
+                    result[x, y] = array[col, row];
+                }
+            }
+
+            return result;
+        }
+
+        public static T[,] RotateLeft<T>(this T[,] array)
+        {
+            int width = array.GetLength(0);
+            int height = array.GetLength(1);
+            var result = new T[height, width];
+
+            for (var row = 0; row < height; row++)
+            {
+                for (var col = 0; col < width; col++)
+                {
+                    var x = row;
+                    var y = width - (col + 1);
+                           
+                    result[x, y] = array[col, row];
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// https://stackoverflow.com/questions/12446770/how-to-compare-multidimensional-arrays-in-c-sharp
+        /// </summary>
+        public static bool SequenceEquals<T>(this T[,] a, T[,] b) => a.Rank == b.Rank
+                                                                     && Enumerable.Range(0, a.Rank).All(d => a.GetLength(d) == b.GetLength(d))
+                                                                     && a.Cast<T>().SequenceEqual(b.Cast<T>());
+
+
+        public static T[,] Flip<T>(this T[,] array)
+        {
+            int rows = array.GetLength(0);
+            int columns = array.GetLength(1);
+            var flipped = new T[rows, columns];
+
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < columns; j++)
+                {
+                    flipped[i, j] = array[(rows - 1) - i, j];
+                }
+            }
+            return flipped;
+        }
+
+        public static IEnumerable<T> Enumerate<T>(this T[,] array)
+        {
+            int rows = array.GetLength(0);
+            int columns = array.GetLength(1);
+
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < columns; j++)
+                {
+                    yield return array[i, j];
+                }
+            }
+        }
+        #endregion
     }
 }
