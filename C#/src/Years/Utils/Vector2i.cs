@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Years.Utils
 {
+    [Serializable]
     public struct Vector2i : IEquatable<Vector2i>
     {
         public Vector2i(int x, int y)
