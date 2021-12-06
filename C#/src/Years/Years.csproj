@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Year2018\Day09\Program.cs" />
     <Compile Remove="Year2018\Day10\Program.cs" />
     <Compile Remove="Year2018\Day11\Program.cs" />
     <Compile Remove="Year2018\Day12\Program.cs" />
@@ -24,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Year2018\Day09\Program.cs" />
     <None Include="Year2018\Day10\Program.cs" />
     <None Include="Year2018\Day11\Program.cs" />
     <None Include="Year2018\Day12\Program.cs" />
