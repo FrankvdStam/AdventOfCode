@@ -23,6 +23,10 @@ namespace Years.Utils
             return new Vector2i(X + vector.X, Y + vector.Y);
         }
 
+        public Vector2i Sub(Vector2i vector)
+        {
+            return new Vector2i(X - vector.X, Y - vector.Y);
+        }
         //public bool Equals(Vector2i vector)
         //{
         //    return vector.X == X && vector.Y == Y;
