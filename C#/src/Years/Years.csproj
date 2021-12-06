@@ -8,32 +8,4 @@
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Year2018\Day10\Program.cs" />
-    <Compile Remove="Year2018\Day11\Program.cs" />
-    <Compile Remove="Year2018\Day12\Program.cs" />
-    <Compile Remove="Year2018\Day13\CharExtensions.cs" />
-    <Compile Remove="Year2018\Day13\Map.cs" />
-    <Compile Remove="Year2018\Day13\Program.cs" />
-    <Compile Remove="Year2018\Day16\Instruction.cs" />
-    <Compile Remove="Year2018\Day16\InstructionDecoder.cs" />
-    <Compile Remove="Year2018\Day16\Program.cs" />
-    <Compile Remove="Year2018\Day16\Register.cs" />
-    <Compile Remove="Year2018\Day16\VirtualMachine.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Year2018\Day10\Program.cs" />
-    <None Include="Year2018\Day11\Program.cs" />
-    <None Include="Year2018\Day12\Program.cs" />
-    <None Include="Year2018\Day13\CharExtensions.cs" />
-    <None Include="Year2018\Day13\Map.cs" />
-    <None Include="Year2018\Day13\Program.cs" />
-    <None Include="Year2018\Day16\Instruction.cs" />
-    <None Include="Year2018\Day16\InstructionDecoder.cs" />
-    <None Include="Year2018\Day16\Program.cs" />
-    <None Include="Year2018\Day16\Register.cs" />
-    <None Include="Year2018\Day16\VirtualMachine.cs" />
-  </ItemGroup>
-
 </Project>
