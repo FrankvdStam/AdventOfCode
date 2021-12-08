@@ -14,7 +14,7 @@ namespace Cli
         {
             bool runAll = false;
             int year = 2021;
-            int day = 7;
+            int day = 8;
 
             Run(runAll, year, day);
         }
