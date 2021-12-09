@@ -4,109 +4,113 @@ using Years.Utils;
 
 namespace Years.Year2021
 {
-    public class BingoCard
-    {
-        public BingoCard(int[,] data)
-        {
-            _bingoData = data;
-        }
-
-        public bool DrawNumber(int number)
-        {
-            if (FindMark(number))
-            {
-                return HasWon();
-            }
-            return false;
-        }
-
-
-        private bool FindMark(int number)
-        {
-            for (int y = 0; y < 5; y++)
-            {
-                for (int x = 0; x < 5; x++)
-                {
-                    if (_bingoData[x, y] == number)
-                    {
-                        _marks[x, y] = true;
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        private bool HasWon()
-        {
-            //Check rows
-            for (int y = 0; y < 5; y++)
-            {
-                var succes = true;
-                for (int x = 0; x < 5; x++)
-                {
-                    if (_marks[x, y] != true)
-                    {
-                        succes = false;
-                        break;
-                    }
-                }
-
-                if (succes)
-                {
-                    return true;
-                }
-            }
-
-            //Check columns
-            for (int x = 0; x < 5; x++)
-            {
-                var succes = true;
-
-                for (int y = 0; y < 5; y++)
-                {
-                    if (_marks[x, y] != true)
-                    {
-                        succes = false;
-                        break;
-                    }
-                }
-
-                if (succes)
-                {
-                    return true;
-                }
-            }
-
-
-            return false;
-        }
-
-        public int CalculateScore(int lastDrawnNumber)
-        {
-            var sum = 0;
-            for (int y = 0; y < 5; y++)
-            {
-                for (int x = 0; x < 5; x++)
-                {
-                    if (!_marks[x, y])
-                    {
-                        sum += _bingoData[x, y];
-                    }
-                }
-            }
-
-            return sum * lastDrawnNumber;
-        }
-
-        private readonly int[,] _bingoData = new int[5, 5];
-        private readonly bool[,] _marks = new bool[5, 5];
-    }
+    
 
 
     public class Day04 : IDay
     {
+        public class BingoCard
+        {
+            public BingoCard(int[,] data)
+            {
+                _bingoData = data;
+            }
+
+            public bool DrawNumber(int number)
+            {
+                if (FindMark(number))
+                {
+                    return HasWon();
+                }
+                return false;
+            }
+
+
+            private bool FindMark(int number)
+            {
+                for (int y = 0; y < 5; y++)
+                {
+                    for (int x = 0; x < 5; x++)
+                    {
+                        if (_bingoData[x, y] == number)
+                        {
+                            _marks[x, y] = true;
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
+            }
+
+            private bool HasWon()
+            {
+                //Check rows
+                for (int y = 0; y < 5; y++)
+                {
+                    var succes = true;
+                    for (int x = 0; x < 5; x++)
+                    {
+                        if (_marks[x, y] != true)
+                        {
+                            succes = false;
+                            break;
+                        }
+                    }
+
+                    if (succes)
+                    {
+                        return true;
+                    }
+                }
+
+                //Check columns
+                for (int x = 0; x < 5; x++)
+                {
+                    var succes = true;
+
+                    for (int y = 0; y < 5; y++)
+                    {
+                        if (_marks[x, y] != true)
+                        {
+                            succes = false;
+                            break;
+                        }
+                    }
+
+                    if (succes)
+                    {
+                        return true;
+                    }
+                }
+
+
+                return false;
+            }
+
+            public int CalculateScore(int lastDrawnNumber)
+            {
+                var sum = 0;
+                for (int y = 0; y < 5; y++)
+                {
+                    for (int x = 0; x < 5; x++)
+                    {
+                        if (!_marks[x, y])
+                        {
+                            sum += _bingoData[x, y];
+                        }
+                    }
+                }
+
+                return sum * lastDrawnNumber;
+            }
+
+            private readonly int[,] _bingoData = new int[5, 5];
+            private readonly bool[,] _marks = new bool[5, 5];
+        }
+
+
+
         public int Day => 4;
         public int Year => 2021;
 
