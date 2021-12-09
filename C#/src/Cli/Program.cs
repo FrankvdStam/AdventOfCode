@@ -10,67 +10,57 @@ namespace Cli
 {
     class Program
     {
-        static void Main(string[] args)
+        private enum RunType
         {
-            bool runAll = false;
-            int year = 2018;
-            int day = 12;
-
-            Run(runAll, year, day);
+            All,
+            Year,
+            Day
         }
 
-        static void Run(bool runAll, int year, int day)
+        static void Main(string[] args)
         {
+            Run(RunType.Year, 2017, 8);
+        }
 
+        static void Run(RunType runType, int year, int day)
+        {
             //Initialize all IDays
             var type = typeof(IDay);
-            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => type.IsAssignableFrom(p)).ToList();
-
-            List<IDay> days = new List<IDay>();
-            foreach (var t in types)
+            var days = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => type.IsAssignableFrom(p) && p.IsClass).Select(i => (IDay)Activator.CreateInstance(i)).ToList();
+            
+            //Filter
+            switch (runType)
             {
-                if (t.IsClass)
-                {
-                    var obj = (IDay)Activator.CreateInstance(t);
-                    days.Add(obj);
-                }
+                case RunType.All:
+                    break;
+
+                case RunType.Year:
+                    days = days.Where(i => i.Year == year).ToList();
+                    break;
+
+                case RunType.Day:
+                    days = days.Where(i => i.Year == year && i.Day == day).ToList();
+                    break;
+
+                
             }
 
-            Stopwatch stopwatch = new Stopwatch();
+            //sort
+            days = days.OrderBy(i => i.Year).ThenBy(i => i.Day).ToList();
 
-            if (runAll)
+            //Run
+            var stopwatch = new Stopwatch();
+            foreach (var _day in days)
             {
-                for (int y = 2015; y <= 2019; y++)
-                {
-                    for (int d = 1; d <= 25; d++)
-                    {
-                        var day_ = days.First(i => i.Year == y && i.Day == d);
-
-                        stopwatch.Start();
-                        day_.ProblemOne();
-                        stopwatch.Stop();
-                        Console.WriteLine($"{y}-{d.ToString().PadLeft(2, '0')}-{01} in {stopwatch.ElapsedMilliseconds}ms");
-
-                        stopwatch.Restart();
-                        day_.ProblemTwo();
-                        stopwatch.Stop();
-                        Console.WriteLine($"{y}-{d.ToString().PadLeft(2, '0')}-{02} in {stopwatch.ElapsedMilliseconds}ms");
-                    }
-                }
-            }
-            else
-            {
-                var activeDay = days.First(i => i.Year == year && i.Day == day);
-
                 stopwatch.Start();
-                activeDay.ProblemOne();
+                _day.ProblemOne();
                 stopwatch.Stop();
-                Console.WriteLine($"{year}-{day}-{01} in {stopwatch.ElapsedMilliseconds}ms");
+                Console.WriteLine($"{_day.Year}-{_day.Day.ToString().PadLeft(2, '0')} - part 1 in {stopwatch.ElapsedMilliseconds}ms");
 
                 stopwatch.Restart();
-                activeDay.ProblemTwo();
+                _day.ProblemTwo();
                 stopwatch.Stop();
-                Console.WriteLine($"{year}-{day}-{02} in {stopwatch.ElapsedMilliseconds}ms");
+                Console.WriteLine($"{_day.Year}-{_day.Day.ToString().PadLeft(2, '0')} - part 2 in {stopwatch.ElapsedMilliseconds}ms");
             }
 
             Console.ReadKey();
