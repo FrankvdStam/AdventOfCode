@@ -13,8 +13,8 @@ namespace Cli
         static void Main(string[] args)
         {
             bool runAll = false;
-            int year = 2021;
-            int day = 9;
+            int year = 2018;
+            int day = 12;
 
             Run(runAll, year, day);
         }
