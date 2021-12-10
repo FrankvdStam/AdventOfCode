@@ -19,7 +19,7 @@ namespace Cli
 
         static void Main(string[] args)
         {
-            Run(RunType.Year, 2017, 8);
+            Run(RunType.Day, 2021, 10);
         }
 
         static void Run(RunType runType, int year, int day)
