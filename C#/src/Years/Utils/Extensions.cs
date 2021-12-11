@@ -182,6 +182,94 @@ namespace Years.Utils
 
         #region IEnumerables ========================================================================================================
 
+        public enum AdjacentIteratorBehavior
+        {
+            None,
+            IncludeDiagonal,
+        }
+
+        private static readonly List<Vector2i> _adjacentIndices = new List<Vector2i>()
+        {
+            new Vector2i(-1,  0), //left
+            new Vector2i( 1,  0), //right
+            new Vector2i( 0,  1), //down
+            new Vector2i( 0, -1), //up
+        };
+
+        private static readonly List<Vector2i> _diagonalIndices = new List<Vector2i>()
+        {
+            new Vector2i(-1, -1), //left up
+            new Vector2i(-1,  1), //left down
+            new Vector2i( 1, -1), //right up
+            new Vector2i( 1,  1), //right down
+        };
+
+        /// <summary>
+        /// Iterates over a 2d array and returns the iterated element plus all adjacent elements that are within bounds of the array
+        /// Returns the current element and it's position and a list of adjacent elements and their position
+        /// </summary>
+        public static IEnumerable<(Vector2i currentPosition, T currentElement, List<(Vector2i position, T element)> adjacentElements)> AdjacentIterator<T>(this T[,] array, AdjacentIteratorBehavior adjacentIteratorBehavior = AdjacentIteratorBehavior.None)
+        {
+            var width = array.GetLength(0);
+            var height = array.GetLength(1);
+
+            var indices = _adjacentIndices.Clone();
+            if (adjacentIteratorBehavior == AdjacentIteratorBehavior.IncludeDiagonal)
+            {
+                indices.AddRange(_diagonalIndices);
+            }
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    var currentPosition = new Vector2i(x, y);
+                    var currentElement = array[x, y];
+                    var adjacentElements = new List<(Vector2i position, T element)>();
+
+                    foreach (var index in indices)
+                    {
+                        var adjacentPosition = currentPosition.Add(index);
+
+                        if (adjacentPosition.X >= 0 &&
+                            adjacentPosition.X < width && 
+                            adjacentPosition.Y >= 0 &&
+                            adjacentPosition.Y < height)
+                        {
+                            adjacentElements.Add((adjacentPosition, array[adjacentPosition.X, adjacentPosition.Y]));
+                        }
+                    }
+                    yield return (currentPosition, currentElement, adjacentElements);
+                }
+            }
+        }
+
+        public static List<(Vector2i position, T element)> GetAdjacentElements<T>(this T[,] array, Vector2i position, AdjacentIteratorBehavior adjacentIteratorBehavior = AdjacentIteratorBehavior.None)
+        {
+            var width = array.GetLength(0);
+            var height = array.GetLength(1);
+
+            var indices = _adjacentIndices.Clone();
+            if (adjacentIteratorBehavior == AdjacentIteratorBehavior.IncludeDiagonal)
+            {
+                indices.AddRange(_diagonalIndices);
+            }
+
+            var adjacentElements = new List<(Vector2i position, T element)>();
+            foreach (var index in indices)
+            {
+                var adjacentPosition = position.Add(index);
+
+                if (adjacentPosition.X >= 0 &&
+                    adjacentPosition.X < width &&
+                    adjacentPosition.Y >= 0 &&
+                    adjacentPosition.Y < height)
+                {
+                    adjacentElements.Add((adjacentPosition, array[adjacentPosition.X, adjacentPosition.Y]));
+                }
+            }
+            return adjacentElements;
+        }
 
 
         public static IEnumerable<IEnumerable<T>> Permute<T>(this IEnumerable<T> sequence)
