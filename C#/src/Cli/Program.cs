@@ -41,8 +41,6 @@ namespace Cli
                 case RunType.Day:
                     days = days.Where(i => i.Year == year && i.Day == day).ToList();
                     break;
-
-                
             }
 
             //sort
