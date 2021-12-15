@@ -29,7 +29,7 @@ namespace Years.Year2016
         }
 
 
-        private static string Input = @"cpy 1 a
+        private const string Input = @"cpy 1 a
 cpy 1 b
 cpy 26 d
 jnz c 2
@@ -53,7 +53,8 @@ jnz d -2
 dec c
 jnz c -5";
 
-        private static string Example = @"cpy 41 a
+#pragma warning disable CS0414
+        private const string Example = @"cpy 41 a
 inc a
 inc a
 dec a

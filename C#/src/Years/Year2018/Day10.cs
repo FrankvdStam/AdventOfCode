@@ -27,34 +27,34 @@ namespace Years.Year2018
         {
             throw new Exception();
 
-            var lights = ParseInput(Input);
-
-            int seconds = 0;
-            while (true)
-            {
-                //Draw(Normalize(lights));
-                //int biggestDistance = FindBiggestDistance(lights);
-                var test = MoveToOrigin(lights);
-
-                Draw(test);
-                Console.ReadKey();
-
-                if (test.All(i => i.Position.X > 0 && i.Position.Y > 0))
-                {
-                    Draw(test);
-                }
-                
-                //Distance is smallest at 10077
-                //if (biggestDistance < 1000)
-                //{
-
-                //}
-
-                //Console.WriteLine(biggestDistance);
-                ProgresSeconds(1, lights);
-                seconds += 1;
-                //Console.ReadKey();
-            }
+            ////var lights = ParseInput(Input);
+            ////
+            ////int seconds = 0;
+            ////while (true)
+            ////{
+            ////    //Draw(Normalize(lights));
+            ////    //int biggestDistance = FindBiggestDistance(lights);
+            ////    var test = MoveToOrigin(lights);
+            ////
+            ////    Draw(test);
+            ////    Console.ReadKey();
+            ////
+            ////    if (test.All(i => i.Position.X > 0 && i.Position.Y > 0))
+            ////    {
+            ////        Draw(test);
+            ////    }
+            ////    
+            ////    //Distance is smallest at 10077
+            ////    //if (biggestDistance < 1000)
+            ////    //{
+            ////
+            ////    //}
+            ////
+            ////    //Console.WriteLine(biggestDistance);
+            ////    ProgresSeconds(1, lights);
+            ////    seconds += 1;
+            ////    //Console.ReadKey();
+            ////}
         }
 
         public void ProblemTwo()

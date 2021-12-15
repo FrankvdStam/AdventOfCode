@@ -21,7 +21,6 @@ namespace Years.Year2015
             
             var lines = input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
             //Give all constants a unique name.
-            int counter = 0;
             foreach (var line in lines)
             {
 
@@ -203,7 +202,8 @@ namespace Years.Year2015
             }
         }
 
-        private static string example = @"123 -> x
+#pragma warning disable CS0414
+        private const string example = @"123 -> x
 456 -> y
 x AND y -> d
 x OR y -> e
@@ -215,7 +215,7 @@ NOT y -> i";
 
         //19138 -> b
 
-        private string Input = @"lf AND lq -> ls
+        private const string Input = @"lf AND lq -> ls
 iu RSHIFT 1 -> jn
 bo OR bu -> bv
 gj RSHIFT 1 -> hc

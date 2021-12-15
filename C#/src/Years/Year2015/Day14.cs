@@ -127,11 +127,12 @@ namespace Years.Year2015
             return result;
         }
 
-        private string Example = @"Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.
+#pragma warning disable CS0414
+        private const string Example = @"Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.
 Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.";
 
 
-        public string Input = @"Dancer can fly 27 km/s for 5 seconds, but then must rest for 132 seconds.
+        private const string Input = @"Dancer can fly 27 km/s for 5 seconds, but then must rest for 132 seconds.
 Cupid can fly 22 km/s for 2 seconds, but then must rest for 41 seconds.
 Rudolph can fly 11 km/s for 5 seconds, but then must rest for 48 seconds.
 Donner can fly 28 km/s for 5 seconds, but then must rest for 134 seconds.

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 
 namespace Years.Utils
 {
@@ -73,11 +74,7 @@ namespace Years.Utils
 
         public static List<T> Clone<T>(this List<T> oldList)
         {
-            var formatter = new BinaryFormatter();
-            var stream = new MemoryStream();
-            formatter.Serialize(stream, oldList);
-            stream.Position = 0;
-            return (List<T>)formatter.Deserialize(stream);
+            return JsonSerializer.Deserialize<List<T>>(JsonSerializer.Serialize(oldList));
         }
 
         public static Direction RotateLeft(this Direction direction)
@@ -181,6 +178,28 @@ namespace Years.Utils
         }
 
         #region IEnumerables ========================================================================================================
+
+        public static IEnumerable<(int x, int y)> DiagonalIterator(int width, int height)
+        {
+            for (int k = 0; k <= width + height - 2; k++)
+            {
+                for (int j = 0; j <= k; j++)
+                {
+                    int i = k - j;
+                    if (i < height && j < width)
+                    {
+                        yield return (i, j);
+                    }
+                }
+            }
+        }
+
+
+        private static int AdditionFactorial(this int n)
+        {
+            return ((n * (n + 1)) / 2);
+        }
+
 
         public enum AdjacentIteratorBehavior
         {

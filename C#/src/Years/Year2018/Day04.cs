@@ -32,15 +32,8 @@ namespace Years.Year2018
         private class _Day
         {
             public int[] Minutes = new int[60];
-            public DateTime date;
         }
-
-        private class Guard
-        {
-            public int Id;
-            List<_Day> Days;
-        }
-
+        
 
 
         public int Day => 4;

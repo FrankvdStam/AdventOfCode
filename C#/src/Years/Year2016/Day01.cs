@@ -75,8 +75,6 @@ namespace Years.Year2016
 
             int x = 0;
             int y = 0;
-            int prevX = 0;
-            int prevY = 0;
 
             int currentDirection = 0;
 

@@ -66,7 +66,6 @@ namespace Years.Year2017.SoundVirtualMachine
         public void Step()
         {
             _recoveryFlag = false;
-            _sendFlag = false;
             _haltFlag = false;
 
             if (InstructionPointer < 0 || InstructionPointer >= _program.Count)
@@ -116,7 +115,6 @@ namespace Years.Year2017.SoundVirtualMachine
                 case Opcode.Snd:
                     SendCount++;
                     _recoveryFrequency = valueA;
-                    _sendFlag = true;
                     Send.Add(_recoveryFrequency);
                     //Console.WriteLine($"sound: {_recoveryFrequency}");
                     break;
@@ -228,7 +226,6 @@ namespace Years.Year2017.SoundVirtualMachine
         public List<long> Received = new List<long>();
         public List<long> Send = new List<long>();
         private bool _haltFlag = false;
-        private bool _sendFlag = false;
         private bool _recoveryFlag = false;
         public long InstructionPointer = 0;
         private long _recoveryFrequency = 0;

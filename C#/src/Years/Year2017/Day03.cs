@@ -127,7 +127,6 @@ namespace Years.Year2017
         private int FindFirstSquare(int steps)
         {
             //Find the first square size that contains our step by finding the first odd-number square
-            int squareSize = 0;
             int i = 1;
             while (true)
             {

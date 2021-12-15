@@ -12,7 +12,7 @@ namespace Years.Year2021
 
         public void ProblemOne()
         {
-            var input = ParseInput(_input);
+            var input = ParseInput(Input);
 
             var count = 0;
             var previous = input[0];
@@ -29,7 +29,7 @@ namespace Years.Year2021
 
         public void ProblemTwo()
         {
-            var input = CalculateSlidingSum(ParseInput(_input));
+            var input = CalculateSlidingSum(ParseInput(Input));
 
             var count = 0;
             var previous = input[0];
@@ -67,7 +67,8 @@ namespace Years.Year2021
             return result;
         }
 
-        private static string _example = @"199
+#pragma warning disable CS0414
+        private const string Example = @"199
 200
 208
 210
@@ -78,7 +79,8 @@ namespace Years.Year2021
 260
 263";
 
-        private static string _input = @"199
+#pragma warning disable CS0414
+        private const string Input = @"199
 203
 200
 201

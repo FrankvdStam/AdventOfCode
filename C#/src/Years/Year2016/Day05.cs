@@ -68,8 +68,12 @@ namespace Years.Year2016
         }
 
 
-        private static string Input = @"uqwqemis";
-        private static string Example = @"";
+
+        
+        private const string Input = @"uqwqemis";
+
+#pragma warning disable CS0414
+        private const string Example = @"";
 
     }
 }

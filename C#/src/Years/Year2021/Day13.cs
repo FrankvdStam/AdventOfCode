@@ -14,13 +14,6 @@ namespace Years.Year2021
         public void ProblemOne()
         {
             ParseInput(Input, out List<Vector2i> dots, out List<(char axis, int num)> folds);
-
-            void Draw()
-            {
-                Console.Clear();
-                dots.Draw('#');
-                Console.ReadKey();
-            }
             var fold = folds.First();
             
             if (fold.axis == 'x')

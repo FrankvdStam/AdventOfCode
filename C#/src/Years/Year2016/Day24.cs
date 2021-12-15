@@ -266,8 +266,8 @@ namespace Years.Year2016
             }
         }
 
-        
 
+#pragma warning disable CS0414
         private string Example = @"###########
 #0.1.....2#
 #.#######.#

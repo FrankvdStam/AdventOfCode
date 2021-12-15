@@ -78,6 +78,8 @@ namespace Years.Year2016
         }
 
         //8 - 2 - 0 - 0
+
+#pragma warning disable CS0414
         private string Input = @"The first floor contains a polonium generator, a thulium generator, a thulium-compatible microchip, a promethium generator, a ruthenium generator, a ruthenium-compatible microchip, a cobalt generator, and a cobalt-compatible microchip.
 The second floor contains a polonium-compatible microchip and a promethium-compatible microchip.
 The third floor contains nothing relevant.

@@ -26,10 +26,10 @@ namespace Years.Year2016
             Console.WriteLine(result);
 
             return;
-            AssembunnyVirtualMachine avm = new AssembunnyVirtualMachine(Input);
-            avm.RegisterValues['a'] = 12;
-            avm.Run();
-            Console.WriteLine(avm.RegisterValues['a']);
+            //AssembunnyVirtualMachine avm = new AssembunnyVirtualMachine(Input);
+            //avm.RegisterValues['a'] = 12;
+            //avm.Run();
+            //Console.WriteLine(avm.RegisterValues['a']);
         }
 
 

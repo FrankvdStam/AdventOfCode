@@ -67,13 +67,13 @@ namespace Years.Year2019
             return fuelRequired;
         }
 
-
-        private static string Test = @"12
+#pragma warning disable CS0414
+        private const string Example = @"12
 14
 1969
 100756";
 
-        private static string Input = @"140170
+        private const string Input = @"140170
 75120
 75645
 134664
@@ -173,6 +173,5 @@ namespace Years.Year2019
 139759
 134171
 104869";
-        private static string Example = @"";
     }
 }

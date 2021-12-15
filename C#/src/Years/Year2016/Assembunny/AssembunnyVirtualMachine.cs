@@ -171,7 +171,6 @@ namespace Years.Year2016.Assembunny
         };
 
         private int _programCounter = 0;
-        private int _cycles = 0;
 
 
         private List<Instruction> Parse(string input)

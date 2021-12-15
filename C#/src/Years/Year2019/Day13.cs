@@ -59,15 +59,12 @@ namespace Years.Year2019
             computer.Memory[0] = 2;
             computer.PrintOutput = false;
             computer.PrintDisassembly = false;
-
-            bool started = false;
-
+            
             Dictionary<Vector2i, Tile> screen = new Dictionary<Vector2i, Tile>();
             Vector2i ballPosition = new Vector2i(0, 0);
             Vector2i paddlePosition = new Vector2i(0, 0);
 
             long score = 0;
-            int cycle = 0;
             while (computer.State != State.Halt)
             {
                RunComputerTillInputOrOutput(computer);

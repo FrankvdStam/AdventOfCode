@@ -103,7 +103,7 @@ namespace Years.Year2019
                     cycle++;
                     //Console.WriteLine(cycle);
                 }
-                catch (Exception e)
+                catch
                 {
                     if (computer.State == State.Halt)
                     {
