@@ -50,7 +50,7 @@ namespace Years.Utils
         //https://stackoverflow.com/questions/311165/how-do-you-convert-a-byte-array-to-a-hexadecimal-string-and-vice-versa
         public static string ToHexString(this byte[] ba)
         {
-            StringBuilder hex = new StringBuilder(ba.Length * 2);
+            var hex = new StringBuilder(ba.Length * 2);
             foreach (byte b in ba)
                 hex.AppendFormat("{0:x2}", b);
             return hex.ToString();
@@ -73,8 +73,8 @@ namespace Years.Utils
 
         public static List<T> Clone<T>(this List<T> oldList)
         {
-            BinaryFormatter formatter = new BinaryFormatter();
-            MemoryStream stream = new MemoryStream();
+            var formatter = new BinaryFormatter();
+            var stream = new MemoryStream();
             formatter.Serialize(stream, oldList);
             stream.Position = 0;
             return (List<T>)formatter.Deserialize(stream);
