@@ -66,6 +66,11 @@ namespace Years.Utils
             return bytes;
         }
 
+        public static string HexStringToBinaryString(this string hex)
+        {
+            return string.Join(string.Empty, hex.Select(c => Convert.ToString(Convert.ToInt32(c.ToString(), 16), 2).PadLeft(4, '0')));
+        }
+
 
         public static string[] SplitNewLine(this string input)
         {
@@ -175,6 +180,11 @@ namespace Years.Utils
 
             digits.Reverse();
             return digits;
+        }
+
+        public static bool IsAllCaps(this string str)
+        {
+            return str.All(char.IsUpper);
         }
 
         #region IEnumerables ========================================================================================================
