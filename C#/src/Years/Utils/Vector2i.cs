@@ -14,8 +14,8 @@ namespace Years.Utils
 
 
 
-        public int X;
-        public int Y;
+        public int X { get; set; }
+        public int Y { get; set; }
 
 
         public Vector2i Add(Vector2i vector)

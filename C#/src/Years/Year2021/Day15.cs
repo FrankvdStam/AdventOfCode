@@ -2,28 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.VisualBasic;
+using Dijkstra.NET.Graph;
+using Dijkstra.NET.ShortestPath;
 using Years.Utils;
 
 namespace Years.Year2021
 {
     public class Day15 : IDay
     {
-        private struct Path
-        {
-            public bool Remove = false;
-            public Vector2i CurrentPosition => Steps.Last().position;
-            public int CurrentScore => Steps.Last().score;
-
-            public List<(Vector2i position, int score)> Steps;
-            public Path Clone()
-            {
-                return new Path()
-                {
-                    Steps = this.Steps.Clone(),
-                };
-            }
-        }
 
         public int Day => 15;
         public int Year => 2021;
@@ -34,145 +20,87 @@ namespace Years.Year2021
 
         public void ProblemOne()
         {
-            var thing = new List<int>();
-            thing.Add(1);
-            thing.Add(2);
-            thing.Add(3);
+            var map = ParseInput(Input);
+            Console.WriteLine(SolveMap(map));
+        }
 
-            var copy = thing.Clone();
+        public void ProblemTwo()
+        {
+            var map = ParseInput(Input);
+            map = EnlargeMap(map);
+            Console.WriteLine(SolveMap(map));
+        }
 
 
-            var map = ParseInput(Example);
-         
-            //If we interpret the map as a node graph where each individual number is its own node at it's x and y position, it's weight is the distance from the previous node
-            //then the whole thing becomes a dijkstra/a* solvable problem.
-
-            var g = new Graph<int>();
+        private int[,] EnlargeMap(int[,] map)
+        {
+            var result = new int[map.GetLength(0) * 5, map.GetLength(1) * 5];
             
-
-
-            var lowestScores = new int[map.GetLength(0), map.GetLength(1)];
-
-            //iterate diagonally
-            foreach (var coord in Extensions.DiagonalIterator(map.GetLength(0), map.GetLength(1)))
+            for (var mapY = 0; mapY < 5; mapY++)
             {
-                var value = map[coord.x, coord.y];
-
-            }
-
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            var start = new Path() { Steps = new List<(Vector2i position, int score)>() { (new Vector2i(0, 0), 0) } };
-            var stack = new Stack<Path>();
-            stack.Push(start);
-
-            var finish = new Vector2i(map.GetLength(0)-1, map.GetLength(1)-1);
-            var finishedPaths = new List<Path>();
-
-            //Keep track of the lowest score to reach any given position
-            var locationScores = new int[map.GetLength(0), map.GetLength(1)];
-            for (var y = 0; y < map.GetLength(1); y++)
-            {
-                for (var x = 0; x < map.GetLength(0); x++)
+                for (var mapX = 0; mapX < 5; mapX++)
                 {
-                    locationScores[x, y] = int.MaxValue;
-                }
-            }
+                    var addition = mapX + mapY;
 
-
-            var cycle = 0;
-            while (stack.Any())
-            {
-                if (cycle % 100 == 0)
-                {
-                    Console.WriteLine($"{cycle} {stack.Count}");
-                }
-
-                cycle++;
-
-
-                var path = stack.Pop();
-                var adjacentElements = map.GetAdjacentElements(path.CurrentPosition);
-
-                foreach (var adjacent in adjacentElements)
-                {
-                    //Don't revisit a position
-                    if (path.Steps.All(i => i.position != adjacent.position))
+                    for (var y = 0; y < map.GetLength(1); y++)
                     {
-                        //Setup a potential new path
-                        var newPath = path.Clone();
-                        newPath.Steps.Add((adjacent.position, path.CurrentScore + adjacent.element));
-
-                        //Check if we're finished
-                        if (adjacent.position == finish)
+                        for (var x = 0; x < map.GetLength(0); x++)
                         {
-                            finishedPaths.Add(newPath);
-                        }
-                        else
-                        {
-                            var highScore = locationScores[newPath.CurrentPosition.X, newPath.CurrentPosition.Y];
+                            var newValue = map[x, y] + addition;
 
-                            //We've been in this position before. Only add this path if we score better.
-                            //Else, the path dies.
-                            if (highScore > newPath.CurrentScore)
+                            //Not really a wraparound but since we repeat at most 5 times we can get away with this
+                            if (newValue > 9)
                             {
-                                locationScores[newPath.CurrentPosition.X, newPath.CurrentPosition.Y] = newPath.CurrentScore;
-                                
-
-                                //Get rid of existing paths that visited this position with a lower score
-                                var removals = new List<Path>();
-                                foreach (var p in stack)
-                                {
-                                    if (p.Steps.Any(i => i.position == newPath.CurrentPosition))
-                                    {
-                                        removals.Add(p);
-                                    }
-                                }
-                                
-
-                                //Now add the new best scoring path for this position
-                                stack.Push(newPath);
+                                newValue -= 9;
                             }
+
+                            result[(mapX * map.GetLength(0)) + x, (mapY * map.GetLength(1)) + y] = newValue;
                         }
                     }
                 }
             }
 
-            //var lowestScore = finishedPaths.Min(i => i.Score);
-            //Console.WriteLine(lowestScore);
+            return result;
         }
 
-        public void ProblemTwo()
+
+        private int SolveMap(int[,] map)
         {
+            var nodeId = new uint[map.GetLength(0), map.GetLength(1)];
+
+            var graph = new Graph<Vector2i, string>();
+
+            //First pass: build all the nodes
+            for (var y = 0; y < map.GetLength(1); y++)
+            {
+                for (var x = 0; x < map.GetLength(0); x++)
+                {
+                    //This library is a bit strange. We can give some type and some instance as a node and adding a node will return a node id.
+                    //However, the data you give it is not used anywhere. Instead, you connect nodes via the ID it gives you. Why have data at all?
+                    nodeId[x, y] = graph.AddNode(new Vector2i(x, y));
+                }
+            }
+
+            //second pass: connect nodes
+            for (var y = 0; y < map.GetLength(1); y++)
+            {
+                for (var x = 0; x < map.GetLength(0); x++)
+                {
+                    var currentPosition = new Vector2i(x, y);
+                    var currentValue = map[x, y];
+                    var currentGraphIndex = nodeId[x, y];
+
+                    var adjacentElements = map.GetAdjacentElements(currentPosition);
+                    foreach (var adjacent in adjacentElements)
+                    {
+                        var index = nodeId[adjacent.position.X, adjacent.position.Y];
+                        graph.Connect(currentGraphIndex, index, adjacent.element, "");
+                    }
+                }
+            }
+
+            var result = graph.Dijkstra(nodeId[0, 0], nodeId[nodeId.GetLength(0) - 1, nodeId.GetLength(1) - 1]);
+            return result.Distance;
         }
 
         private int[,] ParseInput(string input)

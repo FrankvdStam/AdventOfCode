@@ -79,7 +79,8 @@ namespace Years.Utils
 
         public static List<T> Clone<T>(this List<T> oldList)
         {
-            return JsonSerializer.Deserialize<List<T>>(JsonSerializer.Serialize(oldList));
+            var temp = JsonSerializer.Serialize(oldList);
+            return JsonSerializer.Deserialize<List<T>>(temp);
         }
 
         public static Direction RotateLeft(this Direction direction)
