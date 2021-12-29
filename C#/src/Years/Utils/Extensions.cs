@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
 using System.Text;
@@ -11,6 +12,24 @@ namespace Years.Utils
 {
     public static partial class Extensions
     {
+        public static int Difference(this int a, int b)
+        {
+            if (a > b)
+            {
+                return a - b;
+            }
+            return b - a;
+        }
+
+        public static float Difference(this float a, float b)
+        {
+            if (a > b)
+            {
+                return a - b;
+            }
+            return b - a;
+        }
+
 
         public static int Factorial(this int i)
         { 
@@ -45,6 +64,11 @@ namespace Years.Utils
                     return false;
 
             return true;
+        }
+
+        public static double DegreesToRadians(this double angle)
+        {
+            return (Math.PI / 180) * angle;
         }
 
 
@@ -127,6 +151,11 @@ namespace Years.Utils
 
             }
             throw new Exception($"Unsupported ");
+        }
+
+        public static int ManhattanDistance(this Vector3 vector1, Vector3 vector2)
+        {
+            return (int)(Math.Abs(vector1.X - vector2.X) + Math.Abs(vector1.Y - vector2.Y) + Math.Abs(vector1.Z - vector2.Z));
         }
 
 
