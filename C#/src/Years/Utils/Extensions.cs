@@ -247,7 +247,7 @@ namespace Years.Utils
             IncludeDiagonal,
         }
 
-        private static readonly List<Vector2i> _adjacentIndices = new List<Vector2i>()
+        public static readonly List<Vector2i> AdjacentIndices = new List<Vector2i>()
         {
             new Vector2i(-1,  0), //left
             new Vector2i( 1,  0), //right
@@ -255,7 +255,7 @@ namespace Years.Utils
             new Vector2i( 0, -1), //up
         };
 
-        private static readonly List<Vector2i> _diagonalIndices = new List<Vector2i>()
+        public static readonly List<Vector2i> DiagonalIndices = new List<Vector2i>()
         {
             new Vector2i(-1, -1), //left up
             new Vector2i(-1,  1), //left down
@@ -272,10 +272,10 @@ namespace Years.Utils
             var width = array.GetLength(0);
             var height = array.GetLength(1);
 
-            var indices = _adjacentIndices.Clone();
+            var indices = AdjacentIndices.Clone();
             if (adjacentIteratorBehavior == AdjacentIteratorBehavior.IncludeDiagonal)
             {
-                indices.AddRange(_diagonalIndices);
+                indices.AddRange(DiagonalIndices);
             }
 
             for (int y = 0; y < height; y++)
@@ -308,10 +308,10 @@ namespace Years.Utils
             var width = array.GetLength(0);
             var height = array.GetLength(1);
 
-            var indices = _adjacentIndices.Clone();
+            var indices = AdjacentIndices.Clone();
             if (adjacentIteratorBehavior == AdjacentIteratorBehavior.IncludeDiagonal)
             {
-                indices.AddRange(_diagonalIndices);
+                indices.AddRange(DiagonalIndices);
             }
 
             var adjacentElements = new List<(Vector2i position, T element)>();
