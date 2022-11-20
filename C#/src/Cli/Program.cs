@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Years;
 using Years.Utils;
 
 namespace Cli
@@ -19,15 +22,21 @@ namespace Cli
 
         static void Main(string[] args)
         {
-            Run(RunType.Day, 2022, 01);
+
+
         }
+        //Run(RunType.Day, 2022, 01);
+    
 
         static void Run(RunType runType, int year, int day)
         {
             //Initialize all IDays
             var type = typeof(IDay);
             var days = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => type.IsAssignableFrom(p) && p.IsClass).Select(i => (IDay)Activator.CreateInstance(i)).ToList();
-            
+
+            //Setup inputs
+            var inputMan = new InputManager();
+
             //Filter
             switch (runType)
             {
