@@ -10,7 +10,7 @@ namespace YearGenerator
         {
 
             string path = @"C:\projects\AdventOfCode\C#\src\Years";
-            int year = 2017;
+            int year = 2022;
             
             Console.WriteLine($"Generating 25 days for year {year} in {path}, press any key to continue.");
             Thread.Sleep(1000);
