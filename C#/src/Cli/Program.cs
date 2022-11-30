@@ -16,8 +16,8 @@ namespace Cli
         static void Main(string[] args)
         {
             //InputManager.Instance.AppendInput(2015, 01);
-            RunYear(2015);
-            //RunDay(2022, 01);
+            //RunYear(2018);
+            RunDay(2018, 14);
         }
 
 
