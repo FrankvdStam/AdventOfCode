@@ -13,64 +13,52 @@ namespace Cli
 {
     class Program
     {
-        private enum RunType
-        {
-            All,
-            Year,
-            Day
-        }
-
         static void Main(string[] args)
         {
-
-
+            //InputManager.Instance.AppendInput(2015, 01);
+            RunYear(2015);
+            //RunDay(2022, 01);
         }
-        //Run(RunType.Day, 2022, 01);
-    
 
-        static void Run(RunType runType, int year, int day)
+
+        static List<IDay> _days = new List<IDay>();
+        static void InitDays()
         {
-            //Initialize all IDays
             var type = typeof(IDay);
-            var days = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => type.IsAssignableFrom(p) && p.IsClass).Select(i => (IDay)Activator.CreateInstance(i)).ToList();
+            _days = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => type.IsAssignableFrom(p) && p.IsClass && !p.IsAbstract).Select(i => (IDay)Activator.CreateInstance(i)).ToList();
+        }
 
-            //Setup inputs
-            var inputMan = new InputManager();
-
-            //Filter
-            switch (runType)
-            {
-                case RunType.All:
-                    break;
-
-                case RunType.Year:
-                    days = days.Where(i => i.Year == year).ToList();
-                    break;
-
-                case RunType.Day:
-                    days = days.Where(i => i.Year == year && i.Day == day).ToList();
-                    break;
-            }
-
-            //sort
-            days = days.OrderBy(i => i.Year).ThenBy(i => i.Day).ToList();
-
-            //Run
-            var stopwatch = new Stopwatch();
-            foreach (var _day in days)
-            {
-                stopwatch.Start();
-                _day.ProblemOne();
-                stopwatch.Stop();
-                Console.WriteLine($"{_day.Year}-{_day.Day.ToString().PadLeft(2, '0')} - part 1 in {stopwatch.ElapsedMilliseconds}ms");
-
-                stopwatch.Restart();
-                _day.ProblemTwo();
-                stopwatch.Stop();
-                Console.WriteLine($"{_day.Year}-{_day.Day.ToString().PadLeft(2, '0')} - part 2 in {stopwatch.ElapsedMilliseconds}ms");
-            }
-
+        static void RunDay(int year, int day)
+        {
+            InitDays();
+            var dayInstance = _days.First(i => i.Year == year && i.Day == day);
+            RunDay(dayInstance);
             Console.ReadKey();
+        }
+
+        static void RunYear(int year)
+        {
+            InitDays();
+            var days = _days.Where(i => i.Year == year).OrderBy(i => i.Day);
+            foreach(var d in days)
+            {
+                RunDay(d);
+            }
+            Console.ReadKey();
+        }
+
+        private static void RunDay(IDay day)
+        {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            day.ProblemOne();
+            stopwatch.Stop();
+            Console.WriteLine($"{day.Year}-{day.Day.ToString().PadLeft(2, '0')} - part 1 in {stopwatch.ElapsedMilliseconds}ms");
+
+            stopwatch.Restart();
+            day.ProblemTwo();
+            stopwatch.Stop();
+            Console.WriteLine($"{day.Year}-{day.Day.ToString().PadLeft(2, '0')} - part 2 in {stopwatch.ElapsedMilliseconds}ms");
         }
     }
 }

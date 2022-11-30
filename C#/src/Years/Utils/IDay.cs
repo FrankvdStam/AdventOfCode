@@ -13,4 +13,21 @@ namespace Years.Utils
         void ProblemOne();
         void ProblemTwo();
     }
+
+    public abstract class BaseDay : IDay
+    {
+        public BaseDay(int year, int day)
+        {
+            Year = year;
+            Day = day;
+            Input = InputManager.Instance.GetInput(Year, Day);
+        }
+
+        public int Year { get; }
+        public int Day { get; }
+        public string Input { get; }
+
+        public abstract void ProblemOne();
+        public abstract void ProblemTwo();
+    }    
 }

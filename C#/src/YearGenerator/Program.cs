@@ -42,11 +42,6 @@ namespace YearGenerator
             }
         }
 
-
-
-
-
-
         static string GenerateClass(int year, int day)
         {
             return $@"using System;
@@ -56,16 +51,15 @@ using Years.Utils;
 
 namespace Years.Year{year}
 {{
-    public class Day{day.ToString().PadLeft(2, '0')} : IDay
+    public class Day{day.ToString().PadLeft(2, '0')} : BaseDay
     {{
-        public int Day => {day};
-        public int Year => {year};
+        public Day{day.ToString().PadLeft(2, '0')}() : base({year}, {day}) {{}}
 
-        public void ProblemOne()
+        public override void ProblemOne()
         {{
         }}
 
-        public void ProblemTwo()
+        public override void ProblemTwo()
         {{
         }}
     }}

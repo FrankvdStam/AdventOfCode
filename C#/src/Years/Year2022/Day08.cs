@@ -5,16 +5,15 @@ using Years.Utils;
 
 namespace Years.Year2022
 {
-    public class Day08 : IDay
+    public class Day08 : BaseDay
     {
-        public int Day => 8;
-        public int Year => 2022;
+        public Day08() : base(2022, 8) {}
 
-        public void ProblemOne()
+        public override void ProblemOne()
         {
         }
 
-        public void ProblemTwo()
+        public override void ProblemTwo()
         {
         }
     }
