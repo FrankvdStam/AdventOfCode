@@ -118,7 +118,8 @@ namespace Years.Year2021
         }
 
 
-        private string Example = @"1163751742
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "<Pending>")]
+        private const string Example = @"1163751742
 1381373672
 2136511328
 3694931569
