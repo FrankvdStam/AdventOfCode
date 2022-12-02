@@ -5,30 +5,11 @@ using Years.Utils;
 
 namespace Years.Year2015
 {
-    public class Day10 : IDay
+    public class Day10 : BaseDay
     {
-        public int Day => 10;
-        public int Year => 2015;
-
-
-        public void ProblemOne()
+        public Day10() : base(2015, 10)
         {
-            SolveAndCache();
-            Console.WriteLine(_one);
-        }
-
-        public void ProblemTwo()
-        {
-            Console.WriteLine(_two);
-        }
-
-
-        private int _one;
-        private int _two;
-
-        private void SolveAndCache()
-        {
-            string input = Input;
+            string input = Input.Replace("\n", "");
             for (int i = 0; i < 50; i++)
             {
                 input = lookandsay(input);
@@ -41,13 +22,28 @@ namespace Years.Year2015
         }
 
 
-        string lookandsay(string number)
+        public override void ProblemOne()
         {
-            StringBuilder result = new StringBuilder();
+            Console.WriteLine(_one);
+        }
 
-            char repeat = number[0];
+        public override void ProblemTwo()
+        {
+            Console.WriteLine(_two);
+        }
+
+
+        private int _one;
+        private int _two;
+
+
+        private string lookandsay(string number)
+        {
+            var result = new StringBuilder();
+
+            var repeat = number[0];
             number = number.Substring(1, number.Length - 1) + " ";
-            int times = 1;
+            var times = 1;
 
             foreach (char actual in number)
             {
@@ -68,10 +64,10 @@ namespace Years.Year2015
 
         private string NextGeneration(string input)
         {
-            string result = "";
+            var result = "";
             for (int i = 0; i < input.Length; /*Don't increment i here.*/)
             {
-                int duplicate = DupplicateCount(input[i], input, i);
+                var duplicate = DupplicateCount(input[i], input, i);
                 result += duplicate.ToString() + input[i].ToString();
                 i += duplicate;
             }
@@ -80,7 +76,7 @@ namespace Years.Year2015
 
         private int DupplicateCount(char c, string input, int offset)
         {
-            int count = 0;
+            var count = 0;
             for (int i = offset; i < input.Length; i++)
             {
                 if (input[i] == c)
@@ -94,7 +90,5 @@ namespace Years.Year2015
             }
             return count;
         }
-
-        private const string Input = "1321131112";
     }
 }
