@@ -6,16 +6,18 @@ using Years.Utils;
 
 namespace Years.Year2015
 {
-    public class Day09 : IDay
+    public class Day09 : BaseDay
     {
-        public int Day => 9;
-        public int Year => 2015;
-
-        public void ProblemOne()
+        public Day09() : base(2015, 09)
         {
-            Dictionary<string, int> distances = new Dictionary<string, int>();
-            List<string> cities = new List<string>();
-            var lines = input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+
+        }
+
+        private (Dictionary<string, int> distances, List<string> cities) ParseCities(string input)
+        {
+            var distances = new Dictionary<string, int>();
+            var cities = new List<string>();
+            var lines = input.Split('\n', StringSplitOptions.RemoveEmptyEntries);
             foreach (var line in lines)
             {
                 var split = line.Split(' ');
@@ -34,8 +36,16 @@ namespace Years.Year2015
                 }
             }
 
-            string bestRoute = "";
-            int bestDistance = int.MaxValue;
+            return (distances, cities);
+        }
+
+
+        public override void ProblemOne()
+        {
+            var (distances, cities) = ParseCities(Input);
+
+            var bestRoute = "";
+            var bestDistance = int.MaxValue;
             foreach (var permutation in cities.Permute())
             {
                 string route = "";
@@ -63,31 +73,12 @@ namespace Years.Year2015
             Console.WriteLine(bestDistance);
         }
 
-        public void ProblemTwo()
+        public override void ProblemTwo()
         {
-            Dictionary<string, int> distances = new Dictionary<string, int>();
-            List<string> cities = new List<string>();
-            var lines = input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
-            foreach (var line in lines)
-            {
-                var split = line.Split(' ');
-                //Put the cities in both ways
-                distances[split[0] + split[2]] = int.Parse(split[4]);
-                distances[split[2] + split[0]] = int.Parse(split[4]);
+            var (distances, cities) = ParseCities(Input);
 
-                if (!cities.Contains(split[0]))
-                {
-                    cities.Add(split[0]);
-                }
-
-                if (!cities.Contains(split[2]))
-                {
-                    cities.Add(split[2]);
-                }
-            }
-
-            string bestRoute = "";
-            int bestDistance = 0;
+            var bestRoute = "";
+            var bestDistance = 0;
             foreach (var permutation in cities.Permute())
             {
                 string route = "";
@@ -114,34 +105,5 @@ namespace Years.Year2015
             }
             Console.WriteLine(bestDistance);
         }
-
-        private static string input = @"Tristram to AlphaCentauri = 34
-Tristram to Snowdin = 100
-Tristram to Tambi = 63
-Tristram to Faerun = 108
-Tristram to Norrath = 111
-Tristram to Straylight = 89
-Tristram to Arbre = 132
-AlphaCentauri to Snowdin = 4
-AlphaCentauri to Tambi = 79
-AlphaCentauri to Faerun = 44
-AlphaCentauri to Norrath = 147
-AlphaCentauri to Straylight = 133
-AlphaCentauri to Arbre = 74
-Snowdin to Tambi = 105
-Snowdin to Faerun = 95
-Snowdin to Norrath = 48
-Snowdin to Straylight = 88
-Snowdin to Arbre = 7
-Tambi to Faerun = 68
-Tambi to Norrath = 134
-Tambi to Straylight = 107
-Tambi to Arbre = 40
-Faerun to Norrath = 11
-Faerun to Straylight = 66
-Faerun to Arbre = 144
-Norrath to Straylight = 115
-Norrath to Arbre = 135
-Straylight to Arbre = 127";
     }
 }
