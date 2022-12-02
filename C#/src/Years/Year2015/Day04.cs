@@ -6,17 +6,20 @@ using Years.Utils;
 
 namespace Years.Year2015
 {
-    public class Day04 : IDay
+    public class Day04 : BaseDay
     {
-        public int Day => 4;
-        public int Year => 2015;
+        public Day04() : base(2015, 04)
+        {
 
-        public void ProblemOne()
+        }
+
+
+        public override void ProblemOne()
         {
             long i = 0;
             while(true)
             {
-                var hash = Extensions.ComputeHashFromUtf8String(Input + i);
+                var hash = Extensions.ComputeHashFromUtf8String(Input.Replace("\n", "") + i);
 
                 if (hash[0] == 0 && hash[1] == 0 && hash[2] <= 16)
                 {
@@ -27,12 +30,12 @@ namespace Years.Year2015
             }
         }
 
-        public void ProblemTwo()
+        public override void ProblemTwo()
         {
             long i = 0;
             while (true)
             {
-                var hash = Extensions.ComputeHashFromUtf8String(Input + i);
+                var hash = Extensions.ComputeHashFromUtf8String(Input.Replace("\n", "") + i);
 
                 if (hash[0] == 0 && hash[1] == 0 && hash[2] == 0)
                 {
@@ -44,6 +47,5 @@ namespace Years.Year2015
         }
 
         private const string Example = @"abcdef";
-        private const string Input = @"bgvyzdsv";
     }
 }
