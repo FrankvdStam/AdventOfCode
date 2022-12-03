@@ -98,7 +98,11 @@ namespace Years.Utils
 
         public static string[] SplitNewLine(this string input)
         {
-            return input.Split(new string[] {"\r\n"}, StringSplitOptions.None);
+            if(input.Contains("\r\n"))
+            {
+                return input.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            }
+            return input.Split('\n', StringSplitOptions.RemoveEmptyEntries);
         }
 
         public static List<T> Clone<T>(this List<T> oldList)
