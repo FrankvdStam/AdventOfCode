@@ -9,14 +9,13 @@ namespace Years.Year2015
 
 
 
-    public class Day15 : IDay
+    public class Day15 : BaseDay
     {
-        public int Day => 15;
-        public int Year => 2015;
+        public Day15() : base(2015, 15) { }
 
         private int _maxWithCalories = 0;
 
-        public void ProblemOne()
+        public override void ProblemOne()
         {
             var ingredients = ParseIngredients(Input);
 
@@ -65,7 +64,7 @@ namespace Years.Year2015
             Console.WriteLine(max);
         }
 
-        public void ProblemTwo()
+        public override void ProblemTwo()
         {
             Console.WriteLine(_maxWithCalories);
         }
@@ -74,7 +73,7 @@ namespace Years.Year2015
         private List<Ingredient> ParseIngredients(string input)
         {
             var ingredients = new List<Ingredient>();
-            var lines = input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+            var lines = input.SplitNewLine();
             foreach (var line in lines)
             {
                 ingredients.Add(Ingredient.FromString(line));
@@ -117,10 +116,5 @@ namespace Years.Year2015
                 };
             }
         }
-
-        private const string Input = @"Sprinkles: capacity 5, durability -1, flavor 0, texture 0, calories 5
-PeanutButter: capacity -1, durability 3, flavor 0, texture 0, calories 1
-Frosting: capacity 0, durability -1, flavor 4, texture 0, calories 6
-Sugar: capacity -1, durability 0, flavor 0, texture 2, calories 8";
     }
 }
