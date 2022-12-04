@@ -18,14 +18,13 @@ namespace Years.Year2015
         public int Points = 0;
     }
 
-    public class Day14 : IDay
+    public class Day14 : BaseDay
     {
-        public int Day => 14;
-        public int Year => 2015;
+        public Day14() : base(2015, 14) {}
 
-        public void ProblemOne()
+        public override void ProblemOne()
         {
-            var deer = ParseInput(Input);
+            var deer = ParseInput(Input.RemoveTrailingNewline());
 
             for (int i = 0; i < 2503; i++)
             {
@@ -39,7 +38,7 @@ namespace Years.Year2015
 
         private int _points;
 
-        public void ProblemTwo()
+        public override void ProblemTwo()
         {
             Console.WriteLine(_points);
         }
@@ -112,7 +111,7 @@ namespace Years.Year2015
         private List<Reindeer> ParseInput(string input)
         {
             var result = new List<Reindeer>();
-            var split = input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+            var split = input.SplitNewLine();
             foreach (string line in split)
             {
                 var bits = line.Split(' ');
@@ -130,16 +129,5 @@ namespace Years.Year2015
 #pragma warning disable CS0414
         private const string Example = @"Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.
 Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.";
-
-
-        private const string Input = @"Dancer can fly 27 km/s for 5 seconds, but then must rest for 132 seconds.
-Cupid can fly 22 km/s for 2 seconds, but then must rest for 41 seconds.
-Rudolph can fly 11 km/s for 5 seconds, but then must rest for 48 seconds.
-Donner can fly 28 km/s for 5 seconds, but then must rest for 134 seconds.
-Dasher can fly 4 km/s for 16 seconds, but then must rest for 55 seconds.
-Blitzen can fly 14 km/s for 3 seconds, but then must rest for 38 seconds.
-Prancer can fly 3 km/s for 21 seconds, but then must rest for 40 seconds.
-Comet can fly 18 km/s for 6 seconds, but then must rest for 103 seconds.
-Vixen can fly 18 km/s for 5 seconds, but then must rest for 84 seconds.";
     }
 }
