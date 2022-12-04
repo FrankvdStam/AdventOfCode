@@ -6,20 +6,18 @@ using Years.Utils;
 
 namespace Years.Year2015
 {
-    public class Day11 : IDay
+    public class Day11 : BaseDay
     {
-        public int Day => 11;
-        public int Year => 2015;
+        public Day11() : base(2015, 11) { }
 
-        private const string Input = "cqjxjnds";
         private string _problemOneResult;
 
-        public void ProblemOne()
+        public override void ProblemOne()
         {
            // bool correct = IsPasswordValid(StringPasswordToUlong("cqjxxyzz"));
 
 
-            ulong pwd = StringPasswordToUlong(Input);
+            ulong pwd = StringPasswordToUlong(Input.Replace("\n", String.Empty));
             while (true)
             {
                 pwd = IncrementPassword(pwd);
@@ -33,7 +31,7 @@ namespace Years.Year2015
             }
         }
 
-        public void ProblemTwo()
+        public override void ProblemTwo()
         {
             ulong pwd = StringPasswordToUlong(_problemOneResult);
             while (true)
