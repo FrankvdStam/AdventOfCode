@@ -6,12 +6,11 @@ using Years.Utils;
 
 namespace Years.Year2015
 {
-    public class Day17 : IDay
+    public class Day17 : BaseDay
     {
-        public int Day => 17;
-        public int Year => 2015;
+        public Day17() : base(2015, 17) { }
 
-        public void ProblemOne()
+        public override void ProblemOne()
         {
             var lines = Input.Split(new string[] { "\r\n" }, StringSplitOptions.None);
             var list = new List<int>();
@@ -37,7 +36,7 @@ namespace Years.Year2015
         private int _partTwo;
 
 
-        public void ProblemTwo()
+        public override void ProblemTwo()
         {
             Console.WriteLine(_partTwo);
         }
@@ -48,35 +47,12 @@ namespace Years.Year2015
         {
             List<int> result = new List<int>();
 
-            foreach (string line in input.Split(new string[] { "\r\n" }, StringSplitOptions.None))
+            foreach (string line in input.SplitNewLine())
             {
                 result.Add(int.Parse(line));
             }
 
             return result;
         }
-
-
-        private string Input = @"50
-44
-11
-49
-42
-46
-18
-32
-26
-40
-21
-7
-18
-43
-10
-47
-36
-24
-22
-40";
-
     }
 }
