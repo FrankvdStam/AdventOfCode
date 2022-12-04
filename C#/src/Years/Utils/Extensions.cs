@@ -105,6 +105,15 @@ namespace Years.Utils
             return input.Split('\n', StringSplitOptions.RemoveEmptyEntries);
         }
 
+        public static string RemoveTrailingNewline(this string input)
+        {
+            if(input.EndsWith('\n'))
+            {
+                return input.Substring(0, input.Length - 1);
+            }
+            return input;
+        }
+
         public static List<T> Clone<T>(this List<T> oldList)
         {
             var temp = JsonSerializer.Serialize(oldList);

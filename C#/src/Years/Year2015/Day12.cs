@@ -7,19 +7,19 @@ using Years.Utils;
 
 namespace Years.Year2015
 {
-    public class Day12 : IDay
+    public class Day12 : BaseDay
     {
-        public int Day => 12;
-        public int Year => 2015;
+        public Day12() : base(2015, 12) {}
 
-        public void ProblemOne()
+        public override void ProblemOne()
         {
-            Console.WriteLine(Day12Func(Input));
+            Console.WriteLine(Day12Func(Input.RemoveTrailingNewline()));
         }
 
-        public void ProblemTwo()
+        public override void ProblemTwo()
         {
-            Console.WriteLine(Braces.IsMatch(Input) ? Day12Part2Func(Braces.Replace(Input, SumBraces)) : Day12Func(Input));
+            var input = Input.RemoveTrailingNewline();
+            Console.WriteLine(Braces.IsMatch(input) ? Day12Part2Func(Braces.Replace(input, SumBraces)) : Day12Func(input));
         }
 
         static Regex Number = new Regex("-?\\d+", RegexOptions.Compiled);
