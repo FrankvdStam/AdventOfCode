@@ -5,11 +5,9 @@ using Years.Utils;
 
 namespace Years.Year2015
 {
-    public class Day25 : IDay
+    public class Day25 : BaseDay
     {
-        public int Day => 25;
-        public int Year => 2015;
-
+        public Day25() : base(2015, 25) { }
 
         /*
             ============================================
@@ -58,10 +56,15 @@ namespace Years.Year2015
             */
 
  
-        public void ProblemOne()
+        public override void ProblemOne()
         {
-            int x = 3029;
-            int y = 2947;
+            var split = Input.Split(' ');
+
+            var xStr = split[18].Replace(".\n", string.Empty);
+            var yStr = split[16].Replace(",", string.Empty);
+
+            int x = int.Parse(xStr);
+            int y = int.Parse(yStr);
             long order = (((y + x - 2) * (y + x - 1)) / 2) + x;
 
             long code = 20151125;
@@ -72,7 +75,7 @@ namespace Years.Year2015
             Console.WriteLine(code);
         }
 
-        public void ProblemTwo()
+        public override void ProblemTwo()
         {
             //There is no problem two...
         }
