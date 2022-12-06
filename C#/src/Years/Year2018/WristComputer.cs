@@ -173,7 +173,7 @@ namespace Years.Year2018
                     break;
             }
 
-            _instructionPointer += 4;
+            _instructionPointer++;
             
             if(_instructionPointer >= Program.Count)
             {

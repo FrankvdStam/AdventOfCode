@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Years.Utils;
@@ -15,6 +16,7 @@ namespace Years.Year2018
 
         public override void ProblemOne()
         {
+
             //TestInstructionOnSamples();
             //FindInstructionValues();
 
