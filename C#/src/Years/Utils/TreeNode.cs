@@ -17,6 +17,15 @@ namespace Years.Utils
         public List<TreeNode<T>> Children = new List<TreeNode<T>>();
         public object Object;//Use with hard casts, to store some addition info with each generic node.
 
+        public TreeNode<T> AddChild(T t)
+        {
+            var childNode = new TreeNode<T>(t);
+            childNode.Parent = this;
+            Children.Add(childNode);
+            return childNode;
+        }
+
+
         public override string ToString()
         {
             return $"{Value.ToString()} Children: {Children.Count}";
