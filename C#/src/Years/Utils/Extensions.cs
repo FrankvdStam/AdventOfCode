@@ -202,6 +202,36 @@ namespace Years.Utils
             }
         }
 
+        public static void Draw(this List<(Vector2i vec, char c)> vectors)
+        {
+            int minx = vectors.Min(i => i.vec.X);
+            int maxx = vectors.Max(i => i.vec.X);
+            int width = maxx - minx;
+            int miny = vectors.Min(i => i.vec.Y);
+            int maxy = vectors.Max(i => i.vec.Y);
+            int height = maxy - miny;
+
+            int transformX = 0;
+            if (minx < 0)
+            {
+                transformX = Math.Abs(minx);
+            }
+
+            int transformY = 0;
+            if (miny < 0)
+            {
+                transformY = Math.Abs(miny);
+            }
+
+            //Console.SetWindowSize(width, height);
+
+            foreach (var v in vectors)
+            {
+                Console.SetCursorPosition(v.vec.X + transformX, v.vec.Y + transformY);
+                Console.Write(v.c);
+            }
+        }
+
 
 
         public static string Reverse(this string s)
@@ -259,6 +289,11 @@ namespace Years.Utils
             None,
             IncludeDiagonal,
         }
+
+        public static readonly Vector2i DirectionLeft  = new Vector2i(-1,  0);
+        public static readonly Vector2i DirectionRight = new Vector2i( 1,  0);
+        public static readonly Vector2i DirectionDown  = new Vector2i( 0,  1);
+        public static readonly Vector2i DirectionUp    = new Vector2i( 0, -1);
 
         public static readonly List<Vector2i> AdjacentIndices = new List<Vector2i>()
         {
