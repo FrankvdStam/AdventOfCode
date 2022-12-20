@@ -75,7 +75,16 @@ namespace Years.Utils
             {
                 var str = DownloadDayInput(client, year, day);
                 Console.WriteLine($"{year} {day}\n{str}");
-                _inputs.Add((year, day, str));
+
+                if(_inputs.Any(i => i.Year == year && i.Day == day))
+                {
+                    var input = _inputs.FirstOrDefault(i => i.Year == year && i.Day == day);
+                    input.input = str;
+                }
+                else
+                {
+                    _inputs.Add((year, day, str));
+                }
                 SaveToFile();
             }
         }

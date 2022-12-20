@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -116,8 +117,8 @@ namespace Years.Utils
 
         public static List<T> Clone<T>(this List<T> oldList)
         {
-            var temp = JsonSerializer.Serialize(oldList);
-            return JsonSerializer.Deserialize<List<T>>(temp);
+            var temp = JsonConvert.SerializeObject(oldList);
+            return JsonConvert.DeserializeObject<List<T>>(temp);
         }
 
         public static Direction RotateLeft(this Direction direction)
@@ -611,5 +612,21 @@ namespace Years.Utils
             }
         }
         #endregion
+
+        public static int GreatestCommonFactor(int a, int b)
+        {
+            while (b != 0)
+            {
+                int temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+
+        public static int LeastCommonDenominator(int a, int b)
+        {
+            return (a / GreatestCommonFactor(a, b)) * b;
+        }
     }
 }
