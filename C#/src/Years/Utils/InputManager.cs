@@ -53,7 +53,7 @@ namespace Years.Utils
             _inputs.Clear();
             using (var client = SetupClient())
             {
-                for (int year = 2015; year <= 2021; year++)
+                for (int year = 2015; year <= 2022; year++)
                 {
                     for (int day = 1; day <= 25; day++)
                     {
