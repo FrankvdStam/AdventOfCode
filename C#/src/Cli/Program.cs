@@ -15,6 +15,11 @@ namespace Cli
     {
         static void Main(string[] args)
         {
+            ParseqTests t = new ParseqTests();
+            t.DoIt();
+            return;
+            
+
             //InputManager.Instance.DownloadAllInputs();
             RunDay(2022, 12);
             //RunYear(2015);
