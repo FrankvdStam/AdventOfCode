@@ -458,6 +458,18 @@ namespace Years.Utils
             }
         }
 
+        public static List<int> AllOccurencesOf(this string str, string value)
+        {
+            var indices = new List<int>();
+            for (int index = 0; ; index += value.Length)
+            {
+                index = str.IndexOf(value, index);
+                if (index == -1)
+                    return indices;
+                indices.Add(index);
+            }
+        }
+
         #endregion
 
 
