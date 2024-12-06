@@ -115,7 +115,7 @@ namespace Years.Utils
         {
             if(input.EndsWith('\n'))
             {
-                return input.Substring(0, input.Length - 1);
+                return input.Substring(0, input.Length - 1); 
             }
             return input;
         }
