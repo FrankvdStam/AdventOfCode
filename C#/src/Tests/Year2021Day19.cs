@@ -5,6 +5,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Years.Year2021.BeaconScanner;
 
 namespace Tests
@@ -37,31 +38,31 @@ namespace Tests
             {
                 Console.WriteLine(rot);
             }
-
-             Assert.Contains(new Vector3( 1,  2,  3), rotations);
-             Assert.Contains(new Vector3(-2,  1,  3), rotations);
-             Assert.Contains(new Vector3(-1, -2,  3), rotations);
-             Assert.Contains(new Vector3( 2, -1,  3), rotations);
-             Assert.Contains(new Vector3( 1, -3,  2), rotations);
-             Assert.Contains(new Vector3(-2, -3,  1), rotations);
-             Assert.Contains(new Vector3(-1, -3, -2), rotations);
-             Assert.Contains(new Vector3( 2, -3, -1), rotations);
-             Assert.Contains(new Vector3( 1, -2, -3), rotations);
-             Assert.Contains(new Vector3(-2, -1, -3), rotations);
-             Assert.Contains(new Vector3(-1,  2, -3), rotations);
-             Assert.Contains(new Vector3( 2,  1, -3), rotations);
-             Assert.Contains(new Vector3( 1,  3, -2), rotations);
-             Assert.Contains(new Vector3(-2,  3, -1), rotations);
-             Assert.Contains(new Vector3(-1,  3,  2), rotations);
-             Assert.Contains(new Vector3( 2,  3,  1), rotations);
-             Assert.Contains(new Vector3( 3,  2, -1), rotations);
-             Assert.Contains(new Vector3( 3,  1,  2), rotations);
-             Assert.Contains(new Vector3( 3, -2,  1), rotations);
-             Assert.Contains(new Vector3( 3, -1, -2), rotations);
-             Assert.Contains(new Vector3(-3, -2, -1), rotations);
-             Assert.Contains(new Vector3(-3, -1,  2), rotations);
-             Assert.Contains(new Vector3(-3,  2,  1), rotations);
-             Assert.Contains(new Vector3(-3,  1, -2), rotations);
+            
+            CollectionAssert.Contains(rotations, new Vector3( 1,  2,  3));
+            CollectionAssert.Contains(rotations, new Vector3(-2,  1,  3));
+            CollectionAssert.Contains(rotations, new Vector3(-1, -2,  3));
+            CollectionAssert.Contains(rotations, new Vector3( 2, -1,  3));
+            CollectionAssert.Contains(rotations, new Vector3( 1, -3,  2));
+            CollectionAssert.Contains(rotations, new Vector3(-2, -3,  1));
+            CollectionAssert.Contains(rotations, new Vector3(-1, -3, -2));
+            CollectionAssert.Contains(rotations, new Vector3( 2, -3, -1));
+            CollectionAssert.Contains(rotations, new Vector3( 1, -2, -3));
+            CollectionAssert.Contains(rotations, new Vector3(-2, -1, -3));
+            CollectionAssert.Contains(rotations, new Vector3(-1,  2, -3));
+            CollectionAssert.Contains(rotations, new Vector3( 2,  1, -3));
+            CollectionAssert.Contains(rotations, new Vector3( 1,  3, -2));
+            CollectionAssert.Contains(rotations, new Vector3(-2,  3, -1));
+            CollectionAssert.Contains(rotations, new Vector3(-1,  3,  2));
+            CollectionAssert.Contains(rotations, new Vector3( 2,  3,  1));
+            CollectionAssert.Contains(rotations, new Vector3( 3,  2, -1));
+            CollectionAssert.Contains(rotations, new Vector3( 3,  1,  2));
+            CollectionAssert.Contains(rotations, new Vector3( 3, -2,  1));
+            CollectionAssert.Contains(rotations, new Vector3( 3, -1, -2));
+            CollectionAssert.Contains(rotations, new Vector3(-3, -2, -1));
+            CollectionAssert.Contains(rotations, new Vector3(-3, -1,  2));
+            CollectionAssert.Contains(rotations, new Vector3(-3,  2,  1));
+            CollectionAssert.Contains(rotations, new Vector3(-3,  1, -2));
         }
 
 

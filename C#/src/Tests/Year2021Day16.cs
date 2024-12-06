@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Years.Utils;
 
@@ -19,7 +20,8 @@ namespace Tests
         {
             var packet = Years.Year2021.Day16.Parse(hex.HexStringToBinaryString(), out _);
             var versionSum = packet.SumVersion();
-            Assert.AreEqual(expectedSum, versionSum);
+
+            Assert.That(versionSum, Is.EqualTo(expectedSum));
         }
 
 
@@ -35,7 +37,7 @@ namespace Tests
         {
             var packet = Years.Year2021.Day16.Parse(hex.HexStringToBinaryString(), out _);
             var value = packet.GetValue();
-            Assert.AreEqual(expectedValue, value);
+            Assert.That(value, Is.EqualTo(expectedValue));
         }
     }
 }

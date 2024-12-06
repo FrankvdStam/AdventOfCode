@@ -15,14 +15,7 @@ namespace Cli
     {
         static void Main(string[] args)
         {
-            //ParseqTests t = new ParseqTests();
-            //t.DoIt();
-            //return;
-            
-
-            //InputManager.Instance.DownloadAllInputs();
-            RunDay(2023, 1);
-            //RunYear(2015);
+            RunDay(2024, 2);
         }
 
 
@@ -54,6 +47,8 @@ namespace Cli
 
         private static void RunDay(IDay day)
         {
+            InputManager.Instance.DownloadMissingInput(day.Year, day.Day);
+
             var stopwatch = new Stopwatch();
             stopwatch.Start();
             day.ProblemOne();

@@ -18,7 +18,7 @@ namespace Tests
         [TestCase("1,2,4"       , "63960835bcdc130f0b66d7ff4f6a5a8e")]
         public void TestHash(string input, string expectedHash)
         {
-            Assert.AreEqual(expectedHash, KnotHasher.Calculate(input));
+            Assert.That(KnotHasher.Calculate(input), Is.EqualTo(expectedHash));
         }
     }
 }

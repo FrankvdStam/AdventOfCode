@@ -93,8 +93,6 @@ namespace Years.Year2018
                 //Run the samples
                 foreach (var sample in _samples)
                 {
-                    var treeOrMoreCount = 0;
-
                     var i = new WristComputer.Instruction();
                     i.RegisterA = sample.instruction[1];
                     i.RegisterB = sample.instruction[2];

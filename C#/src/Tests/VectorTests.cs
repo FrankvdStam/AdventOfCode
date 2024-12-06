@@ -4,7 +4,9 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Years.Utils;
 
 namespace Tests
@@ -131,11 +133,6 @@ namespace Tests
             0, -4,
             0, -5
         )]
-
-
-
-
-
         public void TestPlotLine(int x1, int y1, int x2, int y2, params int[] resultInts)
         {
             var start = new Vector2i(x1, y1);
@@ -148,7 +145,7 @@ namespace Tests
                 resultVectors.Add(new Vector2i(resultInts[i], resultInts[i+1]));
             }
 
-            Assert.AreEqual(line.ToArray(), resultVectors.ToArray());
+            CollectionAssert.AreEqual(line.ToArray(), resultVectors.ToArray());
         }
 
     }

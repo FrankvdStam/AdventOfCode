@@ -106,6 +106,11 @@ namespace Years.Utils
             return input.Split('\n', StringSplitOptions.RemoveEmptyEntries);
         }
 
+        public static string[] SplitWhitespace(this string input)
+        {
+            return input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        }
+
         public static string RemoveTrailingNewline(this string input)
         {
             if(input.EndsWith('\n'))

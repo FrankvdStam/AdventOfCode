@@ -219,8 +219,8 @@ namespace Tests
             var resultMemory = computer.MemoryToString();
             var resultOutput = string.Join(',', computer.Output);
 
-            Assert.AreEqual(result, resultMemory);
-            Assert.AreEqual(resultOutput, output);
+            Assert.That(result, Is.EqualTo(resultMemory));
+            Assert.That(resultOutput, Is.EqualTo(output));
         }
     }
 }

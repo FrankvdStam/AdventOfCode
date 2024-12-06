@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using Years.Year2017;
+using static Years.Year2021.Day18;
 
 namespace Tests
 {
@@ -20,7 +22,8 @@ namespace Tests
         {
             var pair = Years.Year2021.Day18.ParsePair(input);
             var exploded = Years.Year2021.Day18.TryExplode(pair);
-            Assert.AreEqual(expected.Replace(" ", string.Empty), pair.ToString());
+
+            Assert.That(pair.ToString(), Is.EqualTo(expected.Replace(" ", string.Empty)));
         }
         
         [TestCase("[[2,[[7,7],7]],[[5,8],[[9,3],[0,2]]]]", "[[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]", "[[[[7,8],[6,6]],[[6,0],[7,7]]],[[[7,8],[8,8]],[[7,9],[0,6]]]]")]
@@ -31,7 +34,8 @@ namespace Tests
             var rightPair = Years.Year2021.Day18.ParsePair(right);
             var result = Years.Year2021.Day18.Add(leftPair, rightPair);
             Years.Year2021.Day18.ReduceAll(result);
-            Assert.AreEqual(expected.Replace(" ", string.Empty), result.ToString());
+
+            Assert.That(result.ToString(), Is.EqualTo(expected.Replace(" ", string.Empty)));
         }
 
 
@@ -74,7 +78,7 @@ namespace Tests
                 Years.Year2021.Day18.ReduceAll(currentPair);
                 //Console.WriteLine(currentPair);
             }
-            Assert.AreEqual(expected.Replace(" ", string.Empty), currentPair.ToString());
+            Assert.That(currentPair.ToString(), Is.EqualTo(expected.Replace(" ", string.Empty)));
         }
 
 
@@ -90,7 +94,8 @@ namespace Tests
         public void Magnitude(string pair, int expected)
         {
             var pair_ = Years.Year2021.Day18.ParsePair(pair);
-            Assert.AreEqual(expected, pair_.Magnitude());
+
+            Assert.That(pair_.Magnitude(), Is.EqualTo(expected));
         }
     }
 }

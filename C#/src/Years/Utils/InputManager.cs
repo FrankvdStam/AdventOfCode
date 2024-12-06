@@ -5,22 +5,23 @@ using System.Net.Http;
 using System.Net;
 using System.Threading;
 using System.IO;
+using Microsoft.VisualBasic.CompilerServices;
 using Newtonsoft.Json;
 
 namespace Years.Utils
 {
     public class InputManager
     {
-        private static InputManager _instace;
+        private static InputManager _instance;
         public static InputManager Instance
         {
             get
             {
-                if (_instace == null)
+                if (_instance == null)
                 {
-                    _instace = new InputManager();
+                    _instance = new InputManager();
                 }
-                return _instace;
+                return _instance;
             }
         }
 
@@ -35,6 +36,11 @@ namespace Years.Utils
             {
                 _session = JsonConvert.DeserializeObject<Session>(File.ReadAllText(_sessionFilePath)).Value;
             }
+            else
+            {
+                File.WriteAllText(_sessionFilePath, JsonConvert.SerializeObject(new Session(){ Value = "session token" }));
+                throw new ArgumentException("Session file created, now set the value of the token before continuing");
+            }
         }
 
         private readonly string _sessionFilePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\AdventOfCodeSession.json";
@@ -48,12 +54,23 @@ namespace Years.Utils
             return _inputs.FirstOrDefault(i => i.Year == year && i.Day == day).input;
         }
 
+        public void DownloadMissingInput(int year, int day)
+        {
+            if (GetInput(year, day) == null)
+            {
+                using var client = SetupClient();
+                var str = DownloadDayInput(client, year, day);
+                _inputs.Add((year, day, str));
+                SaveToFile();
+            }
+        }
+
         public void DownloadAllInputs()
         {
             _inputs.Clear();
             using (var client = SetupClient())
             {
-                for (int year = 2015; year <= 2022; year++)
+                for (int year = 2015; year <= 2024; year++)
                 {
                     for (int day = 1; day <= 25; day++)
                     {
