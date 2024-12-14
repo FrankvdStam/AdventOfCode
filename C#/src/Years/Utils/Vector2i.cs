@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.VisualBasic.CompilerServices;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Years.Utils
 {
@@ -23,14 +25,13 @@ namespace Years.Utils
             return new Vector2i(X + vector.X, Y + vector.Y);
         }
 
+        public static Vector2i operator +(Vector2i a, Vector2i b) => a.Add(b);
+        public static Vector2i operator -(Vector2i a, Vector2i b) => a.Sub(b);
+
         public Vector2i Sub(Vector2i vector)
         {
             return new Vector2i(X - vector.X, Y - vector.Y);
         }
-        //public bool Equals(Vector2i vector)
-        //{
-        //    return vector.X == X && vector.Y == Y;
-        //}
 
         public static bool operator ==(Vector2i first, Vector2i second)
         {
