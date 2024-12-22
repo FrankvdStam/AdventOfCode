@@ -15,7 +15,7 @@ namespace Cli
     {
         static void Main(string[] args)
         {
-            RunDay(2024, 5);
+            RunDay(2024, 7);
         }
 
 

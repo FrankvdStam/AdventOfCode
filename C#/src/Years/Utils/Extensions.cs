@@ -238,6 +238,11 @@ namespace Years.Utils
             }
         }
 
+        public static bool IsInBound<T>(this T[,] array, Vector2i position)
+        {
+            return position.X >= 0 && position.X < array.GetLength(1) &&
+                   position.Y >= 0 && position.Y < array.GetLength(0);
+        }
 
 
         public static string Reverse(this string s)
@@ -429,6 +434,26 @@ namespace Years.Utils
                 for (int y = x + 1; y < sequence.Count(); y++)
                 {
                     yield return (sequence[x], sequence[y]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Generates a list of all possible combinations and permutations of the given inputs
+        /// </summary>
+        public static IEnumerable<IEnumerable<T>> PermuteAllCombinationsAndPermutations<T>(this IEnumerable<T> inputs, int maxLength)
+        {
+            var inputArray = inputs.Distinct().ToArray();
+            for (var queue = new Queue<T[]>(new[] { Array.Empty<T>() });
+                 queue.Peek().Length < maxLength;)
+            {
+                var current = queue.Dequeue();
+
+                foreach (var input in inputArray)
+                {
+                    var next = current.Append(input).ToArray();
+                    queue.Enqueue(next);
+                    yield return next;
                 }
             }
         }
