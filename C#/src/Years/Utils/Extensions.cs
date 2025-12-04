@@ -238,6 +238,14 @@ namespace Years.Utils
             }
         }
 
+        public static bool IsInBound(this Vector2i position, Vector2i lowerBound, Vector2i upperbound)
+        {
+
+            return position.X >= lowerBound.X && position.X < upperbound.X &&
+                   position.Y >= lowerBound.Y && position.Y < upperbound.Y;
+        }
+
+
         public static bool IsInBound<T>(this T[,] array, Vector2i position)
         {
             return position.X >= 0 && position.X < array.GetLength(1) &&
