@@ -15,7 +15,7 @@ namespace Cli
     {
         static void Main(string[] args)
         {
-            RunDay(2025, 1);
+            RunLatest();
         }
 
 
@@ -24,6 +24,14 @@ namespace Cli
         {
             var type = typeof(IDay);
             _days = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => type.IsAssignableFrom(p) && p.IsClass && !p.IsAbstract).Select(i => (IDay)Activator.CreateInstance(i)).ToList();
+        }
+
+        static void RunLatest()
+        {
+            InitDays();
+            var dayInstance = _days.OrderByDescending(i => i.Year).ThenByDescending(i => i.Day).First();
+            RunDay(dayInstance);
+            Console.ReadKey();
         }
 
         static void RunDay(int year, int day)

@@ -508,6 +508,18 @@ namespace Years.Utils
             }
         }
 
+        public static int Count(this string str, string value)
+        {
+            var count = 0;
+            for (int index = 0; ; index += value.Length)
+            {
+                index = str.IndexOf(value, index);
+                if (index == -1)
+                    return count;
+                count++;
+            }
+        }
+
         #endregion
 
 
