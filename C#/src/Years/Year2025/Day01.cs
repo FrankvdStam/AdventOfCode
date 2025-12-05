@@ -11,7 +11,7 @@ namespace Years.Year2025
     {
         public Day01() : base(2025, 1) 
         {
-            Nums = ParseInput(Example);
+            Nums = ParseInput(Input);
         }
 
         private List<int> Nums = new List<int>();
